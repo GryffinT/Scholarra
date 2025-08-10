@@ -342,9 +342,8 @@ if st.session_state.page == 4:
             st.subheader(graph_type)
 
             # Base figure
-            # Initialize fig
             fig = None
-            
+
             if graph_type == "Line chart":
                 fig = px.line(df_all, x="x", y="y", color="dataset", title=graph_label)
             elif graph_type == "Bar chart":
@@ -366,10 +365,11 @@ if st.session_state.page == 4:
                     ),
                     margin=dict(t=80, b=40, l=80, r=80),  # More margin left/right to avoid cutoff
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True, key="main_chart")
             else:
                 st.write("No valid graph type selected.")
 
+            # BOTTOM OF THE CODE FOR CENTERING
 
             
             if func_input.strip():
@@ -554,6 +554,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
