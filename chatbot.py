@@ -354,11 +354,18 @@ if st.session_state.page == 4:
                 fig = None
             
             if fig:
-                # Tilt x-axis tick labels by 45 degrees and enable auto margin
                 fig.update_layout(
+                    margin=dict(t=80, r=150),  # more top and right margin
+                    title=dict(
+                        text=graph_label,
+                        x=0.5,             # center title horizontally
+                        xanchor='center',
+                        yanchor='top',
+                        font=dict(size=16)
+                    ),
                     xaxis=dict(tickangle=45, automargin=True),
-                    margin=dict(t=50, b=100)  # add extra bottom margin to fit tilted labels
                 )
+
 
 
             # BOTTOM OF THE CODE FOR CENTERING
@@ -546,6 +553,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
