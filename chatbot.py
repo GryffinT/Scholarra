@@ -421,7 +421,7 @@ if st.session_state.page == 4:
             #    data=img_bytes,
             #    file_name=f"{graph_type.replace(' ', '_').lower()}.png",
             #    mime="image/png"
-            )
+            #)
 
 
         # Statistical calculations display
@@ -535,6 +535,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
