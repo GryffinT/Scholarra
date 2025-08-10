@@ -342,29 +342,20 @@ if st.session_state.page == 4:
             st.subheader(graph_type)
 
             # Base figure
-            if graph_type == "Line chart":
-                fig = px.line(df_all, x="x", y="y", color="dataset", title=graph_label)
-            elif graph_type == "Bar chart":
-                fig = px.bar(df_all, x="x", y="y", color="dataset", title=graph_label)
-            elif graph_type == "Area chart":
-                fig = px.area(df_all, x="x", y="y", color="dataset", title=graph_label)
-            elif graph_type == "Scatter plot":
-                fig = px.scatter(df_all, x="x", y="y", color="dataset", title=graph_label)
-            else:
-                fig = None
-            
             if fig:
                 fig.update_layout(
                     title=dict(
                         text=graph_label,
-                        y=0.95,
                         x=0.5,
                         xanchor='center',
+                        y=0.95,
                         yanchor='top',
                         font=dict(size=20)
                     ),
-                    margin=dict(t=80, b=40, l=40, r=40)
+                    margin=dict(t=80, b=40, l=80, r=80),
                 )
+                st.plotly_chart(fig, use_container_width=True)
+
 
             
             if func_input.strip():
@@ -549,6 +540,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
