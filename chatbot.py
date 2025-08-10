@@ -223,9 +223,9 @@ if st.session_state.page == 4:
     Example: `1:2, 2:3, 3:5, 4:8`
     """)
     graph_label = st.text_input("Graph label:")
-    data_input_1 = st.text_input("Dataset 1 (x:y pairs):")
+    data_input_1 = st.text_input("Data for Dataset 1 (x:y pairs):")
     data_name_1 = st.text_input("Dataset 1 label:")
-    data_input_2 = st.text_input("Dataset 2 (optional, x:y pairs):")
+    data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
     data_name_2 = st.text_input("Dataset 2 label:")
 
 
@@ -352,6 +352,20 @@ if st.session_state.page == 4:
                 fig = px.scatter(df_all, x="x", y="y", color="dataset", title=graph_label)
             else:
                 fig = None
+            
+            if fig:
+                fig.update_layout(
+                    title=dict(
+                        text=graph_label,
+                        y=0.95,
+                        x=0.5,
+                        xanchor='center',
+                        yanchor='top',
+                        font=dict(size=20)
+                    ),
+                    margin=dict(t=80, b=40, l=40, r=40)
+                )
+
             
             if func_input.strip():
                 # Use a fine grid of x for smooth plotting of function
@@ -535,6 +549,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
