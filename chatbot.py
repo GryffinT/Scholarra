@@ -342,8 +342,6 @@ if st.session_state.page == 4:
             st.subheader(graph_type)
 
             # Base figure
-            fig = None
-
             if graph_type == "Line chart":
                 fig = px.line(df_all, x="x", y="y", color="dataset", title=graph_label)
             elif graph_type == "Bar chart":
@@ -352,22 +350,16 @@ if st.session_state.page == 4:
                 fig = px.area(df_all, x="x", y="y", color="dataset", title=graph_label)
             elif graph_type == "Scatter plot":
                 fig = px.scatter(df_all, x="x", y="y", color="dataset", title=graph_label)
+            else:
+                fig = None
             
             if fig:
+                # Tilt x-axis tick labels by 45 degrees and enable auto margin
                 fig.update_layout(
-                    title=dict(
-                        text=graph_label,
-                        x=0.5,               # Center horizontally
-                        xanchor='center',
-                        y=0.95,
-                        yanchor='top',
-                        font=dict(size=20)
-                    ),
-                    margin=dict(t=80, b=40, l=80, r=80),  # More margin left/right to avoid cutoff
+                    xaxis=dict(tickangle=45, automargin=True),
+                    margin=dict(t=50, b=100)  # add extra bottom margin to fit tilted labels
                 )
-                st.plotly_chart(fig, use_container_width=True, key="main_chart")
-            else:
-                st.write("No valid graph type selected.")
+
 
             # BOTTOM OF THE CODE FOR CENTERING
 
@@ -554,6 +546,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
