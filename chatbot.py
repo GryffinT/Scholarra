@@ -1,7 +1,18 @@
 import streamlit as st
 from openai import OpenAI
 
-logo = ["NEXCLASS LOGO.gif", "NEX CLASS (3).jpg"]
+import os
+import streamlit as st
+
+# Get the folder where chatbot.py is located
+base_path = os.path.dirname(__file__)
+
+logo = [
+    os.path.join(base_path, "NEXCLASS LOGO.gif"),
+    os.path.join(base_path, "NEX CLASS (3).jpg")
+]
+
+st.image(logo[0], use_container_width=True)
 
 # Track current page
 if "page" not in st.session_state:
@@ -61,11 +72,12 @@ elif st.session_state.page == 2:
         unsafe_allow_html=True
     )
     st.write("")
-    st.image("scatter_plot.png", caption="Example scatter plot generated with the NexStats function")
+    # Scatterplot image
+    scatter_path = os.path.join(base_path, "scatter_plot.png")
+    st.image(scatter_path, caption="Example scatter plot generated with the NexStats function")
     st.header("")
-
     key = st.text_input("Enter use key")
-    access_keys = ["ALKU-1024"]
+    access_keys = ["pibble67"]
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.button("Back", on_click=last_page)
@@ -522,5 +534,6 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
