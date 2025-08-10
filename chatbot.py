@@ -413,13 +413,14 @@ if st.session_state.page == 4:
 
             st.plotly_chart(fig, use_container_width=True)
 
-            img_bytes = fig.to_image(format="png")
-            btn_label = f"Download {graph_type} as PNG"
-            st.download_button(
-                label=btn_label,
-                data=img_bytes,
-                file_name=f"{graph_type.replace(' ', '_').lower()}.png",
-                mime="image/png"
+            # Defunct image download
+            #img_bytes = fig.to_image(format="png")
+            #btn_label = f"Download {graph_type} as PNG"
+            #st.download_button(
+            #    label=btn_label,
+            #    data=img_bytes,
+            #    file_name=f"{graph_type.replace(' ', '_').lower()}.png",
+            #    mime="image/png"
             )
 
 
@@ -534,6 +535,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
