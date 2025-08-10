@@ -361,7 +361,11 @@ if st.session_state.page == 4:
                         x=0.5,             # center title horizontally
                         xanchor='center',
                         yanchor='top',
-                        font=dict(size=10)
+                        if graph_label.len() > 10:
+                            font=dict(size=12)
+                        else:
+                            font=dict(size=16)
+                
                     ),
                     xaxis=dict(tickangle=45, automargin=True),
                 )
@@ -553,6 +557,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
