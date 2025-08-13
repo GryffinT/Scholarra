@@ -393,8 +393,8 @@ if st.session_state.page == 4:
                 font_size = max(min_font, min(max_font, max_font - (length - 5)))
             
                 fig.update_layout(
-                    plot_bgcolor="white"
-                    paper_bgcolor="white"
+                    plot_bgcolor="white",
+                    paper_bgcolor="white",
                     margin=dict(t=80, r=150),  # more top and right margin
                     title=dict(
                         text=graph_label,
@@ -595,6 +595,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
