@@ -129,7 +129,7 @@ if st.session_state.page == 3 or st.session_state.page == 4 or st.session_state.
         st.session_state.page = 1
 
 if st.session_state.page == 3:
-    st.title("NEX interface")
+    st.title("Scholarra interface")
     st.markdown("""Powered by Open AI APIs""")
 
     # Initialize chat history with system prompt if not exists
@@ -591,6 +591,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
