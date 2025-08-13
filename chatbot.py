@@ -383,10 +383,13 @@ if st.session_state.page == 4:
             else:
                 fig = None
             
+                       # Define font_size before using it
+            font_size = 18  # You can adjust this as needed or make it dynamic
+            
             fig.update_layout(
                 plot_bgcolor="white",
                 paper_bgcolor="white",
-                margin=dict(t=80, r=150),  # more top and right margin
+                margin=dict(t=80, r=150),  # More top and right margin
                 title=dict(
                     text=graph_label,
                     x=0.5,
@@ -395,8 +398,8 @@ if st.session_state.page == 4:
                     font=dict(size=font_size, color="black"),
                 ),
                 font=dict(
-                    color="black",
-                    family="Arial, sans-serif",
+                    color="black",  # General font color (legend, labels)
+                    family="Arial, sans-serif",  # Optional: clean font family
                 ),
                 xaxis=dict(
                     tickangle=45,
@@ -602,6 +605,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
