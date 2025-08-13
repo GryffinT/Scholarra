@@ -398,14 +398,35 @@ if st.session_state.page == 4:
                     margin=dict(t=80, r=150),  # more top and right margin
                     title=dict(
                         text=graph_label,
+                        color="black",
                         x=0.5,
                         xanchor='center',
                         yanchor='top',
                         font=dict(size=font_size)
-                        
                     ),
-                    xaxis=dict(tickangle=45, automargin=True),
+                    font=dict(
+                        color="black",  # general font color for legend and labels
+                        family="Arial, sans-serif"  # optional clean font
+                    ),
+                    xaxis=dict(
+                        tickangle=45,
+                        automargin=True,
+                        gridcolor="lightgray",
+                        title_font=dict(color="black"),
+                        tickfont=dict(color="black"),
+                        zerolinecolor="lightgray",
+                    ),
+                    yaxis=dict(
+                        gridcolor="lightgray",
+                        title_font=dict(color="black"),
+                        tickfont=dict(color="black"),
+                        zerolinecolor="lightgray",
+                    ),
+                    legend=dict(
+                        font=dict(color="black")
+                    ),
                 )
+
             
 
 
@@ -595,6 +616,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
