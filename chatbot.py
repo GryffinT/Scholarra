@@ -429,6 +429,7 @@ if st.session_state.page == 4:
                     legend=dict(
                         font=dict(color='black')
                     )
+                )
             # BOTTOM OF THE CODE FOR CENTERING
 
             
@@ -614,6 +615,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
