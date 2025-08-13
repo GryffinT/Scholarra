@@ -385,8 +385,6 @@ if st.session_state.page == 4:
             
                        # Define font_size before using it
                 fig.update_layout(
-                    plot_bgcolor="lightgray",
-                    paper_bgcolor="lightgray",
                     margin=dict(t=80, r=150),  # more top and right margin
                     title=dict(
                         text=graph_label,
@@ -584,6 +582,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
