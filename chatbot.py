@@ -386,7 +386,7 @@ if st.session_state.page == 4:
             fig.update_layout(
                 plot_bgcolor="white",
                 paper_bgcolor="white",
-                margin=dict(t=80, r=150),
+                margin=dict(t=80, r=150),  # more top and right margin
                 title=dict(
                     text=graph_label,
                     x=0.5,
@@ -396,7 +396,7 @@ if st.session_state.page == 4:
                 ),
                 font=dict(
                     color="black",
-                    family="Arial, sans-serif"
+                    family="Arial, sans-serif",
                 ),
                 xaxis=dict(
                     tickangle=45,
@@ -413,13 +413,9 @@ if st.session_state.page == 4:
                     tickfont=dict(color="black"),
                 ),
                 legend=dict(
-                    font=dict(color="black")
+                    font=dict(color="black"),
                 ),
             )
-
-            
-
-
 
             # BOTTOM OF THE CODE FOR CENTERING
 
@@ -606,6 +602,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
