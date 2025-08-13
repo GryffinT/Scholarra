@@ -4,6 +4,22 @@ from openai import OpenAI
 import os
 import streamlit as st
 
+import streamlit as st
+
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Batangas&display=swap');
+
+    html, body, [class*="css"]  {
+        font-family: 'Batangas', serif;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 # Get the folder where chatbot.py is located
 base_path = os.path.dirname(__file__)
 
@@ -559,6 +575,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
