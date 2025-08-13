@@ -383,12 +383,29 @@ if st.session_state.page == 4:
             else:
                 fig = None
             
+                st.markdown(
+                    """
+                    <style>
+                        body {
+                            background-color: white;
+                        }
+                        .stApp {
+                            background-color: white;
+                        }
+                        [data-testid="stSidebar"] {
+                            background-color: white;
+                        }
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
                        # Define font_size before using it
                 fig.update_layout(
-                    plot_bgcolor='white',       # Plot area background
-                    paper_bgcolor='white',      # Entire figure background
-                    font=dict(color='black'),   # Text color for titles, labels, legend
-                    margin=dict(t=80, r=150),   # More top and right margin
+                    plot_bgcolor='white',
+                    paper_bgcolor='white',
+                    font=dict(color='black'),
+                    margin=dict(t=80, r=150),
                     title=dict(
                         text=graph_label,
                         x=0.5,
@@ -396,12 +413,12 @@ if st.session_state.page == 4:
                         yanchor='top',
                         font=dict(
                             size=font_size,
-                            color='black'       # Ensure title text is black
+                            color='black'
                         )
                     ),
                     xaxis=dict(
-                        gridcolor='rgba(0,0,0,0.1)',  # light grid lines
-                        zerolinecolor='rgba(0,0,0,0.2)', # zero line color
+                        gridcolor='rgba(0,0,0,0.1)',
+                        zerolinecolor='rgba(0,0,0,0.2)',
                         tickangle=45,
                         automargin=True
                     ),
@@ -410,10 +427,8 @@ if st.session_state.page == 4:
                         zerolinecolor='rgba(0,0,0,0.2)'
                     ),
                     legend=dict(
-                        font=dict(color='black')  # legend text color
+                        font=dict(color='black')
                     )
-                )
-
             # BOTTOM OF THE CODE FOR CENTERING
 
             
@@ -599,6 +614,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
