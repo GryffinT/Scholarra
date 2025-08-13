@@ -411,7 +411,7 @@ if st.session_state.page == 4:
                         x=0.5,
                         xanchor='center',
                         yanchor='top',
-                        font=dict(
+                        textfont=dict(
                             size=font_size,
                             color='black'
                         )
@@ -427,7 +427,7 @@ if st.session_state.page == 4:
                         zerolinecolor='rgba(0,0,0,0.2)'
                     ),
                     legend=dict(
-                        font=dict(color='black')
+                        textfont=dict(color='black')
                     )
                 )
             # BOTTOM OF THE CODE FOR CENTERING
@@ -615,6 +615,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
