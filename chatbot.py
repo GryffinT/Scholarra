@@ -42,12 +42,28 @@ def last_page():
 if st.session_state.page == 1:
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
-        st.image(logo[0], use_container_width=True) # Works with GIFs too
+        st.image(logo[0], use_container_width=True)  # Works with GIFs too
+
+    # Inject Batangas font CSS once
     st.markdown(
-        "<h1 style='text-align: center;'>Smarter study starts here.</h1>",
-        unsafe_allow_html=True
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Batangas&display=swap');
+        .batangas-font {
+            font-family: 'Batangas', serif;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Use the CSS class on the heading
+    st.markdown(
+        "<h1 class='batangas-font' style='text-align: center;'>Smarter study starts here.</h1>",
+        unsafe_allow_html=True,
     )
     st.button("Next", on_click=next_page)
+
 
 # ---------------- PAGE 2 ----------------
 elif st.session_state.page == 2:
@@ -575,6 +591,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
