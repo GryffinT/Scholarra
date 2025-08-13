@@ -387,11 +387,14 @@ if st.session_state.page == 4:
                 max_font = 20
                 min_font = 10
                 length = len(graph_label)
+                
             
                 # Scale font size inversely proportional to length, capped by min and max
                 font_size = max(min_font, min(max_font, max_font - (length - 5)))
             
                 fig.update_layout(
+                    plot_bgcolor="white"
+                    paper_bgcolor="white"
                     margin=dict(t=80, r=150),  # more top and right margin
                     title=dict(
                         text=graph_label,
@@ -399,6 +402,7 @@ if st.session_state.page == 4:
                         xanchor='center',
                         yanchor='top',
                         font=dict(size=font_size)
+                        
                     ),
                     xaxis=dict(tickangle=45, automargin=True),
                 )
@@ -591,6 +595,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
