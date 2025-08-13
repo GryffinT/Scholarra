@@ -11,7 +11,6 @@ logo = [
     os.path.join(base_path, "Scholarra (1).png"),
 ]
 
-st.image(logo[0], use_container_width=True)
 
 # Track current page
 if "page" not in st.session_state:
@@ -560,6 +559,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
