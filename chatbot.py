@@ -8,8 +8,7 @@ import streamlit as st
 base_path = os.path.dirname(__file__)
 
 logo = [
-    os.path.join(base_path, "NEXCLASS LOGO.gif"),
-    os.path.join(base_path, "NEX CLASS (3).jpg")
+    os.path.join(base_path, "Scholarra (1).png"),
 ]
 
 st.image(logo[0], use_container_width=True)
@@ -561,6 +560,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
