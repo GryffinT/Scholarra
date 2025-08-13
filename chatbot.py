@@ -385,16 +385,33 @@ if st.session_state.page == 4:
             
                        # Define font_size before using it
                 fig.update_layout(
-                    margin=dict(t=80, r=150),  # more top and right margin
+                    plot_bgcolor='white',       # Plot area background
+                    paper_bgcolor='white',      # Entire figure background
+                    font=dict(color='black'),   # Text color for titles, labels, legend
+                    margin=dict(t=80, r=150),   # More top and right margin
                     title=dict(
                         text=graph_label,
                         x=0.5,
                         xanchor='center',
                         yanchor='top',
-                        font=dict(size=font_size)
-                        
+                        font=dict(
+                            size=font_size,
+                            color='black'       # Ensure title text is black
+                        )
                     ),
-                    xaxis=dict(tickangle=45, automargin=True),
+                    xaxis=dict(
+                        gridcolor='rgba(0,0,0,0.1)',  # light grid lines
+                        zerolinecolor='rgba(0,0,0,0.2)', # zero line color
+                        tickangle=45,
+                        automargin=True
+                    ),
+                    yaxis=dict(
+                        gridcolor='rgba(0,0,0,0.1)',
+                        zerolinecolor='rgba(0,0,0,0.2)'
+                    ),
+                    legend=dict(
+                        font=dict(color='black')  # legend text color
+                    )
                 )
 
             # BOTTOM OF THE CODE FOR CENTERING
@@ -582,6 +599,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
