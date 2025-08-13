@@ -26,7 +26,7 @@ def last_page():
 if st.session_state.page == 1:
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
-        st.image(logo[0], use_container_width=True)  # Works with GIFs too
+        st.image(logo[0], use_container_width=True) # Works with GIFs too
     st.markdown(
         "<h1 style='text-align: center;'>Class work brought to the NEX level.</h1>",
         unsafe_allow_html=True
