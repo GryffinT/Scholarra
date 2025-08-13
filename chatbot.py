@@ -44,7 +44,7 @@ if st.session_state.page == 1:
     with col2:
         st.image(logo[0], use_container_width=True) # Works with GIFs too
     st.markdown(
-        "<h1 style='text-align: center;'>Class work brought to the NEX level.</h1>",
+        "<h1 style='text-align: center;'>Smarter study starts here.</h1>",
         unsafe_allow_html=True
     )
     st.button("Next", on_click=next_page)
@@ -52,7 +52,7 @@ if st.session_state.page == 1:
 # ---------------- PAGE 2 ----------------
 elif st.session_state.page == 2:
     st.markdown(
-        "<h3 style='text-align: center;'>NEX CLASS is an online, machine learning study supplement for students, by students..</h3>",
+        "<h3 style='text-align: center;'>Scholarra is an online, machine learning study supplement for students, by students..</h3>",
         unsafe_allow_html=True
     )
     st.header("")
@@ -77,18 +77,18 @@ elif st.session_state.page == 2:
     )
     st.header("")
     st.markdown(
-        "<h5 style='text-align: center;'>What is NexClass?</h5>",
+        "<h5 style='text-align: center;'>What is Scholarra?</h5>",
         unsafe_allow_html=True
     )
     st.write("")
     st.markdown(
-        "<h6 style='text-align: center;'>NexClass is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Nex, our machine learning tutor, powered by openai, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate neccisary statistics for courses such as, AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
+        "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Nex, our machine learning tutor, powered by openai, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate neccisary statistics for courses such as, AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
         unsafe_allow_html=True
     )
     st.write("")
     # Scatterplot image
     scatter_path = os.path.join(base_path, "scatter_plot.png")
-    st.image(scatter_path, caption="Example scatter plot generated with the NexStats function")
+    st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
     st.header("")
     key = st.text_input("Enter use key")
     access_keys = ["pibble67"]
@@ -96,7 +96,7 @@ elif st.session_state.page == 2:
     with col1:
         st.button("Back", on_click=last_page)
     with col2:
-        if key in access_keys or key == "NexAdmin-EG-01":
+        if key in access_keys or key == "Scholar-EG-01":
             st.button("Next", on_click=next_page)
 
 
@@ -229,7 +229,7 @@ def calculate_stats(df):
     return result
 
 if st.session_state.page == 4:
-    st.title("NexStats")
+    st.title("Scholistics")
     st.header("Next level graphing and statistics calculator.")
 
     st.write("""
@@ -575,6 +575,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
