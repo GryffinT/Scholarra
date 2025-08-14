@@ -276,7 +276,7 @@ if st.session_state.page == 3:
             urls = build_urls(user_input, main_topic, sub_type)
             
             search_instruction = (
-                f"Fetch factual information about '{user_input}' from these sources: {urls}. "
+                f"Fetch factual information about '{user_input}' from these sources: {urls}.If there are no sources search from Britannica, Jstor, Oxford, Harvard, Stanford, John Hopkins, Mayo Clinic, and other academically accepted sources "
                 "Synthesize a concise, verbatim, and academic answer (~30 words), cite the sources with intext citation, "
                 "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
             )
@@ -729,6 +729,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
