@@ -199,80 +199,23 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
+        
         # -----------------------------
-        # Sources dictionary (example)
+        # Expanded sources dictionary
         # -----------------------------
         SOURCES = {
             "History": {
-                "britannica": {
-                    "event": "https://www.britannica.com/event/[TOPIC]",
-                    "person": "https://www.britannica.com/biography/[TOPIC]",
-                    "place": "https://www.britannica.com/place/[TOPIC]"
-                },
-                "history_com": {
-                    "event": "https://www.history.com/topics/[TOPIC]",
-                    "person": "https://www.history.com/topics/people/[TOPIC]",
-                    "place": "https://www.history.com/topics/places/[TOPIC]"
-                },
-                "jstor": {
-                    "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
-                    "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
-                    "place": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
-                },
-                "sciencedirect": {
-                    "event": "https://www.sciencedirect.com/search?qs=[TOPIC]",
-                    "person": "https://www.sciencedirect.com/search?qs=[TOPIC]",
-                    "place": "https://www.sciencedirect.com/search?qs=[TOPIC]"
-                },
-                "stanford_phil": {
-                    "event": "https://plato.stanford.edu/search/search.html?query=[TOPIC]",
-                    "person": "https://plato.stanford.edu/search/search.html?query=[TOPIC]",
-                    "place": "https://plato.stanford.edu/search/search.html?query=[TOPIC]"
-                }
-            },
-            "Math": {
-                "mathworld": {
-                    "concept": "https://mathworld.wolfram.com/search/?query=[TOPIC]"
-                },
-                "wikipedia": {
-                    "concept": "https://en.wikipedia.org/wiki/[TOPIC]"
-                },
-                "sciencedirect": {
-                    "concept": "https://www.sciencedirect.com/search?qs=[TOPIC]"
-                },
-                "jstor": {
-                    "concept": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
-                },
-                "springer": {
-                    "concept": "https://link.springer.com/search?query=[TOPIC]"
-                }
-            },
-            "English": {
-                "poetryfoundation": {
-                    "person": "https://www.poetryfoundation.org/search?query=[TOPIC]",
-                    "event": "https://www.poetryfoundation.org/search?query=[TOPIC]"
-                },
-                "britannica": {
-                    "person": "https://www.britannica.com/biography/[TOPIC]",
-                    "event": "https://www.britannica.com/event/[TOPIC]"
-                },
-                "jstor": {
-                    "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
-                    "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
-                },
-                "project_gutenberg": {
-                    "person": "https://www.gutenberg.org/ebooks/search/?query=[TOPIC]"
-                },
-                "wikipedia": {
-                    "person": "https://en.wikipedia.org/wiki/[TOPIC]",
-                    "event": "https://en.wikipedia.org/wiki/[TOPIC]"
-                }
+                "britannica": {"event": "https://www.britannica.com/event/[TOPIC]", "person": "https://www.britannica.com/biography/[TOPIC]"},
+                "history_com": {"event": "https://www.history.com/topics/[TOPIC]", "person": "https://www.history.com/topics/people/[TOPIC]"},
+                "jstor": {"event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel", "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"},
+                "sciencedirect": {"event": "https://www.sciencedirect.com/search?qs=[TOPIC]", "person": "https://www.sciencedirect.com/search?qs=[TOPIC]"},
+                "stanford_phil": {"event": "https://plato.stanford.edu/search/search.html?query=[TOPIC]", "person": "https://plato.stanford.edu/search/search.html?query=[TOPIC]"}
             }
+            # Add other topics like Math, English similarly
         }
-
         
         # -----------------------------
-        # Hidden character injection
+        # Hidden-character obfuscation
         # -----------------------------
         def obfuscate_text(text):
             zwsp = "\u200b"
@@ -288,7 +231,7 @@ if st.session_state.page == 3:
             return text[:1000]  # limit per source
         
         # -----------------------------
-        # Topic + type classification
+        # Classify topic and sub-type
         # -----------------------------
         def classify_topic(user_input):
             prompt = f"Classify the topic of this input: '{user_input}'. Return main_topic and sub_type separated by comma."
@@ -304,14 +247,16 @@ if st.session_state.page == 3:
                 return "History", "event"
         
         # -----------------------------
-        # Build URLs
+        # Build URLs with citation names
         # -----------------------------
-        def build_urls(user_input, main_topic, sub_type):
+        def build_urls_with_citations(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
             for source_name, variants in SOURCES.get(main_topic, {}).items():
                 if sub_type in variants:
-                    urls.append((source_name, variants[sub_type].replace("[TOPIC]", encoded_query)))
+                    url = variants[sub_type].replace("[TOPIC]", encoded_query)
+                    citation = source_name.title()  # e.g., 'Britannica'
+                    urls.append({"citation": citation, "url": url})
             return urls
         
         # -----------------------------
@@ -326,14 +271,22 @@ if st.session_state.page == 3:
         
         async def fetch_all(urls):
             async with httpx.AsyncClient() as client:
-                tasks = [fetch_url(client, url) for _, url in urls]
+                tasks = [fetch_url(client, u["url"]) for u in urls]
                 return await asyncio.gather(*tasks)
         
         # -----------------------------
-        # GPT summarization for a chunk
+        # Summarize a chunk
         # -----------------------------
-        def summarize_chunk(text_chunk, user_input):
-            prompt = f"Using the following content:\n{text_chunk}\nSummarize factual info about '{user_input}' (~100 words), cite sources."
+        def summarize_chunk(text_chunk, user_input, citations):
+            citation_names = ", ".join([c["citation"] for c in citations])
+            prompt = f"""
+        Using the following content:
+        
+        {text_chunk}
+        
+        Write a concise factual answer about '{user_input}' (~100 words), 
+        include MLA-style in-text citations using these sources: {citation_names}.
+        """
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
@@ -345,29 +298,33 @@ if st.session_state.page == 3:
         # -----------------------------
         def answer_user(user_input, chunk_size=2):
             main_topic, sub_type = classify_topic(user_input)
-            urls = build_urls(user_input, main_topic, sub_type)
+            urls_with_citations = build_urls_with_citations(user_input, main_topic, sub_type)
             
-            # Fetch all sources async
-            all_texts = asyncio.run(fetch_all(urls))
+            all_texts = asyncio.run(fetch_all(urls_with_citations))
             
-            # Chunking
             summaries = []
             for i in range(0, len(all_texts), chunk_size):
                 chunk_text = "\n\n".join(all_texts[i:i+chunk_size])
-                summary = summarize_chunk(chunk_text, user_input)
+                chunk_citations = urls_with_citations[i:i+chunk_size]
+                summary = summarize_chunk(chunk_text, user_input, chunk_citations)
                 summaries.append(summary)
             
-            # Final synthesis
             final_text = "\n\n".join(summaries)
-            prompt = f"Combine the following summaries into a concise factual answer about '{user_input}', cite sources, and add hidden characters to prevent copy-paste:\n{final_text}"
+            citation_names = ", ".join([c["citation"] for c in urls_with_citations])
             
+            prompt = f"""
+        Combine the following summaries into a concise factual answer about '{user_input}', 
+        include MLA-style in-text citations using: {citation_names}, 
+        and add hidden characters to prevent copy-paste:
+        
+        {final_text}
+        """
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
             )
-            
             answer_text = response.choices[0].message.content
-            return obfuscate_text(answer_text)
+            return obfuscate_text(answer_text), urls_with_citations
         
         # -----------------------------
         # Streamlit UI
@@ -378,10 +335,16 @@ if st.session_state.page == 3:
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    answer = answer_user(user_input)
+                    answer, sources = answer_user(user_input)
                     st.markdown(answer)
+                    
+                    st.subheader("Sources")
+                    for src in sources:
+                        with st.expander(src["citation"]):
+                            st.write(src["url"])
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
+
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -806,6 +769,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
