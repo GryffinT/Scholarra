@@ -195,10 +195,10 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
-
-        # -------------------------------
-        # Base URLs for dynamic construction
-        # -------------------------------
+        
+        # -----------------------------
+        # Base URLs by source (with multiple "modes")
+        # -----------------------------
         BASE_URLS = {
             "britannica": {
                 "general": "https://www.britannica.com",
@@ -208,9 +208,123 @@ if st.session_state.page == 3:
             },
             "history_com": {
                 "general": "https://www.history.com/topics",
-                "event": "https://www.history.com/topics"
+                "event": "https://www.history.com/topics",
+                "person": "https://www.history.com/topics/people",
+                "place": "https://www.history.com/topics/places"
+            },
+            "stanford_phil": {
+                "general": "https://plato.stanford.edu",
+                "event": "https://plato.stanford.edu/search/search.html?query=[TOPIC]",
+                "person": "https://plato.stanford.edu/search/search.html?query=[TOPIC]",
+                "place": "https://plato.stanford.edu/search/search.html?query=[TOPIC]"
+            },
+            "iep": {
+                "general": "https://iep.utm.edu",
+                "event": "https://iep.utm.edu/search/?q=[TOPIC]",
+                "person": "https://iep.utm.edu/search/?q=[TOPIC]",
+                "place": "https://iep.utm.edu/search/?q=[TOPIC]"
+            },
+            "nature": {
+                "general": "https://www.nature.com",
+                "event": "https://www.nature.com/search?q=[TOPIC]",
+                "person": "https://www.nature.com/search?q=[TOPIC]",
+                "place": "https://www.nature.com/search?q=[TOPIC]"
+            },
+            "sciencedirect": {
+                "general": "https://www.sciencedirect.com",
+                "event": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                "person": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                "place": "https://www.sciencedirect.com/search?qs=[TOPIC]"
+            },
+            "jstor": {
+                "general": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                "place": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
+            },
+            "mathworld": {
+                "general": "https://mathworld.wolfram.com",
+                "event": "https://mathworld.wolfram.com/search/?query=[TOPIC]",
+                "person": "https://mathworld.wolfram.com/search/?query=[TOPIC]",
+                "place": "https://mathworld.wolfram.com/search/?query=[TOPIC]"
+            },
+            "poetryfoundation": {
+                "general": "https://www.poetryfoundation.org",
+                "event": "https://www.poetryfoundation.org/search?query=[TOPIC]",
+                "person": "https://www.poetryfoundation.org/search?query=[TOPIC]",
+                "place": "https://www.poetryfoundation.org/search?query=[TOPIC]"
             }
         }
+        
+        # -----------------------------
+        # High school subjects mapping to multiple sources
+        # -----------------------------
+        SOURCE_TOPIC = {
+            "history": [
+                {"name": "Britannica", "url_type": "general"},
+                {"name": "History.com", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Stanford Encyclopedia of Philosophy", "url_type": "general"},
+                {"name": "Internet History Sourcebooks Project", "url_type": "general"}
+            ],
+            "science": [
+                {"name": "Nature", "url_type": "general"},
+                {"name": "ScienceDirect", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Britannica", "url_type": "general"},
+                {"name": "EdX Science Courses", "url_type": "general"}
+            ],
+            "mathematics": [
+                {"name": "MathWorld", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Britannica", "url_type": "general"},
+                {"name": "Khan Academy Math", "url_type": "general"},
+                {"name": "edX Mathematics Courses", "url_type": "general"}
+            ],
+            "english": [
+                {"name": "Poetry Foundation", "url_type": "general"},
+                {"name": "Britannica Literature", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Project Gutenberg", "url_type": "general"},
+                {"name": "Internet Archive", "url_type": "general"}
+            ],
+            "philosophy": [
+                {"name": "Stanford Encyclopedia of Philosophy", "url_type": "general"},
+                {"name": "Internet Encyclopedia of Philosophy", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Britannica", "url_type": "general"},
+                {"name": "EdX Philosophy Courses", "url_type": "general"}
+            ],
+            "computer_science": [
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Britannica CS", "url_type": "general"},
+                {"name": "edX CS Courses", "url_type": "general"},
+                {"name": "MIT OpenCourseWare", "url_type": "general"},
+                {"name": "ScienceDirect", "url_type": "general"}
+            ],
+            "foreign_languages": [
+                {"name": "Britannica Language", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Duolingo Blog", "url_type": "general"},
+                {"name": "EdX Language Courses", "url_type": "general"},
+                {"name": "Internet Archive Language Texts", "url_type": "general"}
+            ],
+            "art": [
+                {"name": "Britannica Art", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Museum of Modern Art", "url_type": "general"},
+                {"name": "Google Arts & Culture", "url_type": "general"},
+                {"name": "Artstor", "url_type": "general"}
+            ],
+            "social_studies": [
+                {"name": "Britannica Social Sciences", "url_type": "general"},
+                {"name": "History.com", "url_type": "general"},
+                {"name": "JSTOR", "url_type": "general"},
+                {"name": "Stanford Encyclopedia of Philosophy", "url_type": "general"},
+                {"name": "EdX Social Science Courses", "url_type": "general"}
+            ]
+        }
+
         
         # -------------------------------
         # Known topics and normalization
@@ -313,21 +427,51 @@ if st.session_state.page == 3:
         # -------------------------------
         # Construct dynamic URLs
         # -------------------------------
-        def construct_britannica_url(query):
-            main_topic = extract_and_normalize_topic(query)
-            query_type = determine_query_type(main_topic)
-            base = BASE_URLS["britannica"].get(query_type, BASE_URLS["britannica"]["general"])
-            formatted_query = urllib.parse.quote(main_topic.replace(" ", "-"))
-            url = f"{base}/{formatted_query}"
-            return url
+        def sanitize_topic_for_url(topic, is_event=False):
+            """
+            Prepare topic string for URL:
+            - Convert to lowercase
+            - Replace spaces with hyphens
+            - Remove punctuation
+            - Optionally prepend 'The-' for events
+            """
+            topic = topic.strip()
+            topic = re.sub(r'\s+', '-', topic)  # spaces -> hyphens
+            topic = re.sub(r'[^\w\-]', '', topic)  # remove punctuation
+            if is_event:
+                topic = "The-" + topic
+            return topic
         
-        def construct_history_com_url(query):
-            main_topic = extract_and_normalize_topic(query)
-            query_type = determine_query_type(main_topic)
-            base = BASE_URLS["history_com"]["general"]
-            formatted_query = urllib.parse.quote(main_topic.replace(" ", "-"))
-            url = f"{base}/{formatted_query}"
-            return url
+        def construct_source_url(source_name, topic, mode="general"):
+            """
+            Construct a URL for any source in BASE_URLS.
+            
+            Args:
+                source_name (str): Key in BASE_URLS dict
+                topic (str): The topic to search for
+                mode (str): One of 'general', 'event', 'person', 'place'
+                
+            Returns:
+                str: Complete URL
+            """
+            if source_name not in BASE_URLS:
+                raise ValueError(f"Source '{source_name}' not found in BASE_URLS.")
+            
+            # Pick the base URL for the given mode; fallback to general
+            base_url = BASE_URLS[source_name].get(mode, BASE_URLS[source_name]["general"])
+            
+            is_event = mode == "event"
+            sanitized_topic = sanitize_topic_for_url(topic, is_event)
+            
+            # If the base URL contains [TOPIC], replace it
+            if "[TOPIC]" in base_url:
+                return base_url.replace("[TOPIC]", sanitized_topic)
+            
+            # Otherwise, append sanitized topic to the base URL
+            if mode in ["event", "person", "place"]:
+                return f"{base_url}/{sanitized_topic}"
+            
+            return f"{base_url}/{sanitized_topic}"
         
         # -------------------------------
         # Retrieve text chunks from URL
@@ -413,18 +557,23 @@ if st.session_state.page == 3:
             # 4. Fetch chunks for all variants
             for term in all_terms:
                 sources = [
-                    {"name": "Britannica", "url": construct_britannica_url(term)},
-                    {"name": "History.com", "url": construct_history_com_url(term)}
+                    {"name": "britannica", "mode": "general"},
+                    {"name": "history_com", "mode": "general"}
                 ]
                 for src in sources:
-                    chunks = retrieve_source_chunks(src["url"])
+                    url = construct_source_url(src["name"], term, mode=src["mode"])
+                    chunks = retrieve_source_chunks(url)
                     top_chunks = semantic_search(chunks, query)
                     for c in top_chunks:
-                        gathered_chunks.append({"text": c, "name": src["name"], "url": src["url"]})
+                        gathered_chunks.append({"text": c, "name": src["name"], "url": url})
         
             # 5. Fallback if no content found
             if not gathered_chunks:
-                return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join([construct_britannica_url(main_topic), construct_history_com_url(main_topic)])}"
+                fallback_urls = [
+                    construct_source_url("britannica", main_topic),
+                    construct_source_url("history_com", main_topic)
+                ]
+                return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join(fallback_urls)}"
         
             # 6. Combine chunks for GPT context
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
@@ -446,6 +595,7 @@ if st.session_state.page == 3:
             )
             answer = resp.choices[0].message.content.strip()
             return answer
+
         
 
 
@@ -886,6 +1036,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
