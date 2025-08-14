@@ -229,7 +229,7 @@ if st.session_state.page == 3:
         KNOWN_TOPICS = list(TOPIC_NORMALIZATION.values())
         
         # -------------------------------
-        # Extract main topic from user query
+        # Extract main topic from user query 
         # -------------------------------
         def extract_topic_from_query(query):
             query = query.lower()
@@ -327,37 +327,68 @@ if st.session_state.page == 3:
             top_indices = similarities.argsort()[::-1][:top_k]
             top_chunks = [chunks[i] for i in top_indices]
             return top_chunks
-        
+
+        def generate_related_terms(query, max_terms=5):
+            prompt = (
+                "You are an academic assistant.\n"
+                f'Given the topic: "{query}",\n'
+                f"provide up to {max_terms} short, relevant keywords or related topics\n"
+                "that could help expand a search for scholarly sources.\n"
+                "Reply with a comma-separated list only."
+            )
+            
+            resp = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[{"role": "system", "content": prompt}]
+            )
+            
+            related_text = resp.choices[0].message.content.strip()
+            related_terms = [t.strip() for t in related_text.split(",") if t.strip()]
+            return related_terms
+
+
         # -------------------------------
         # Generate scholarly answer with GPT
         # -------------------------------
         def generate_scholarly_answer(query):
-            # Construct source URLs dynamically
-            sources = [
-                {"name": "Britannica", "url": construct_britannica_url(query)},
-                {"name": "History.com", "url": construct_history_com_url(query)}
-            ]
+            # Normalize main topic
+            main_topic = extract_and_normalize_topic(query)
+        
+            # Generate related terms dynamically
+            related_terms = generate_related_terms(main_topic)
+            all_terms = [main_topic] + related_terms
         
             gathered_chunks = []
-            for src in sources:
-                chunks = retrieve_source_chunks(src["url"])
-                top_chunks = semantic_search(chunks, query)
-                for c in top_chunks:
-                    gathered_chunks.append({"text": c, "name": src["name"], "url": src["url"]})
+        
+            # Loop through each term and fetch chunks
+            for term in all_terms:
+                sources = [
+                    {"name": "Britannica", "url": construct_britannica_url(term)},
+                    {"name": "History.com", "url": construct_history_com_url(term)}
+                ]
+        
+                for src in sources:
+                    chunks = retrieve_source_chunks(src["url"])
+                    top_chunks = semantic_search(chunks, query)
+                    for c in top_chunks:
+                        gathered_chunks.append({"text": c, "name": src["name"], "url": src["url"]})
         
             if not gathered_chunks:
-                return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join([s['url'] for s in sources])}"
+                return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join([construct_britannica_url(main_topic), construct_history_com_url(main_topic)])}"
         
+            # Combine the chunks for GPT context
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
+            
+            # GPT prompt
             prompt = f"""
-            You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
-            Include in-text citations and a list of sources at the end.
+        You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
+        Include in-text citations and a list of sources at the end.
         
-            User Query: {query}
+        User Query: {query}
         
-            Source Texts:
-            {context_text}
-            """
+        Source Texts:
+        {context_text}
+        """
         
             resp = client.chat.completions.create(
                 model="gpt-4-turbo",
@@ -365,6 +396,7 @@ if st.session_state.page == 3:
             )
             answer = resp.choices[0].message.content.strip()
             return answer
+
         
         # -------------------------------
         # Streamlit UI
@@ -802,6 +834,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
