@@ -198,9 +198,8 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
-        
         # -----------------------------
-        # Sources dictionary
+        # Sources dictionary (expanded)
         # -----------------------------
         SOURCES = {
             "History": {
@@ -213,17 +212,59 @@ if st.session_state.page == 3:
                     "event": "https://www.history.com/topics/[TOPIC]",
                     "person": "https://www.history.com/topics/people/[TOPIC]",
                     "place": "https://www.history.com/topics/places/[TOPIC]"
+                },
+                "jstor": {
+                    "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                    "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                    "place": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
+                },
+                "sciencedirect": {
+                    "event": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                    "person": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                    "place": "https://www.sciencedirect.com/search?qs=[TOPIC]"
+                },
+                "stanford_phil": {
+                    "event": "https://plato.stanford.edu/search/search.html?query=[TOPIC]",
+                    "person": "https://plato.stanford.edu/search/search.html?query=[TOPIC]",
+                    "place": "https://plato.stanford.edu/search/search.html?query=[TOPIC]"
                 }
             },
             "Math": {
                 "mathworld": {
                     "concept": "https://mathworld.wolfram.com/search/?query=[TOPIC]"
+                },
+                "wikipedia": {
+                    "concept": "https://en.wikipedia.org/wiki/[TOPIC]"
+                },
+                "sciencedirect": {
+                    "concept": "https://www.sciencedirect.com/search?qs=[TOPIC]"
+                },
+                "jstor": {
+                    "concept": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
+                },
+                "springer": {
+                    "concept": "https://link.springer.com/search?query=[TOPIC]"
                 }
             },
             "English": {
                 "poetryfoundation": {
                     "person": "https://www.poetryfoundation.org/search?query=[TOPIC]",
                     "event": "https://www.poetryfoundation.org/search?query=[TOPIC]"
+                },
+                "britannica": {
+                    "person": "https://www.britannica.com/biography/[TOPIC]",
+                    "event": "https://www.britannica.com/event/[TOPIC]"
+                },
+                "jstor": {
+                    "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                    "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"
+                },
+                "project_gutenberg": {
+                    "person": "https://www.gutenberg.org/ebooks/search/?query=[TOPIC]"
+                },
+                "wikipedia": {
+                    "person": "https://en.wikipedia.org/wiki/[TOPIC]",
+                    "event": "https://en.wikipedia.org/wiki/[TOPIC]"
                 }
             }
         }
@@ -232,7 +273,6 @@ if st.session_state.page == 3:
         # Hidden character injection
         # -----------------------------
         def obfuscate_text(text):
-            # inject zero-width spaces randomly between characters
             zwsp = "\u200b"
             return zwsp.join(list(text))
         
@@ -269,21 +309,44 @@ if st.session_state.page == 3:
             return urls
         
         # -----------------------------
+        # Async fetching of URLs
+        # -----------------------------
+        async def fetch_url(client, url):
+            try:
+                r = await client.get(url, timeout=10.0)
+                return r.text
+            except Exception as e:
+                return f"Error fetching {url}: {e}"
+        
+        async def fetch_all(urls):
+            async with httpx.AsyncClient() as client:
+                tasks = [fetch_url(client, url) for url in urls]
+                results = await asyncio.gather(*tasks)
+            return results
+        
+        # -----------------------------
         # Generate GPT answer
         # -----------------------------
         def answer_user(user_input):
             main_topic, sub_type = classify_topic(user_input)
             urls = build_urls(user_input, main_topic, sub_type)
             
-            search_instruction = (
-                f"Fetch factual information about '{user_input}' from these sources: {urls}. "
-                "Synthesize a concise answer (~150 words), cite the sources, "
-                "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
+            # Fetch all sources asynchronously
+            contents = asyncio.run(fetch_all(urls))
+            
+            # Combine content
+            combined_text = "\n\n".join(contents)
+            
+            # GPT prompt for synthesis
+            prompt = (
+                f"Using the following content from multiple sources:\n{combined_text}\n\n"
+                f"Synthesize a concise factual answer about '{user_input}', "
+                "cite sources, and insert hidden characters (zero-width) to prevent copy-paste."
             )
             
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": search_instruction}]
+                messages=[{"role": "user", "content": prompt}]
             )
             
             answer_text = response.choices[0].message.content
@@ -726,6 +789,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
