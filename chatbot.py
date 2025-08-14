@@ -208,27 +208,25 @@ if st.session_state.page == 3:
                     "event": "https://www.britannica.com/event/[TOPIC]",
                     "person": "https://www.britannica.com/biography/[TOPIC]",
                     "name": "Britannica",
-                    "location": "Chicago, USA"
+                    "location": "Chicago, USA",
+                    "author": "Encyclopaedia Britannica Editors"
                 },
                 "history_com": {
                     "event": "https://www.history.com/topics/[TOPIC]",
                     "person": "https://www.history.com/topics/people/[TOPIC]",
                     "name": "History.com",
-                    "location": "USA"
+                    "location": "USA",
+                    "author": "History.com Editors"
                 },
                 "jstor": {
                     "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
                     "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
                     "name": "JSTOR",
-                    "location": "USA"
+                    "location": "USA",
+                    "author": "Various"
                 }
             }
         }
-        
-        # -----------------------------
-        # GPT client (already configured)
-        # -----------------------------
-        # client = your_preconfigured_client
         
         # -----------------------------
         # Hidden-character obfuscation
@@ -272,10 +270,11 @@ if st.session_state.page == 3:
                 if sub_type in variants:
                     url = variants[sub_type].replace("[TOPIC]", encoded_query)
                     urls.append({
-                        "citation": source_name.title(),
+                        "citation": f"{variants.get('author', 'Unknown')}, {variants.get('name', source_name.title())}",
                         "url": url,
                         "name": variants.get("name", source_name.title()),
-                        "location": variants.get("location", "Unknown")
+                        "location": variants.get("location", "Unknown"),
+                        "author": variants.get("author", "Unknown")
                     })
             return urls
         
@@ -315,12 +314,14 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
         
         # -----------------------------
-        # Filter sources that are actually cited
+        # Filter sources actually cited
         # -----------------------------
         def filter_cited_sources(answer_text, all_sources):
             cited_sources = []
             for src in all_sources:
-                if re.search(rf"\({src['citation']}", answer_text):
+                # check if citation text appears in answer
+                pattern = re.escape(src["citation"].split(",")[1].strip())
+                if re.search(pattern, answer_text):
                     cited_sources.append(src)
             return cited_sources
         
@@ -357,10 +358,10 @@ if st.session_state.page == 3:
             )
             answer_text = response.choices[0].message.content
             obfuscated = obfuscate_text(answer_text)
-            
-            # Only include sources actually cited in the answer
+        
+            # Filter references to only cited sources
             cited_sources = filter_cited_sources(answer_text, urls_with_citations)
-            
+        
             return obfuscated, cited_sources
         
         # -----------------------------
@@ -378,6 +379,7 @@ if st.session_state.page == 3:
                     st.subheader("References")
                     for src in cited_sources:
                         with st.expander(src["citation"]):
+                            st.markdown(f"**Author:** {src['author']}")
                             st.markdown(f"**Name:** {src['name']}")
                             st.markdown(f"**Location:** {src['location']}")
                             st.markdown(f"**URL:** [{src['url']}]({src['url']})")
@@ -807,6 +809,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
