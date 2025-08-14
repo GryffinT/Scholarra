@@ -12,6 +12,7 @@ from scipy import stats
 import math
 import urllib.parse
 from sklearn.metrics.pairwise import cosine_similarity
+from rapidfuzz import process
 
 
 st.markdown(
@@ -211,7 +212,24 @@ if st.session_state.page == 3:
         }
         
         # -------------------------------
-        # Clean query / extract main topic
+        # Known topics and normalization
+        # -------------------------------
+        TOPIC_NORMALIZATION = {
+            "ww2": "World War 2",
+            "world war ii": "World War 2",
+            "wwii": "World War 2",
+            "ww1": "World War 1",
+            "wwi": "World War 1",
+            "holocost": "Holocaust",
+            "holocaust": "Holocaust",
+            "french rev": "French Revolution",
+            "french revolution": "French Revolution"
+        }
+        
+        KNOWN_TOPICS = list(TOPIC_NORMALIZATION.values())
+        
+        # -------------------------------
+        # Extract main topic from user query
         # -------------------------------
         def extract_topic_from_query(query):
             query = query.lower()
@@ -222,6 +240,21 @@ if st.session_state.page == 3:
             # Collapse multiple spaces
             query = re.sub(r'\s+', ' ', query)
             return query.strip()
+        
+        def normalize_topic(topic):
+            return TOPIC_NORMALIZATION.get(topic.lower(), topic)
+        
+        def correct_typo(topic):
+            best_match = process.extractOne(topic, KNOWN_TOPICS)
+            if best_match and best_match[1] > 80:  # similarity threshold
+                return best_match[0]
+            return topic
+        
+        def extract_and_normalize_topic(query):
+            topic = extract_topic_from_query(query)
+            topic = normalize_topic(topic)
+            topic = correct_typo(topic)
+            return topic
         
         # -------------------------------
         # Determine query type
@@ -241,7 +274,7 @@ if st.session_state.page == 3:
         # Construct dynamic URLs
         # -------------------------------
         def construct_britannica_url(query):
-            main_topic = extract_topic_from_query(query)
+            main_topic = extract_and_normalize_topic(query)
             query_type = determine_query_type(main_topic)
             base = BASE_URLS["britannica"].get(query_type, BASE_URLS["britannica"]["general"])
             formatted_query = urllib.parse.quote(main_topic.replace(" ", "-"))
@@ -249,7 +282,7 @@ if st.session_state.page == 3:
             return url
         
         def construct_history_com_url(query):
-            main_topic = extract_topic_from_query(query)
+            main_topic = extract_and_normalize_topic(query)
             query_type = determine_query_type(main_topic)
             base = BASE_URLS["history_com"]["general"]
             formatted_query = urllib.parse.quote(main_topic.replace(" ", "-"))
@@ -769,6 +802,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
