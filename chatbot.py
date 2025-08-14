@@ -199,6 +199,7 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
+
         # -----------------------------
         # Sources dictionary with metadata
         # -----------------------------
@@ -222,14 +223,8 @@ if st.session_state.page == 3:
                     "name": "JSTOR",
                     "location": "USA"
                 }
-                # Add more sources if needed
             }
         }
-        
-        # -----------------------------
-        # GPT client (already configured)
-        # -----------------------------
-        # client = your_preconfigured_client
         
         # -----------------------------
         # Hidden-character obfuscation
@@ -296,17 +291,18 @@ if st.session_state.page == 3:
                 return await asyncio.gather(*tasks)
         
         # -----------------------------
-        # Summarize a chunk
+        # Summarize a chunk strictly using sources
         # -----------------------------
         def summarize_chunk(text_chunk, user_input, citations):
             citation_names = ", ".join([c["citation"] for c in citations])
             prompt = f"""
-        Using the following content:
+        Using ONLY the following content from verified sources:
         
         {text_chunk}
         
-        Write a concise factual answer about '{user_input}' (~100 words),
+        Write a concise factual answer (~100 words) about '{user_input}',
         include MLA-style in-text citations using these sources: {citation_names}.
+        DO NOT invent information. Only include facts from these sources.
         """
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -315,7 +311,7 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
         
         # -----------------------------
-        # Generate final answer with chunking and references
+        # Generate final answer with chunking
         # -----------------------------
         def answer_user(user_input, chunk_size=2):
             main_topic, sub_type = classify_topic(user_input)
@@ -335,8 +331,9 @@ if st.session_state.page == 3:
             
             prompt = f"""
         Combine the following summaries into a concise factual answer about '{user_input}', 
-        include MLA-style in-text citations using: {citation_names}, 
-        and add hidden characters to prevent copy-paste:
+        include MLA-style in-text citations using: {citation_names},
+        and only include information from the provided sources.
+        Add hidden characters to prevent copy-paste:
         
         {final_text}
         """
@@ -367,9 +364,7 @@ if st.session_state.page == 3:
                             st.markdown(f"**URL:** [{src['url']}]({src['url']})")
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
-
-
-
+                    
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -794,6 +789,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
