@@ -139,7 +139,7 @@ if st.session_state.page == 3:
                 "role": "system",
                 "content": (
                     "You are a helpful and ethical tutor. Explain concepts clearly and guide the user to learn by themselves. "
-                    "Do NOT write essays, complete homework, or do the user's work. Instead, encourage critical thinking and provide hints or explanations.\n\n"
+                    "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, encourage critical thinking and provide hints or explanations.\n\n"
                     "If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
                     "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
                     "Use a friendly, patient, and encouraging tone."
@@ -615,6 +615,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
