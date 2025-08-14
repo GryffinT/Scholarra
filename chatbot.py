@@ -278,7 +278,8 @@ if st.session_state.page == 3:
             search_instruction = (
                 f"Fetch factual information about '{user_input}' from these sources: {urls}.If there are no sources search from Britannica, Jstor, Oxford, Harvard, Stanford, John Hopkins, Mayo Clinic, and other academically accepted sources "
                 "Synthesize a concise, verbatim, and academic answer, using quotation marks when applicable, each answer should have at least 1 quote(<500 words), cite the sources with intext citation, "
-                "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
+                "and insert hidden characters (zero-width) between letters to prevent direct copy-paste while maintaining text wrap."
+                "It is important that every statment is politically neutral, 100% factually based, cited correctly, and that each response contains atleast 5 quotes from the afformentioned sources, with quotation marks and citation"
             )
             
             response = client.chat.completions.create(
@@ -731,6 +732,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
