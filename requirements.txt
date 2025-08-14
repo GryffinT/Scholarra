@@ -1,7 +1,9 @@
 streamlit
-openai>=1.0.0
+openai
+requests
+beautifulsoup4
+lxml
 pandas
 numpy
 plotly
 scipy
-kaleido
