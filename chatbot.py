@@ -533,6 +533,32 @@ if st.session_state.page == 3:
             return related_terms
 
         # -------------------------------
+        # Determine mode priority for a term
+        # -------------------------------
+        def get_mode_priority(term):
+            """
+            Return a list of modes to try for a given term.
+            Basic heuristic:
+              - If term looks like a person name -> person first
+              - If term looks like an event -> event first
+              - If term looks like a place -> place first
+              - Otherwise, general
+            """
+            term_lower = term.lower()
+            # Heuristics for events
+            if any(word in term_lower for word in ["war", "revolution", "holocaust", "battle", "conflict"]):
+                return ["event", "general"]
+            # Heuristics for people (basic: first + last name, capitalized)
+            elif len(term.split()) >= 2 and all(w[0].isupper() for w in term.split()):
+                return ["person", "general"]
+            # Heuristics for places (common suffixes)
+            elif any(word in term_lower for word in ["city", "country", "mountain", "river", "state"]):
+                return ["place", "general"]
+            else:
+                return ["general"]
+
+        
+        # -------------------------------
         # Async fetch function for chunks
         # -------------------------------
         async def fetch_chunks(session, url, source_name):
@@ -1058,6 +1084,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
