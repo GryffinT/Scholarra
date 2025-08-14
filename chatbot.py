@@ -226,11 +226,6 @@ if st.session_state.page == 3:
         }
         
         # -----------------------------
-        # GPT client (already configured)
-        # -----------------------------
-        # client = your_preconfigured_client
-        
-        # -----------------------------
         # Hidden-character obfuscation
         # -----------------------------
         def obfuscate_text(text):
@@ -269,11 +264,17 @@ if st.session_state.page == 3:
             encoded_query = quote(user_input)
             urls = []
             for source_name, variants in SOURCES.get(main_topic, {}).items():
-                if sub_type in variants:
-                    url = variants[sub_type].replace("[TOPIC]", encoded_query)
+                # Fallback if sub_type not in variants
+                if sub_type not in variants:
+                    sub_type_use = "event"
+                else:
+                    sub_type_use = sub_type
+        
+                url_template = variants.get(sub_type_use)
+                if url_template:
                     urls.append({
                         "citation": source_name.title(),
-                        "url": url,
+                        "url": url_template.replace("[TOPIC]", encoded_query),
                         "name": variants.get("name", source_name.title()),
                         "location": variants.get("location", "Unknown")
                     })
@@ -321,6 +322,9 @@ if st.session_state.page == 3:
             main_topic, sub_type = classify_topic(user_input)
             urls_with_citations = build_urls_with_citations(user_input, main_topic, sub_type)
             
+            if not urls_with_citations:
+                raise ValueError("No sources found for this topic and type.")
+        
             all_texts = asyncio.run(fetch_all(urls_with_citations))
             
             summaries = []
@@ -793,6 +797,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
