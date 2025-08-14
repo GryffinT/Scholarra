@@ -415,34 +415,27 @@ if st.session_state.page == 3:
         # -------------------------------
         # Retrieve text chunks from URL
         # -------------------------------
-        def retrieve_source_chunks(url, chunk_size=500):
+        def retrieve_source_chunks(url, source_name=None):
             """
-            Fetch text content from a URL and split it into chunks of specified size.
-        
-            Args:
-                url (str): URL to fetch.
-                chunk_size (int): Number of words per chunk.
-        
-            Returns:
-                list[str]: List of text chunks.
+            Fetch and split text content from a URL using source-specific selectors.
             """
             try:
                 resp = requests.get(url, timeout=10)
-                resp.raise_for_status()  # Raise HTTPError for bad responses
-                
+                resp.raise_for_status()
                 soup = BeautifulSoup(resp.text, "html.parser")
-                paragraphs = soup.find_all("p")
-                
-                # Extract and clean text
-                text = " ".join(p.get_text(strip=True) for p in paragraphs)
+        
+                # Use source-specific selector if defined
+                if source_name and source_name in SOURCE_SELECTORS:
+                    paragraphs = soup.select(SOURCE_SELECTORS[source_name])
+                else:
+                    paragraphs = soup.find_all("p")
+        
+                text = " ".join(p.get_text() for p in paragraphs)
                 words = text.split()
-                
-                # Split into chunks
-                chunks = [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
+                chunks = [" ".join(words[i:i+500]) for i in range(0, len(words), 500)]
                 return chunks
-            
             except Exception as e:
-                st.warning(f"Could not fetch content from {url}: {e}")
+                print(f"Could not fetch content from {url}: {e}")
                 return []
                 
         # -------------------------------
@@ -535,12 +528,14 @@ if st.session_state.page == 3:
 
         async def fetch_chunks(session, url, source_name):
             """
-            Fetch chunks from a URL asynchronously.
-            
-            Returns a list of dicts with keys: 'text', 'name', 'url'.
+            Async wrapper to fetch chunks for a source.
             """
             try:
-                chunks = await retrieve_source_chunks_async(session, url)
+                # Run the blocking retrieve_source_chunks in a thread pool
+                loop = asyncio.get_event_loop()
+                chunks = await loop.run_in_executor(None, retrieve_source_chunks, url, source_name)
+                if not chunks:
+                    print(f"No content found at {url}")
                 return [{"text": c, "name": source_name, "url": url} for c in chunks]
             except Exception as e:
                 print(f"Failed to fetch {url}: {e}")
@@ -1152,6 +1147,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
