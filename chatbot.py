@@ -98,7 +98,7 @@ elif st.session_state.page == 2:
     )
     st.write("")
     st.markdown(
-        "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Nex, our machine learning tutor, powered by openai, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate neccisary statistics for courses such as, AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
+        "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Scholarra, our machine learning tutor, powered by openai, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate neccisary statistics for courses such as, AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
         unsafe_allow_html=True
     )
     st.write("")
@@ -142,7 +142,7 @@ if st.session_state.page == 3:
                     "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, encourage critical thinking and provide hints or explanations.\n\n"
                     "If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
                     "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
-                    "Use a friendly, patient, and encouraging tone."
+                    "Use a friendly, patient, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
                 )
             }
         ]
@@ -615,6 +615,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
