@@ -301,8 +301,8 @@ if st.session_state.page == 3:
             with st.spinner("Fetching answer..."):
                 try:
                     answer = answer_user(user_input)
-                    st.markdown(outputs[0])
-                    st.expander(outputs[1])
+                    st.markdown(answer[0])
+                    st.expander(answer[1])
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -729,6 +729,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
