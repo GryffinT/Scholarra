@@ -242,7 +242,7 @@ if st.session_state.page == 3:
             soup = BeautifulSoup(html, "html.parser")
             paragraphs = soup.find_all("p")
             text = " ".join(p.get_text() for p in paragraphs)
-            return text[:1000]  # limit per source
+            return text[:1000]
         
         # -----------------------------
         # Classify topic
@@ -266,11 +266,11 @@ if st.session_state.page == 3:
         def build_urls_with_citations(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
-            for source_name, variants in SOURCES.get(main_topic, {}).items():
+            for i, (source_name, variants) in enumerate(SOURCES.get(main_topic, {}).items()):
                 if sub_type in variants:
                     url = variants[sub_type].replace("[TOPIC]", encoded_query)
                     urls.append({
-                        "citation": f"{variants.get('author', 'Unknown')}, {variants.get('name', source_name.title())}",
+                        "citation_token": f"[SRC{i+1}]",
                         "url": url,
                         "name": variants.get("name", source_name.title()),
                         "location": variants.get("location", "Unknown"),
@@ -297,15 +297,15 @@ if st.session_state.page == 3:
         # Summarize a chunk strictly using verbatim source text
         # -----------------------------
         def summarize_chunk(text_chunk, user_input, citations):
-            citation_names = ", ".join([c["citation"] for c in citations])
+            tokens = ", ".join([c["citation_token"] for c in citations])
             prompt = f"""
-        Using ONLY the following content from verified sources (do not invent facts):
+        Using ONLY the following content from the verified sources (do not invent facts):
         
         {text_chunk}
         
         Write a concise factual answer (~100 words) about '{user_input}',
-        include MLA-style in-text citations using these sources: {citation_names}.
-        Do NOT add information not in the text. Only use facts provided here.
+        using MLA-style in-text citations exactly as follows: {tokens}.
+        Do NOT include any information not in the text.
         """
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -314,14 +314,12 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
         
         # -----------------------------
-        # Filter sources actually cited
+        # Map citations to actual sources
         # -----------------------------
-        def filter_cited_sources(answer_text, all_sources):
+        def map_citations_to_sources(answer_text, all_sources):
             cited_sources = []
             for src in all_sources:
-                # check if citation text appears in answer
-                pattern = re.escape(src["citation"].split(",")[1].strip())
-                if re.search(pattern, answer_text):
+                if src['citation_token'] in answer_text:
                     cited_sources.append(src)
             return cited_sources
         
@@ -342,11 +340,11 @@ if st.session_state.page == 3:
                 summaries.append(summary)
             
             final_text = "\n\n".join(summaries)
-            citation_names = ", ".join([c["citation"] for c in urls_with_citations])
+            tokens = ", ".join([c["citation_token"] for c in urls_with_citations])
             
             prompt = f"""
         Combine the following summaries into a concise factual answer about '{user_input}',
-        include MLA-style in-text citations using: {citation_names},
+        using MLA-style in-text citations exactly as: {tokens},
         only using information from the provided sources.
         Add hidden characters to prevent copy-paste:
         
@@ -359,8 +357,8 @@ if st.session_state.page == 3:
             answer_text = response.choices[0].message.content
             obfuscated = obfuscate_text(answer_text)
         
-            # Filter references to only cited sources
-            cited_sources = filter_cited_sources(answer_text, urls_with_citations)
+            # Only include sources actually cited
+            cited_sources = map_citations_to_sources(answer_text, urls_with_citations)
         
             return obfuscated, cited_sources
         
@@ -378,7 +376,7 @@ if st.session_state.page == 3:
                     
                     st.subheader("References")
                     for src in cited_sources:
-                        with st.expander(src["citation"]):
+                        with st.expander(src["citation_token"]):
                             st.markdown(f"**Author:** {src['author']}")
                             st.markdown(f"**Name:** {src['name']}")
                             st.markdown(f"**Location:** {src['location']}")
@@ -809,6 +807,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
