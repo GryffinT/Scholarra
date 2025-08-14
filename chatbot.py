@@ -265,10 +265,11 @@ if st.session_state.page == 3:
                 messages=[{"role": "system", "content": prompt}]
             )
         
-            ranked_text = resp.choices[0].message["content"].strip()
+            ranked_text = resp.choices[0].message.content.strip()  # <-- FIXED here
             ranked_chunks = re.split(r'\n|\d+\.', ranked_text)
             ranked_chunks = [c.strip() for c in ranked_chunks if c.strip()]
             return ranked_chunks[:top_k]
+
 
         
         # --------------------------
@@ -764,6 +765,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
