@@ -317,7 +317,7 @@ if st.session_state.page == 3:
                 temperature=0.2
             )
         
-            return resp.choices[0].message["content"]
+            return resp.choices[0].message.content
         
         # --------------------------
         # 6. Streamlit UI
@@ -765,6 +765,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
