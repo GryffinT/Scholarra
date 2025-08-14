@@ -199,7 +199,7 @@ if st.session_state.page == 3:
     if selection == "Scholarly":
         
         # -----------------------------
-        # Base URLs by source (with multiple "modes")
+        # Sources dictionary
         # -----------------------------
         SOURCES = {
             "History": {
@@ -218,45 +218,89 @@ if st.session_state.page == 3:
                 "mathworld": {
                     "concept": "https://mathworld.wolfram.com/search/?query=[TOPIC]"
                 }
+            },
+            "English": {
+                "poetryfoundation": {
+                    "person": "https://www.poetryfoundation.org/search?query=[TOPIC]",
+                    "event": "https://www.poetryfoundation.org/search?query=[TOPIC]"
+                }
             }
         }
-
+        
+        # -----------------------------
+        # Hidden character injection
+        # -----------------------------
+        def obfuscate_text(text):
+            # inject zero-width spaces randomly between characters
+            zwsp = "\u200b"
+            return zwsp.join(list(text))
+        
+        # -----------------------------
+        # Topic + type classification
+        # -----------------------------
         def classify_topic(user_input):
-            """
-            Returns: main_topic, sub_type
-            Example: 'Gandhi' -> 'History', 'person'
-            """
-            # Use GPT to classify input
-            prompt = f"Classify this topic: {user_input}. Return main subject (History, Math, etc) and type (event, person, location, invention)."
+            prompt = (
+                f"Classify the topic of this input: '{user_input}'. "
+                "Return ONLY main_topic and sub_type separated by a comma. "
+                "Example output: History, event"
+            )
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role":"user","content":prompt}]
+                messages=[{"role": "user", "content": prompt}]
             )
-            classification = response.choices[0].message.content
-            main_topic, sub_type = classification.split(",")  # simple parsing
-            return main_topic.strip(), sub_type.strip()
+            classification = response.choices[0].message.content.strip()
+            try:
+                main_topic, sub_type = classification.split(",")
+                return main_topic.strip(), sub_type.strip()
+            except ValueError:
+                return "History", "event"  # fallback
         
+        # -----------------------------
+        # Build URLs for sources
+        # -----------------------------
         def build_urls(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
-            for source, variants in SOURCES.get(main_topic, {}).items():
+            for source_name, variants in SOURCES.get(main_topic, {}).items():
                 if sub_type in variants:
                     url = variants[sub_type].replace("[TOPIC]", encoded_query)
                     urls.append(url)
             return urls
         
+        # -----------------------------
+        # Generate GPT answer
+        # -----------------------------
         def answer_user(user_input):
             main_topic, sub_type = classify_topic(user_input)
             urls = build_urls(user_input, main_topic, sub_type)
-        
-            # Construct search instructions for GPT
-            search_instruction = f"Fetch factual info about '{user_input}' from these sources: {urls}. Synthesize a concise answer with sources cited, but include hidden characters to prevent direct copy-paste."
+            
+            search_instruction = (
+                f"Fetch factual information about '{user_input}' from these sources: {urls}. "
+                "Synthesize a concise answer (~150 words), cite the sources, "
+                "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
+            )
             
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role":"user","content":search_instruction}]
+                messages=[{"role": "user", "content": search_instruction}]
             )
-            return response.choices[0].message.content
+            
+            answer_text = response.choices[0].message.content
+            return obfuscate_text(answer_text)
+        
+        # -----------------------------
+        # Streamlit UI
+        # -----------------------------
+        st.title("Smart Factual Assistant")
+        user_input = st.text_input("Ask me about anything:")
+        
+        if st.button("Get Answer") and user_input.strip():
+            with st.spinner("Fetching answer..."):
+                try:
+                    answer = answer_user(user_input)
+                    st.markdown(answer)
+                except Exception as e:
+                    st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -681,6 +725,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
