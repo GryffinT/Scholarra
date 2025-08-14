@@ -258,78 +258,8 @@ if st.session_state.page == 3:
             }
         }
         
-        # -----------------------------
-        # High school subjects mapping to multiple sources
-        # -----------------------------
-        SOURCE_TOPIC = {
-            "history": [
-                {"name": "Britannica", "url_type": "general"},
-                {"name": "History.com", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Stanford Encyclopedia of Philosophy", "url_type": "general"},
-                {"name": "Internet History Sourcebooks Project", "url_type": "general"}
-            ],
-            "science": [
-                {"name": "Nature", "url_type": "general"},
-                {"name": "ScienceDirect", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Britannica", "url_type": "general"},
-                {"name": "EdX Science Courses", "url_type": "general"}
-            ],
-            "mathematics": [
-                {"name": "MathWorld", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Britannica", "url_type": "general"},
-                {"name": "Khan Academy Math", "url_type": "general"},
-                {"name": "edX Mathematics Courses", "url_type": "general"}
-            ],
-            "english": [
-                {"name": "Poetry Foundation", "url_type": "general"},
-                {"name": "Britannica Literature", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Project Gutenberg", "url_type": "general"},
-                {"name": "Internet Archive", "url_type": "general"}
-            ],
-            "philosophy": [
-                {"name": "Stanford Encyclopedia of Philosophy", "url_type": "general"},
-                {"name": "Internet Encyclopedia of Philosophy", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Britannica", "url_type": "general"},
-                {"name": "EdX Philosophy Courses", "url_type": "general"}
-            ],
-            "computer_science": [
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Britannica CS", "url_type": "general"},
-                {"name": "edX CS Courses", "url_type": "general"},
-                {"name": "MIT OpenCourseWare", "url_type": "general"},
-                {"name": "ScienceDirect", "url_type": "general"}
-            ],
-            "foreign_languages": [
-                {"name": "Britannica Language", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Duolingo Blog", "url_type": "general"},
-                {"name": "EdX Language Courses", "url_type": "general"},
-                {"name": "Internet Archive Language Texts", "url_type": "general"}
-            ],
-            "art": [
-                {"name": "Britannica Art", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Museum of Modern Art", "url_type": "general"},
-                {"name": "Google Arts & Culture", "url_type": "general"},
-                {"name": "Artstor", "url_type": "general"}
-            ],
-            "social_studies": [
-                {"name": "Britannica Social Sciences", "url_type": "general"},
-                {"name": "History.com", "url_type": "general"},
-                {"name": "JSTOR", "url_type": "general"},
-                {"name": "Stanford Encyclopedia of Philosophy", "url_type": "general"},
-                {"name": "EdX Social Science Courses", "url_type": "general"}
-            ]
-        }
-
-        
         # -------------------------------
-        # Known topics and normalization
+        # Topic normalization mapping
         # -------------------------------
         TOPIC_NORMALIZATION = {
             "ww2": "World War 2",
@@ -342,67 +272,53 @@ if st.session_state.page == 3:
             "french rev": "French Revolution",
             "french revolution": "French Revolution"
         }
+        
+        # Build known topics list
         KNOWN_TOPICS = list(TOPIC_NORMALIZATION.values())
-
-        def extract_and_normalize_topic(user_query):
-            """
-            1. Lowercase and remove punctuation.
-            2. Use rapidfuzz to find the closest known topic.
-            """
-            user_query_clean = user_query.lower()
-            
-            # Find the best match from KNOWN_TOPICS
-            match, score, _ = process.extractOne(
-                user_query_clean, 
-                KNOWN_TOPICS
-            )
-            
-            if score > 70:  # threshold for fuzzy match
-                return match
-            else:
-                # If no close match, return the AI-suggested main topic
-                return user_query_clean.title()
         
         # -------------------------------
-        # Extract main topic from user query 
+        # Comprehensive extraction & normalization
         # -------------------------------
-        def extract_topic_from_query(query):
-            query = query.lower()
-            # Remove common question words
-            query = re.sub(r'\b(what|who|when|where|is|are|was|were|the|a|an|of)\b', '', query)
-            # Remove punctuation
-            query = re.sub(r'[^\w\s]', '', query)
-            # Collapse multiple spaces
-            query = re.sub(r'\s+', ' ', query)
-            return query.strip()
+        def extract_and_normalize_topic(query, fuzzy_threshold=70, typo_threshold=80):
+            """
+            Extracts and normalizes a main topic from a user query.
+            """
+            # Step 1: Preprocess query
+            query_clean = query.lower()
+            query_clean = re.sub(r'\b(what|who|when|where|is|are|was|were|the|a|an|of)\b', '', query_clean)
+            query_clean = re.sub(r'[^\w\s]', '', query_clean)
+            query_clean = re.sub(r'\s+', ' ', query_clean).strip()
+            
+            # Step 2: Normalize using mapping
+            normalized_topic = TOPIC_NORMALIZATION.get(query_clean, query_clean.title())
+            
+            # Step 3: Fuzzy match for typo correction
+            best_match = process.extractOne(normalized_topic, KNOWN_TOPICS)
+            if best_match:
+                match_topic, score, _ = best_match
+                if score >= fuzzy_threshold:
+                    return match_topic
+            
+            return normalized_topic
         
-        def normalize_topic(topic):
-            return TOPIC_NORMALIZATION.get(topic.lower(), topic)
-        
-        def correct_typo(topic):
-            best_match = process.extractOne(topic, KNOWN_TOPICS)
-            if best_match and best_match[1] > 80:  # similarity threshold
-                return best_match[0]
-            return topic
-        
-        def extract_and_normalize_topic(query):
-            topic = extract_topic_from_query(query)
-            topic = normalize_topic(topic)
-            topic = correct_typo(topic)
-            return topic
-
-        # -----------------------------
+        # -------------------------------
         # AI-generated related terms
-        # -----------------------------
-        def generate_related_terms(query, max_terms=5):
+        # -------------------------------
+        def generate_related_terms(user_query, max_terms=5):
+            """
+            Extracts and normalizes the topic, then generates AI-suggested related terms.
+            """
+            # Normalize the topic first
+            topic = extract_and_normalize_topic(user_query)
+            
             prompt = (
                 "You are an academic assistant.\n"
-                f'Given the topic: "{query}",\n'
+                f'Given the topic: "{topic}",\n'
                 f"provide up to {max_terms} short, relevant keywords or related topics\n"
                 "that could help expand a search for scholarly sources.\n"
                 "Reply with a comma-separated list only."
             )
-        
+            
             resp = client.chat.completions.create(
                 model="gpt-4-turbo",
                 messages=[{"role": "system", "content": prompt}]
@@ -415,20 +331,48 @@ if st.session_state.page == 3:
         # -------------------------------
         # Determine query type
         # -------------------------------
-        def determine_query_type(query):
-            query_lower = query.lower()
-            if any(word in query_lower for word in ["war", "battle", "revolution", "event"]):
-                return "event"
-            elif any(word in query_lower for word in ["president", "king", "queen", "scientist"]):
-                return "person"
-            elif any(word in query_lower for word in ["city", "country", "state", "river"]):
-                return "place"
-            else:
-                return "general"
+        def determine_query_type(term, use_ai=True):
+            """
+            Determine the query type (Person, Event, Place, General) for a given term.
+            
+            Args:
+                term (str): The topic or query to classify.
+                use_ai (bool): If True, attempt AI classification first, fallback to heuristic if needed.
+                
+            Returns:
+                str: One of "Person", "Event", "Place", "General".
+            """
+            category = None
+        
+            if use_ai:
+                try:
+                    # AI-driven classification
+                    prompt = (
+                        "You are an academic assistant.\n"
+                        "Classify the following query into one of these categories: "
+                        "Person, Event, Place, General.\n"
+                        f"Query: \"{term}\"\n"
+                        "Reply with only one word: Person, Event, Place, or General."
+                    )
+                    resp = client.chat.completions.create(
+                        model="gpt-4-turbo",
+                        messages=[{"role": "system", "content": prompt}]
+                    )
+                    category = resp.choices[0].message.content.strip().capitalize()
+                except Exception:
+                    category = None
+        
+            # Validate AI response; fallback to heuristic if invalid
+            if category not in ["Person", "Event", "Place", "General"]:
+                category = get_mode_priority(term)[0].capitalize()  # fallback heuristic
+        
+            return category
+
         
         # -------------------------------
         # Construct dynamic URLs
         # -------------------------------
+
         def sanitize_topic_for_url(topic, is_event=False):
             """
             Prepare topic string for URL:
@@ -438,23 +382,17 @@ if st.session_state.page == 3:
             - Optionally prepend 'The-' for events
             """
             topic = topic.strip()
-            topic = re.sub(r'\s+', '-', topic)  # spaces -> hyphens
-            topic = re.sub(r'[^\w\-]', '', topic)  # remove punctuation
+            topic = topic.lower()
+            topic = re.sub(r'\s+', '-', topic)       # spaces -> hyphens
+            topic = re.sub(r'[^\w\-]', '', topic)   # remove punctuation
             if is_event:
                 topic = "The-" + topic
             return topic
         
+        
         def construct_source_url(source_name, topic, mode="general"):
             """
             Construct a URL for any source in BASE_URLS.
-            
-            Args:
-                source_name (str): Key in BASE_URLS dict
-                topic (str): The topic to search for
-                mode (str): One of 'general', 'event', 'person', 'place'
-                
-            Returns:
-                str: Complete URL
             """
             if source_name not in BASE_URLS:
                 raise ValueError(f"Source '{source_name}' not found in BASE_URLS.")
@@ -462,62 +400,90 @@ if st.session_state.page == 3:
             # Pick the base URL for the given mode; fallback to general
             base_url = BASE_URLS[source_name].get(mode, BASE_URLS[source_name]["general"])
             
-            is_event = mode == "event"
-            sanitized_topic = sanitize_topic_for_url(topic, is_event)
+            sanitized_topic = sanitize_topic_for_url(topic, is_event=(mode=="event"))
             
-            # If the base URL contains [TOPIC], replace it
+            # Replace [TOPIC] placeholder if present
             if "[TOPIC]" in base_url:
                 return base_url.replace("[TOPIC]", sanitized_topic)
             
-            # Otherwise, append sanitized topic to the base URL
-            if mode in ["event", "person", "place"]:
-                return f"{base_url}/{sanitized_topic}"
-            
+            # Otherwise, just append the topic
             return f"{base_url}/{sanitized_topic}"
-        
+
         # -------------------------------
         # Retrieve text chunks from URL
         # -------------------------------
-        def retrieve_source_chunks(url):
+        def retrieve_source_chunks(url, chunk_size=500):
+            """
+            Fetch text content from a URL and split it into chunks of specified size.
+        
+            Args:
+                url (str): URL to fetch.
+                chunk_size (int): Number of words per chunk.
+        
+            Returns:
+                list[str]: List of text chunks.
+            """
             try:
                 resp = requests.get(url, timeout=10)
+                resp.raise_for_status()  # Raise HTTPError for bad responses
+                
                 soup = BeautifulSoup(resp.text, "html.parser")
                 paragraphs = soup.find_all("p")
-                text = " ".join(p.get_text() for p in paragraphs)
+                
+                # Extract and clean text
+                text = " ".join(p.get_text(strip=True) for p in paragraphs)
                 words = text.split()
-                chunks = [" ".join(words[i:i+500]) for i in range(0, len(words), 500)]
+                
+                # Split into chunks
+                chunks = [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
                 return chunks
+            
             except Exception as e:
                 st.warning(f"Could not fetch content from {url}: {e}")
                 return []
-        
+                
         # -------------------------------
-        # Embeddings-based semantic search
+        # Generate embeddings
         # -------------------------------
         def get_embeddings(texts, model="text-embedding-3-small"):
+            """
+            Generate embeddings for a list of texts.
+            """
             embeddings = []
             for t in texts:
-                resp = client.embeddings.create(
-                    model=model,
-                    input=t
-                )
+                resp = client.embeddings.create(model=model, input=t)
                 embeddings.append(resp.data[0].embedding)
             return np.array(embeddings)
         
+        # -------------------------------
+        # Semantic search
+        # -------------------------------
         def semantic_search(chunks, user_query, top_k=3):
+            """
+            Return top_k most relevant chunks to the user query using embeddings.
+            """
             if not chunks:
                 return []
+            
             chunk_embeddings = get_embeddings(chunks)
             query_embedding = get_embeddings([user_query])[0].reshape(1, -1)
             similarities = cosine_similarity(query_embedding, chunk_embeddings)[0]
+            
             top_indices = similarities.argsort()[::-1][:top_k]
-            top_chunks = [chunks[i] for i in top_indices]
-            return top_chunks
-
+            return [chunks[i] for i in top_indices]
+        
+        # -------------------------------
+        # AI-generated related terms
+        # -------------------------------
         def generate_related_terms(query, max_terms=5):
+            """
+            Generate AI-suggested related terms for a normalized topic.
+            """
+            topic = extract_and_normalize_topic(query)  # ensure topic is normalized
+            
             prompt = (
                 "You are an academic assistant.\n"
-                f'Given the topic: "{query}",\n'
+                f'Given the topic: "{topic}",\n'
                 f"provide up to {max_terms} short, relevant keywords or related topics\n"
                 "that could help expand a search for scholarly sources.\n"
                 "Reply with a comma-separated list only."
@@ -529,110 +495,143 @@ if st.session_state.page == 3:
             )
             
             related_text = resp.choices[0].message.content.strip()
-            related_terms = [t.strip() for t in related_text.split(",") if t.strip()]
-            return related_terms
+            return [t.strip() for t in related_text.split(",") if t.strip()]
 
         # -------------------------------
         # Determine mode priority for a term
         # -------------------------------
         def get_mode_priority(term):
             """
-            Return a list of modes to try for a given term.
-            Basic heuristic:
-              - If term looks like a person name -> person first
-              - If term looks like an event -> event first
-              - If term looks like a place -> place first
-              - Otherwise, general
+            Heuristic fallback to determine query type.
+            Returns a list of modes to try in order of priority.
             """
             term_lower = term.lower()
-            # Heuristics for events
-            if any(word in term_lower for word in ["war", "revolution", "holocaust", "battle", "conflict"]):
+            words = term.split()
+        
+            # Event heuristic
+            event_keywords = ["war", "revolution", "holocaust", "battle", "conflict"]
+            if any(word in term_lower for word in event_keywords):
                 return ["event", "general"]
-            # Heuristics for people (basic: first + last name, capitalized)
-            elif len(term.split()) >= 2 and all(w[0].isupper() for w in term.split()):
+        
+            # Person heuristic: at least 2 words, all capitalized
+            if len(words) >= 2 and all(w[0].isupper() for w in words if w):
                 return ["person", "general"]
-            # Heuristics for places (common suffixes)
-            elif any(word in term_lower for word in ["city", "country", "mountain", "river", "state"]):
+        
+            # Place heuristic
+            place_keywords = ["city", "country", "mountain", "river", "state"]
+            if any(word in term_lower for word in place_keywords):
                 return ["place", "general"]
-            else:
-                return ["general"]
+        
+            # Default
+            return ["general"]
 
         
         # -------------------------------
         # Async fetch function for chunks
         # -------------------------------
+
         async def fetch_chunks(session, url, source_name):
-            """Fetch chunks from a URL asynchronously."""
+            """
+            Fetch chunks from a URL asynchronously.
+            
+            Returns a list of dicts with keys: 'text', 'name', 'url'.
+            """
             try:
-                chunks = await retrieve_source_chunks_async(session, url)  # Make sure you implement an async version
+                chunks = await retrieve_source_chunks_async(session, url)
                 return [{"text": c, "name": source_name, "url": url} for c in chunks]
             except Exception as e:
                 print(f"Failed to fetch {url}: {e}")
                 return []
         
-        # -------------------------------
-        # Gather all chunks concurrently
-        # -------------------------------
-        async def gather_all_chunks(all_terms):
+        
+        async def gather_all_chunks(terms):
+            """
+            Gather all content chunks from all sources concurrently.
+            
+            Args:
+                terms (list[str]): List of normalized topics.
+            
+            Returns:
+                list[dict]: Each dict contains 'text', 'name', and 'url'.
+            """
             gathered_chunks = []
+            
             async with aiohttp.ClientSession() as session:
                 tasks = []
-                for term in all_terms:
-                    mode_priority = get_mode_priority(term)
-                    for source_name, modes in BASE_URLS.items():
-                        for mode in mode_priority:
-                            if mode not in modes:
+                for term in terms:
+                    term_normalized = extract_and_normalize_topic(term)  # normalize input
+                    modes = get_mode_priority(term_normalized)            # get mode priority
+                    
+                    for source_name, source_modes in BASE_URLS.items():
+                        for mode in modes:
+                            if mode not in source_modes:
                                 continue
-                            url = construct_source_url(source_name, term, mode=mode)
+                            url = construct_source_url(source_name, term_normalized, mode=mode)
                             tasks.append(fetch_chunks(session, url, source_name))
+                
                 results = await asyncio.gather(*tasks)
                 for res in results:
                     gathered_chunks.extend(res)
+            
             return gathered_chunks
         
         # -------------------------------
         # Scholarly answer generation
         # -------------------------------
         def generate_scholarly_answer(query, max_related_terms=3):
-            # 1. Normalize main topic
+            """
+            Generate a scholarly answer to a query using AI, semantic search, and multiple sources.
+            
+            Steps:
+            1. Normalize main topic.
+            2. Generate AI-suggested related terms.
+            3. Prepare term variants (title case, optional 'The ' prefix for events).
+            4. Fetch all source chunks asynchronously.
+            5. Perform semantic search to select top relevant chunks.
+            6. Fallback if no chunks found.
+            7. Combine chunks for GPT context and generate scholarly response.
+            """
+            # --- Step 1: Normalize main topic ---
             main_topic = extract_and_normalize_topic(query)
         
-            # 2. Generate AI-suggested related terms
+            # --- Step 2: Generate related terms ---
             related_terms = generate_related_terms(main_topic)[:max_related_terms]
         
-            # 3. Prepare term variants
-            all_terms = []
+            # --- Step 3: Prepare term variants ---
+            all_terms = set()
             for term in [main_topic] + related_terms:
-                term_variants = set()
-                term_variants.add(term.title())
-                if any(word in term.lower() for word in ["war", "revolution", "holocaust"]):
-                    term_variants.add("The " + term.title())
-                all_terms.extend(list(term_variants))
+                all_terms.add(term.title())
+                if any(word in term.lower() for word in ["war", "revolution", "holocaust", "battle", "conflict"]):
+                    all_terms.add("The " + term.title())
+            all_terms = list(all_terms)
         
-            # 4. Fetch all chunks asynchronously, Streamlit-compatible
+            # --- Step 4: Fetch all chunks asynchronously ---
             try:
                 loop = asyncio.get_event_loop()
             except RuntimeError:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-        
+            
             gathered_chunks = loop.run_until_complete(gather_all_chunks(all_terms))
         
-            # 5. Semantic search once per query
+            # --- Step 5: Semantic search ---
             if gathered_chunks:
                 combined_texts = [c["text"] for c in gathered_chunks]
-                top_chunks = semantic_search(combined_texts, query)
-                gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks]
+                top_chunks_texts = semantic_search(combined_texts, query)
+                gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks_texts]
         
-            # 6. Fallback if nothing found
+            # --- Step 6: Fallback if no content ---
             if not gathered_chunks:
                 fallback_urls = [construct_source_url(src, main_topic) for src in BASE_URLS.keys()]
-                return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join(fallback_urls)}"
+                return (f"No scholarly content found for '{query}'. "
+                        f"You can check the sources manually: {', '.join(fallback_urls)}")
         
-            # 7. Combine chunks for GPT context
-            context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
+            # --- Step 7: Combine chunks for GPT context ---
+            context_text = "\n\n".join(
+                [f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks]
+            )
         
-            # 8. GPT prompt
+            # --- Step 8: GPT prompt ---
             prompt = f"""
         You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
         Include in-text citations and a list of sources at the end.
@@ -646,20 +645,86 @@ if st.session_state.page == 3:
                 model="gpt-4-turbo",
                 messages=[{"role": "system", "content": prompt}]
             )
-            answer = resp.choices[0].message.content.strip()
-            return answer
+            
+            return resp.choices[0].message.content.strip()
+
         # -------------------------------
         # Streamlit UI
         # -------------------------------
-        st.title("Scholarly Assistant")
+         st.title("Scholarly Assistant")
         
         query = st.text_input("Enter your academic question:")
         
         if query:
-            with st.spinner("Fetching sources and generating scholarly answer..."):
-                answer = generate_scholarly_answer(query)
-                st.markdown("### Scholarly Answer")
-                st.write(answer)
+            status_placeholder = st.empty()  # Placeholder for dynamic status messages
+            with st.spinner("Starting scholarly search..."):
+                try:
+                    # Step 1: Normalize topic
+                    status_placeholder.text("Normalizing your query...")
+                    main_topic = extract_and_normalize_topic(query)
+        
+                    # Step 2: Generate related terms
+                    status_placeholder.text("Generating related terms...")
+                    related_terms = generate_related_terms(main_topic)
+        
+                    # Step 3: Prepare all term variants
+                    status_placeholder.text("Preparing search terms...")
+                    all_terms = set([main_topic.title()])
+                    for term in related_terms:
+                        all_terms.add(term.title())
+                        if any(word in term.lower() for word in ["war", "revolution", "holocaust", "battle", "conflict"]):
+                            all_terms.add("The " + term.title())
+                    all_terms = list(all_terms)
+        
+                    # Step 4: Fetch chunks asynchronously
+                    status_placeholder.text("Fetching sources...")
+                    try:
+                        loop = asyncio.get_event_loop()
+                    except RuntimeError:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                    gathered_chunks = loop.run_until_complete(gather_all_chunks(all_terms))
+        
+                    # Step 5: Semantic search
+                    status_placeholder.text("Performing semantic search...")
+                    if gathered_chunks:
+                        combined_texts = [c["text"] for c in gathered_chunks]
+                        top_chunks_texts = semantic_search(combined_texts, query)
+                        gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks_texts]
+        
+                    # Step 6: Fallback check
+                    if not gathered_chunks:
+                        status_placeholder.text("No relevant sources found, using fallback URLs...")
+                        fallback_urls = [construct_source_url(src, main_topic) for src in BASE_URLS.keys()]
+                        st.warning(f"No scholarly content found. Check manually: {', '.join(fallback_urls)}")
+                    else:
+                        # Step 7 & 8: Combine context and generate answer
+                        status_placeholder.text("Generating scholarly answer with AI...")
+                        context_text = "\n\n".join(
+                            [f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks]
+                        )
+                        prompt = f"""
+        You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
+        Include in-text citations and a list of sources at the end.
+        
+        User Query: {query}
+        
+        Source Texts:
+        {context_text}
+        """
+                        resp = client.chat.completions.create(
+                            model="gpt-4-turbo",
+                            messages=[{"role": "system", "content": prompt}]
+                        )
+                        answer = resp.choices[0].message.content.strip()
+        
+                        status_placeholder.empty()  # Clear status once complete
+                        st.markdown("### Scholarly Answer")
+                        st.write(answer)
+        
+                except Exception as e:
+                    status_placeholder.empty()
+                    st.error(f"An error occurred: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -1084,6 +1149,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
