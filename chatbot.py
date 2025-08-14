@@ -198,7 +198,7 @@ if st.session_state.page == 3:
                 if msg["role"] != "system":
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
-    if selection == "Scholarly":
+    if selection == "Research (Beta)":
         # -----------------------------
         # Sources dictionary
         # -----------------------------
@@ -292,7 +292,7 @@ if st.session_state.page == 3:
         # -----------------------------
         # Streamlit UI
         # -----------------------------
-        st.title("Smart Factual Assistant")
+        st.title("Research Assistant")
         user_input = st.text_input("Ask me about anything:")
         
         if st.button("Get Answer") and user_input.strip():
@@ -726,91 +726,3 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
