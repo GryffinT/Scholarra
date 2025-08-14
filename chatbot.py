@@ -190,11 +190,11 @@ if st.session_state.page == 3:
                 except Exception as e:
                     st.error(f"Error contacting AI: {e}")
     
-        # Display chat messages except the system prompt
-        for msg in st.session_state.chat_history:
-            if msg["role"] != "system":
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+            # Display chat messages except the system prompt
+            for msg in st.session_state.chat_history:
+                if msg["role"] != "system":
+                    with st.chat_message(msg["role"]):
+                        st.markdown(msg["content"])
     if st.button("Scholarly"):
 
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -628,6 +628,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
