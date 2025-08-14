@@ -167,7 +167,7 @@ if st.session_state.page == 3:
             with st.spinner("Loading AI tutor..."):
                 try:
                     response = client.chat.completions.create(
-                        model="gpt-3.5-turbo",
+                        model="gpt-5",
                         messages=st.session_state.chat_history + [{"role": "user", "content": "start"}]
                     )
                     ai_message = response.choices[0].message.content
@@ -726,4 +726,5 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
