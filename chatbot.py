@@ -277,7 +277,7 @@ if st.session_state.page == 3:
             
             search_instruction = (
                 f"Fetch factual information about '{user_input}' from these sources: {urls}. "
-                "Synthesize a concise answer (~150 words), cite the sources, "
+                "Synthesize a concise, verbatim, and academic answer (~30 words), cite the sources with intext citation, "
                 "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
             )
             
@@ -296,10 +296,12 @@ if st.session_state.page == 3:
         user_input = st.text_input("Ask me about anything:")
         
         if st.button("Get Answer") and user_input.strip():
+            urls = build_urls(user_input, main_topic, sub_type)
             with st.spinner("Fetching answer..."):
                 try:
                     answer = answer_user(user_input)
                     st.markdown(answer)
+                    st.expander(urls)
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -726,6 +728,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
