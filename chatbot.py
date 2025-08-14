@@ -393,21 +393,31 @@ if st.session_state.page == 3:
         def construct_source_url(source_name, topic, mode="general"):
             """
             Construct a URL for any source in BASE_URLS.
+        
+            Args:
+                source_name (str): Key in BASE_URLS dict.
+                topic (str): The topic to search for.
+                mode (str): One of 'general', 'event', 'person', 'place'.
+        
+            Returns:
+                str: Complete URL with sanitized topic.
             """
             if source_name not in BASE_URLS:
                 raise ValueError(f"Source '{source_name}' not found in BASE_URLS.")
-            
-            # Pick the base URL for the given mode; fallback to general
-            base_url = BASE_URLS[source_name].get(mode, BASE_URLS[source_name]["general"])
-            
-            sanitized_topic = sanitize_topic_for_url(topic, is_event=(mode=="event"))
-            
-            # Replace [TOPIC] placeholder if present
+        
+            # Pick the base URL for the given mode, fallback to general
+            base_url_dict = BASE_URLS[source_name]
+            base_url = base_url_dict.get(mode) or base_url_dict.get("general")
+        
+            # Sanitize topic for URL
+            is_event = mode == "event"
+            sanitized_topic = sanitize_topic_for_url(topic, is_event=is_event)
+        
+            # Replace [TOPIC] placeholder if exists, else append sanitized topic
             if "[TOPIC]" in base_url:
                 return base_url.replace("[TOPIC]", sanitized_topic)
-            
-            # Otherwise, just append the topic
             return f"{base_url}/{sanitized_topic}"
+        
 
         # -------------------------------
         # Retrieve text chunks from URL
@@ -546,35 +556,35 @@ if st.session_state.page == 3:
         
         async def gather_all_chunks(terms):
             """
-            Gather all content chunks from all sources concurrently.
-            
+            Gather all content chunks from all sources concurrently,
+            selecting the correct URL mode dynamically.
+        
             Args:
                 terms (list[str]): List of normalized topics.
-            
+        
             Returns:
-                list[dict]: Each dict contains 'text', 'name', and 'url'.
+                list[dict]: Each dict contains 'text', 'name', 'url'.
             """
             gathered_chunks = []
-            
+        
             async with aiohttp.ClientSession() as session:
                 tasks = []
+        
                 for term in terms:
-                    term_normalized = extract_and_normalize_topic(term)  # normalize input
-                    modes = get_mode_priority(term_normalized)            # get mode priority
-                    
+                    term_normalized = extract_and_normalize_topic(term)
+                    mode_priority = get_mode_priority(term_normalized)
+        
                     for source_name, source_modes in BASE_URLS.items():
-                        for mode in modes:
-                            if mode not in source_modes:
-                                continue
-                            url = construct_source_url(source_name, term_normalized, mode=mode)
-                            tasks.append(fetch_chunks(session, url, source_name))
-                
+                        # Pick the first mode that exists in the source
+                        selected_mode = next((m for m in mode_priority if m in source_modes), "general")
+                        url = construct_source_url(source_name, term_normalized, mode=selected_mode)
+                        tasks.append(fetch_chunks(session, url, source_name))
+        
                 results = await asyncio.gather(*tasks)
                 for res in results:
                     gathered_chunks.extend(res)
-            
-            return gathered_chunks
         
+            return gathered_chunks
         # -------------------------------
         # Scholarly answer generation
         # -------------------------------
@@ -1149,6 +1159,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
