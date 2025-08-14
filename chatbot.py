@@ -142,7 +142,7 @@ if st.session_state.page == 3:
                     "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, priorotize encouraging critical thinking and provide hints or explanations.\n\n"
                     "If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
                     "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
-                    "Use a friendly, patient, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
+                    "Use a friendly, patient, high-school friendly, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
                 )
             }
         ]
@@ -615,6 +615,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
