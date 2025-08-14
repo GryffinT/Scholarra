@@ -185,7 +185,7 @@ if st.session_state.page == 3:
             with st.spinner("Thinking..."):
                 try:
                     response = client.chat.completions.create(
-                        model="gpt-3.5-turbo",
+                        model="gpt-5",
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
@@ -246,7 +246,7 @@ if st.session_state.page == 3:
                 "Example output: History, event"
             )
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-5",
                 messages=[{"role": "user", "content": prompt}]
             )
             classification = response.choices[0].message.content.strip()
@@ -276,7 +276,8 @@ if st.session_state.page == 3:
             urls = build_urls(user_input, main_topic, sub_type)
             
             search_instruction = (
-                f"Fetch factual information about '{user_input}' from these sources: {urls}.If there are no sources search from Britannica, Jstor, Oxford, Harvard, Stanford, John Hopkins, Mayo Clinic, and other academically accepted sources "
+                f"Fetch factual information about '{user_input}' from these sources: {urls}" 
+                "If there are no sources search from sBritannica, Jstor, Oxford, Harvard, Stanford, John Hopkins, Mayo Clinic, and other academically accepted sources, if nothing can be found from those sources OTHER SCHOLARLY SOURCES ARE ACCEPTABLE"
                 "Synthesize a concise, verbatim, and academic answer, using quotation marks when applicable, each answer should have at least 1 quote(<500 words), cite the sources with intext citation, "
                 "and insert hidden characters (zero-width) between letters to prevent direct copy-paste while maintaining text wrap."
                 "It is important that every statment is politically neutral, 100% factually based, cited correctly, and that each response contains atleast 5 quotes from the afformentioned sources, with quotation marks and citation"
@@ -291,6 +292,15 @@ if st.session_state.page == 3:
             passed_text = obfuscate_text(answer_text)
             outputs = [passed_text, urls]
             return outputs
+            
+        def extract_sources(message):
+            ai_message = message
+            generation_instructions = " DO THIS: Scan through this text and locate all sources within it, likely embedded in parenthacies, moreover list each source used and write a little description on each source"
+            response = client.chat.completions.create(
+                model="gpt-5"
+                messages=[{"role":"user", "content": ai_message + generation_instructions}]
+            )
+            return response
         
         # -----------------------------
         # Streamlit UI
@@ -305,7 +315,8 @@ if st.session_state.page == 3:
                     st.markdown(answer[0])
                     source_expander = st.expander(label="Sources")
                     with source_expander:
-                        st.write("Sources")
+                        source_text = extract_sources(answer)
+                        st.write(source_text)
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -732,6 +743,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
