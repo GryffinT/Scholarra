@@ -193,7 +193,7 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     if selection == "Scholarly":
         # --------------------------
-        # 2. Define Academic Sources
+        # 1. Define Academic Sources
         # --------------------------
         SOURCE_TOPIC = {
             "history": [
@@ -211,7 +211,7 @@ if st.session_state.page == 3:
         }
         
         # --------------------------
-        # 3. Topic Classification
+        # 2. Topic Classification
         # --------------------------
         def classify_topic(user_query):
             prompt = (
@@ -228,7 +228,7 @@ if st.session_state.page == 3:
             return topic if topic in SOURCE_TOPIC else "history"
 
         # --------------------------
-        # 4. Retrieve content from sources
+        # 3. Retrieve content from sources
         # --------------------------
         def retrieve_source_chunks(source_url, max_paragraphs=5):
             """Scrape top paragraphs from the source URL and clean them."""
@@ -244,7 +244,7 @@ if st.session_state.page == 3:
                 return []
         
         # --------------------------
-        # 5. Semantic search
+        # 4. Semantic search
         # --------------------------
         def semantic_search(chunks, user_query, top_k=3):
             """Rank chunks for relevance using GPT."""
@@ -271,7 +271,7 @@ if st.session_state.page == 3:
 
         
         # --------------------------
-        # 6. Generate Scholarly Answer
+        # 5. Generate Scholarly Answer
         # --------------------------
         def generate_scholarly_answer(user_query):
             topic = classify_topic(user_query)
@@ -318,7 +318,7 @@ if st.session_state.page == 3:
             return resp.choices[0].message["content"]
         
         # --------------------------
-        # 7. Streamlit UI
+        # 6. Streamlit UI
         # --------------------------
         st.title("Scholarly AI Research Assistant")
         
@@ -763,6 +763,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
