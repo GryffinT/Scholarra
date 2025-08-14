@@ -200,55 +200,51 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     if selection == "Scholarly":
         # -----------------------------
-        # Sources dictionary with metadata
+        # Sources dictionary
         # -----------------------------
         SOURCES = {
             "History": {
                 "britannica": {
                     "event": "https://www.britannica.com/event/[TOPIC]",
                     "person": "https://www.britannica.com/biography/[TOPIC]",
-                    "name": "Britannica",
-                    "location": "Chicago, USA",
-                    "author": "Encyclopaedia Britannica Editors"
+                    "place": "https://www.britannica.com/place/[TOPIC]"
                 },
                 "history_com": {
                     "event": "https://www.history.com/topics/[TOPIC]",
                     "person": "https://www.history.com/topics/people/[TOPIC]",
-                    "name": "History.com",
-                    "location": "USA",
-                    "author": "History.com Editors"
-                },
-                "jstor": {
-                    "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
-                    "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
-                    "name": "JSTOR",
-                    "location": "USA",
-                    "author": "Various"
+                    "place": "https://www.history.com/topics/places/[TOPIC]"
+                }
+            },
+            "Math": {
+                "mathworld": {
+                    "concept": "https://mathworld.wolfram.com/search/?query=[TOPIC]"
+                }
+            },
+            "English": {
+                "poetryfoundation": {
+                    "person": "https://www.poetryfoundation.org/search?query=[TOPIC]",
+                    "event": "https://www.poetryfoundation.org/search?query=[TOPIC]"
                 }
             }
         }
         
         # -----------------------------
-        # Hidden-character obfuscation
+        # Hidden character injection
         # -----------------------------
         def obfuscate_text(text):
+            # inject zero-width spaces randomly between characters
             zwsp = "\u200b"
             return zwsp.join(list(text))
         
         # -----------------------------
-        # Extract text from HTML
-        # -----------------------------
-        def extract_text(html):
-            soup = BeautifulSoup(html, "html.parser")
-            paragraphs = soup.find_all("p")
-            text = " ".join(p.get_text() for p in paragraphs)
-            return text[:1000]
-        
-        # -----------------------------
-        # Classify topic
+        # Topic + type classification
         # -----------------------------
         def classify_topic(user_input):
-            prompt = f"Classify the topic of this input: '{user_input}'. Return main_topic and sub_type separated by comma."
+            prompt = (
+                f"Classify the topic of this input: '{user_input}'. "
+                "Return ONLY main_topic and sub_type separated by a comma. "
+                "Example output: History, event"
+            )
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
@@ -257,110 +253,41 @@ if st.session_state.page == 3:
             try:
                 main_topic, sub_type = classification.split(",")
                 return main_topic.strip(), sub_type.strip()
-            except:
-                return "History", "event"
+            except ValueError:
+                return "History", "event"  # fallback
         
         # -----------------------------
-        # Build URLs with citations and metadata
+        # Build URLs for sources
         # -----------------------------
-        def build_urls_with_citations(user_input, main_topic, sub_type):
+        def build_urls(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
-            for i, (source_name, variants) in enumerate(SOURCES.get(main_topic, {}).items()):
+            for source_name, variants in SOURCES.get(main_topic, {}).items():
                 if sub_type in variants:
                     url = variants[sub_type].replace("[TOPIC]", encoded_query)
-                    urls.append({
-                        "citation_token": f"[SRC{i+1}]",
-                        "url": url,
-                        "name": variants.get("name", source_name.title()),
-                        "location": variants.get("location", "Unknown"),
-                        "author": variants.get("author", "Unknown")
-                    })
+                    urls.append(url)
             return urls
         
         # -----------------------------
-        # Async fetch
+        # Generate GPT answer
         # -----------------------------
-        async def fetch_url(client, url):
-            try:
-                r = await client.get(url, timeout=10)
-                return extract_text(r.text)
-            except Exception as e:
-                return f"Error fetching {url}: {e}"
-        
-        async def fetch_all(urls):
-            async with httpx.AsyncClient() as client:
-                tasks = [fetch_url(client, u["url"]) for u in urls]
-                return await asyncio.gather(*tasks)
-        
-        # -----------------------------
-        # Summarize a chunk strictly using verbatim source text
-        # -----------------------------
-        def summarize_chunk(text_chunk, user_input, citations):
-            tokens = ", ".join([c["citation_token"] for c in citations])
-            prompt = f"""
-        Using ONLY the following content from the verified sources (do not invent facts):
-        
-        {text_chunk}
-        
-        Write a concise factual answer (~100 words) about '{user_input}',
-        using MLA-style in-text citations exactly as follows: {tokens}.
-        Do NOT include any information not in the text.
-        """
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}]
-            )
-            return response.choices[0].message.content
-        
-        # -----------------------------
-        # Map citations to actual sources
-        # -----------------------------
-        def map_citations_to_sources(answer_text, all_sources):
-            cited_sources = []
-            for src in all_sources:
-                if src['citation_token'] in answer_text:
-                    cited_sources.append(src)
-            return cited_sources
-        
-        # -----------------------------
-        # Generate final answer with chunking
-        # -----------------------------
-        def answer_user(user_input, chunk_size=2):
+        def answer_user(user_input):
             main_topic, sub_type = classify_topic(user_input)
-            urls_with_citations = build_urls_with_citations(user_input, main_topic, sub_type)
+            urls = build_urls(user_input, main_topic, sub_type)
             
-            all_texts = asyncio.run(fetch_all(urls_with_citations))
+            search_instruction = (
+                f"Fetch factual information about '{user_input}' from these sources: {urls}. "
+                "Synthesize a concise answer (~150 words), cite the sources, "
+                "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
+            )
             
-            summaries = []
-            for i in range(0, len(all_texts), chunk_size):
-                chunk_text = "\n\n".join(all_texts[i:i+chunk_size])
-                chunk_citations = urls_with_citations[i:i+chunk_size]
-                summary = summarize_chunk(chunk_text, user_input, chunk_citations)
-                summaries.append(summary)
-            
-            final_text = "\n\n".join(summaries)
-            tokens = ", ".join([c["citation_token"] for c in urls_with_citations])
-            
-            prompt = f"""
-        Combine the following summaries into a concise factual answer about '{user_input}',
-        using MLA-style in-text citations exactly as: {tokens},
-        only using information from the provided sources.
-        Add hidden characters to prevent copy-paste:
-        
-        {final_text}
-        """
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}]
+                messages=[{"role": "user", "content": search_instruction}]
             )
+            
             answer_text = response.choices[0].message.content
-            obfuscated = obfuscate_text(answer_text)
-        
-            # Only include sources actually cited
-            cited_sources = map_citations_to_sources(answer_text, urls_with_citations)
-        
-            return obfuscated, cited_sources
+            return obfuscate_text(answer_text)
         
         # -----------------------------
         # Streamlit UI
@@ -371,16 +298,8 @@ if st.session_state.page == 3:
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    answer, cited_sources = answer_user(user_input)
+                    answer = answer_user(user_input)
                     st.markdown(answer)
-                    
-                    st.subheader("References")
-                    for src in cited_sources:
-                        with st.expander(src["citation_token"]):
-                            st.markdown(f"**Author:** {src['author']}")
-                            st.markdown(f"**Name:** {src['name']}")
-                            st.markdown(f"**Location:** {src['location']}")
-                            st.markdown(f"**URL:** [{src['url']}]({src['url']})")
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -807,6 +726,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
