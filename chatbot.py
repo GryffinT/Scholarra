@@ -532,15 +532,21 @@ if st.session_state.page == 3:
             related_terms = [t.strip() for t in related_text.split(",") if t.strip()]
             return related_terms
 
-
         # -------------------------------
-        # Generate scholarly answer with GPT
+        # Async fetch function for chunks
         # -------------------------------
         async def fetch_chunks(session, url, source_name):
-            """Asynchronously fetch chunks from a URL."""
-            chunks = await retrieve_source_chunks_async(session, url)  # Make sure you have an async version
-            return [{"text": c, "name": source_name, "url": url} for c in chunks]
+            """Fetch chunks from a URL asynchronously."""
+            try:
+                chunks = await retrieve_source_chunks_async(session, url)  # Make sure you implement an async version
+                return [{"text": c, "name": source_name, "url": url} for c in chunks]
+            except Exception as e:
+                print(f"Failed to fetch {url}: {e}")
+                return []
         
+        # -------------------------------
+        # Gather all chunks concurrently
+        # -------------------------------
         async def gather_all_chunks(all_terms):
             gathered_chunks = []
             async with aiohttp.ClientSession() as session:
@@ -558,14 +564,17 @@ if st.session_state.page == 3:
                     gathered_chunks.extend(res)
             return gathered_chunks
         
-        def generate_scholarly_answer_async(query, max_related_terms=3):
+        # -------------------------------
+        # Scholarly answer generation
+        # -------------------------------
+        def generate_scholarly_answer(query, max_related_terms=3):
             # 1. Normalize main topic
             main_topic = extract_and_normalize_topic(query)
         
             # 2. Generate AI-suggested related terms
             related_terms = generate_related_terms(main_topic)[:max_related_terms]
         
-            # 3. Prepare variants
+            # 3. Prepare term variants
             all_terms = []
             for term in [main_topic] + related_terms:
                 term_variants = set()
@@ -574,8 +583,14 @@ if st.session_state.page == 3:
                     term_variants.add("The " + term.title())
                 all_terms.extend(list(term_variants))
         
-            # 4. Fetch all chunks asynchronously
-            gathered_chunks = asyncio.run(gather_all_chunks(all_terms))
+            # 4. Fetch all chunks asynchronously, Streamlit-compatible
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+        
+            gathered_chunks = loop.run_until_complete(gather_all_chunks(all_terms))
         
             # 5. Semantic search once per query
             if gathered_chunks:
@@ -583,12 +598,12 @@ if st.session_state.page == 3:
                 top_chunks = semantic_search(combined_texts, query)
                 gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks]
         
-            # 6. Fallback
+            # 6. Fallback if nothing found
             if not gathered_chunks:
                 fallback_urls = [construct_source_url(src, main_topic) for src in BASE_URLS.keys()]
                 return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join(fallback_urls)}"
         
-            # 7. Combine chunks for GPT
+            # 7. Combine chunks for GPT context
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
         
             # 8. GPT prompt
@@ -1043,6 +1058,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
