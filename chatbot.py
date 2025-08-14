@@ -13,6 +13,8 @@ import math
 import urllib.parse
 from sklearn.metrics.pairwise import cosine_similarity
 from rapidfuzz import process
+import asyncio
+import aiohttp
 
 
 st.markdown(
@@ -534,66 +536,62 @@ if st.session_state.page == 3:
         # -------------------------------
         # Generate scholarly answer with GPT
         # -------------------------------
-        def generate_scholarly_answer(query, max_related_terms=3):
+        async def fetch_chunks(session, url, source_name):
+            """Asynchronously fetch chunks from a URL."""
+            chunks = await retrieve_source_chunks_async(session, url)  # Make sure you have an async version
+            return [{"text": c, "name": source_name, "url": url} for c in chunks]
+        
+        async def gather_all_chunks(all_terms):
+            gathered_chunks = []
+            async with aiohttp.ClientSession() as session:
+                tasks = []
+                for term in all_terms:
+                    mode_priority = get_mode_priority(term)
+                    for source_name, modes in BASE_URLS.items():
+                        for mode in mode_priority:
+                            if mode not in modes:
+                                continue
+                            url = construct_source_url(source_name, term, mode=mode)
+                            tasks.append(fetch_chunks(session, url, source_name))
+                results = await asyncio.gather(*tasks)
+                for res in results:
+                    gathered_chunks.extend(res)
+            return gathered_chunks
+        
+        def generate_scholarly_answer_async(query, max_related_terms=3):
             # 1. Normalize main topic
             main_topic = extract_and_normalize_topic(query)
         
-            # 2. Generate AI-suggested related terms (limit for speed)
+            # 2. Generate AI-suggested related terms
             related_terms = generate_related_terms(main_topic)[:max_related_terms]
-            
-            # 3. Prepare variants for each term
+        
+            # 3. Prepare variants
             all_terms = []
             for term in [main_topic] + related_terms:
                 term_variants = set()
-                term_variants.add(term.title())       # Capitalized
-                # Add "The " prefix if likely an event (basic heuristic)
+                term_variants.add(term.title())
                 if any(word in term.lower() for word in ["war", "revolution", "holocaust"]):
                     term_variants.add("The " + term.title())
                 all_terms.extend(list(term_variants))
         
-            gathered_chunks = []
+            # 4. Fetch all chunks asynchronously
+            gathered_chunks = asyncio.run(gather_all_chunks(all_terms))
         
-            # 4. Define mode priority
-            event_keywords = ["war", "revolution", "holocaust", "battle"]
-            person_keywords = ["president", "king", "scientist", "artist", "author"]
-        
-            def get_mode_priority(term):
-                term_lower = term.lower()
-                if any(k in term_lower for k in event_keywords):
-                    return ["event", "general"]
-                elif any(k in term_lower for k in person_keywords):
-                    return ["person", "general"]
-                else:
-                    return ["general", "place", "person", "event"]
-        
-            # 5. Fetch all chunks
-            for term in all_terms:
-                mode_priority = get_mode_priority(term)
-                for source_name, modes in BASE_URLS.items():
-                    for mode in mode_priority:
-                        if mode not in modes:
-                            continue
-                        url = construct_source_url(source_name, term, mode=mode)
-                        chunks = retrieve_source_chunks(url)
-                        gathered_chunks.extend([{"text": c, "name": source_name, "url": url} for c in chunks])
-        
-            # 6. Semantic search once per query
+            # 5. Semantic search once per query
             if gathered_chunks:
                 combined_texts = [c["text"] for c in gathered_chunks]
                 top_chunks = semantic_search(combined_texts, query)
-                gathered_chunks = [
-                    c for c in gathered_chunks if c["text"] in top_chunks
-                ]
+                gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks]
         
-            # 7. Fallback if no content found
+            # 6. Fallback
             if not gathered_chunks:
                 fallback_urls = [construct_source_url(src, main_topic) for src in BASE_URLS.keys()]
                 return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join(fallback_urls)}"
         
-            # 8. Combine chunks for GPT context
+            # 7. Combine chunks for GPT
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
         
-            # 9. GPT prompt
+            # 8. GPT prompt
             prompt = f"""
         You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
         Include in-text citations and a list of sources at the end.
@@ -609,7 +607,6 @@ if st.session_state.page == 3:
             )
             answer = resp.choices[0].message.content.strip()
             return answer
-
         # -------------------------------
         # Streamlit UI
         # -------------------------------
@@ -1046,6 +1043,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
