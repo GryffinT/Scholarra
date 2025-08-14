@@ -199,7 +199,6 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
-
         # -----------------------------
         # Sources dictionary with metadata
         # -----------------------------
@@ -227,6 +226,11 @@ if st.session_state.page == 3:
         }
         
         # -----------------------------
+        # GPT client (already configured)
+        # -----------------------------
+        # client = your_preconfigured_client
+        
+        # -----------------------------
         # Hidden-character obfuscation
         # -----------------------------
         def obfuscate_text(text):
@@ -240,7 +244,7 @@ if st.session_state.page == 3:
             soup = BeautifulSoup(html, "html.parser")
             paragraphs = soup.find_all("p")
             text = " ".join(p.get_text() for p in paragraphs)
-            return text[:1000]  # limit per source
+            return text[:1000]  # limit per source to avoid token overload
         
         # -----------------------------
         # Classify topic
@@ -291,18 +295,18 @@ if st.session_state.page == 3:
                 return await asyncio.gather(*tasks)
         
         # -----------------------------
-        # Summarize a chunk strictly using sources
+        # Summarize a chunk strictly using verbatim source text
         # -----------------------------
         def summarize_chunk(text_chunk, user_input, citations):
             citation_names = ", ".join([c["citation"] for c in citations])
             prompt = f"""
-        Using ONLY the following content from verified sources:
+        Using ONLY the following content from verified sources (do not invent facts):
         
         {text_chunk}
         
         Write a concise factual answer (~100 words) about '{user_input}',
         include MLA-style in-text citations using these sources: {citation_names}.
-        DO NOT invent information. Only include facts from these sources.
+        Do NOT add information not in the text. Only use facts provided here.
         """
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -330,9 +334,9 @@ if st.session_state.page == 3:
             citation_names = ", ".join([c["citation"] for c in urls_with_citations])
             
             prompt = f"""
-        Combine the following summaries into a concise factual answer about '{user_input}', 
+        Combine the following summaries into a concise factual answer about '{user_input}',
         include MLA-style in-text citations using: {citation_names},
-        and only include information from the provided sources.
+        only using information from the provided sources.
         Add hidden characters to prevent copy-paste:
         
         {final_text}
@@ -364,7 +368,7 @@ if st.session_state.page == 3:
                             st.markdown(f"**URL:** [{src['url']}]({src['url']})")
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
-                    
+                            
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -789,6 +793,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
