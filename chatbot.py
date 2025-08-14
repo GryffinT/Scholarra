@@ -195,6 +195,7 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
+
         # -------------------------------
         # Base URLs for dynamic construction
         # -------------------------------
@@ -214,6 +215,19 @@ if st.session_state.page == 3:
         # -------------------------------
         # Known topics and normalization
         # -------------------------------
+        TOPIC_NORMALIZATION = {
+            "ww2": "World War 2",
+            "world war ii": "World War 2",
+            "wwii": "World War 2",
+            "ww1": "World War 1",
+            "wwi": "World War 1",
+            "holocost": "Holocaust",
+            "holocaust": "Holocaust",
+            "french rev": "French Revolution",
+            "french revolution": "French Revolution"
+        }
+        KNOWN_TOPICS = list(TOPIC_NORMALIZATION.values())
+
         def extract_and_normalize_topic(user_query):
             """
             1. Lowercase and remove punctuation.
@@ -860,6 +874,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
