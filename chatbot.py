@@ -1,10 +1,16 @@
 import streamlit as st
 from openai import OpenAI
-
+import requests
+from bs4 import BeautifulSoup
+import re
 import os
-import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import io
+from scipy import stats
+import math
 
-import streamlit as st
 
 st.markdown(
     """
@@ -119,17 +125,6 @@ elif st.session_state.page == 2:
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-SOURCE_PRIORITY = {
-    "history": ["Britannica", "Oxford Reference", "JSTOR", "Library of Congress", "BBC History"],
-    "philosophy": ["Stanford Encyclopedia of Philosophy", "Internet Encyclopedia of Philosophy", "Oxford Reference", "JSTOR"],
-    "science": ["Britannica Science", "PubMed", "ScienceDirect", "NASA ADS", "arXiv"],
-    "technology": ["Britannica Technology", "arXiv", "ACM Digital Library", "IEEE Xplore"],
-    "economics": ["Britannica Economics", "OECD Library", "World Bank", "JSTOR"],
-    "medicine": ["Britannica Health", "PubMed", "Cochrane Library", "WHO"],
-    "arts": ["Britannica Arts", "Oxford Art Online", "JSTOR", "Project MUSE"]
-}
-
-
 if st.session_state.page == 3 or st.session_state.page == 4 or st.session_state.page == 5 or st.session_state.page == 6:
     col1, col2, col3, col4 = st.columns(4)
     if col2.button("Grapher"):
@@ -197,16 +192,154 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
-        pass
+        # --------------------------
+        # 2. Define Academic Sources
+        # --------------------------
+        SOURCE_TOPIC = {
+            "history": [
+                {"name": "Encyclopaedia Britannica", "url": "https://www.britannica.com"},
+                {"name": "Stanford Encyclopedia of Philosophy", "url": "https://plato.stanford.edu"},
+            ],
+            "science": [
+                {"name": "Nature", "url": "https://www.nature.com"},
+                {"name": "ScienceDirect", "url": "https://www.sciencedirect.com"},
+            ],
+            "philosophy": [
+                {"name": "Stanford Encyclopedia of Philosophy", "url": "https://plato.stanford.edu"},
+                {"name": "Internet Encyclopedia of Philosophy", "url": "https://iep.utm.edu"},
+            ]
+        }
+        
+        # --------------------------
+        # 3. Topic Classification
+        # --------------------------
+        def classify_topic(user_query):
+            prompt = (
+                "Classify the following query into one of these topics: "
+                f"{', '.join(SOURCE_TOPIC.keys())}.\n"
+                "Reply ONLY with the topic name.\n"
+                f"Query: \"{user_query}\""
+            )
+            resp = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[{"role": "system", "content": prompt}]
+            )
+            topic = resp.choices[0].message["content"].strip().lower()
+            return topic if topic in SOURCE_TOPIC else "history"
 
+        # --------------------------
+        # 4. Retrieve content from sources
+        # --------------------------
+        def retrieve_source_chunks(source_url, max_paragraphs=5):
+            """Scrape top paragraphs from the source URL and clean them."""
+            try:
+                page = requests.get(source_url, headers={"User-Agent": "Mozilla/5.0"})
+                if page.status_code != 200:
+                    return []
+                soup = BeautifulSoup(page.text, "html.parser")
+                paragraphs = soup.find_all("p")
+                chunks = [re.sub(r'\s+', ' ', p.get_text()).strip() for p in paragraphs if p.get_text().strip()]
+                return chunks[:max_paragraphs]
+            except:
+                return []
+        
+        # --------------------------
+        # 5. Semantic search
+        # --------------------------
+        def semantic_search(chunks, user_query, top_k=3):
+            """Rank chunks for relevance using GPT."""
+            if not chunks:
+                return []
+        
+            prompt = (
+                "Rank the following text chunks by relevance to the query.\n"
+                f"Query: \"{user_query}\"\n"
+                f"Chunks: {chunks}\n"
+                f"Return the top {top_k} chunks most relevant in a numbered list, "
+                "and do not wrap the entire text in quotes or code blocks."
+            )
+        
+            resp = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[{"role": "system", "content": prompt}]
+            )
+        
+            ranked_text = resp.choices[0].message["content"].strip()
+            ranked_chunks = re.split(r'\n|\d+\.', ranked_text)
+            ranked_chunks = [c.strip() for c in ranked_chunks if c.strip()]
+            return ranked_chunks[:top_k]
+
+        
+        # --------------------------
+        # 6. Generate Scholarly Answer
+        # --------------------------
+        def generate_scholarly_answer(user_query):
+            topic = classify_topic(user_query)
+            sources = SOURCE_TOPIC[topic]
+        
+            gathered_chunks = []
+            for src in sources:
+                chunks = retrieve_source_chunks(src["url"])
+                top_chunks = semantic_search(chunks, user_query)
+                for c in top_chunks:
+                    gathered_chunks.append({"text": c, "name": src["name"], "url": src["url"]})
+        
+            if not gathered_chunks:
+                return f"No relevant sources found for '{user_query}'."
+        
+            # Format chunks for GPT
+            sources_text = "\n".join([f"{c['name']}: {c['text']} ({c['name']}, n.d.) - {c['url']}"
+                                      for c in gathered_chunks])
+        
+            system_prompt = """
+            You are ScholarGPT, an academic assistant.
+            Use ONLY the text provided in the sources to answer the user's query.
+            Include APA-style in-text citations and quotes when relevant.
+            Do not wrap the entire answer in quotes or code blocks.
+            End with a References section listing all sources with clickable URLs.
+            """
+        
+            user_prompt = f"""
+            Question: {user_query}
+        
+            Sources:
+            {sources_text}
+            """
+        
+            resp = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.2
+            )
+        
+            return resp.choices[0].message["content"]
+        
+        # --------------------------
+        # 7. Streamlit UI
+        # --------------------------
+        st.title("Scholarly AI Research Assistant")
+        
+        query = st.text_input("Enter your academic question:")
+        
+        if query:
+            with st.spinner("Fetching sources and generating scholarly answer..."):
+                answer = generate_scholarly_answer(query)
+        
+            st.markdown("### Scholarly Answer")
+            st.write(answer)  # <- avoids treating everything as one giant quoted string
+        
+            st.markdown("### Retrieved Sources (expand to view)")
+            topic = classify_topic(query)
+            for src in SOURCE_TOPIC[topic]:
+                chunks = retrieve_source_chunks(src["url"])
+                if chunks:
+                    with st.expander(f"{src['name']} - {src['url']}"):
+                        for i, p in enumerate(chunks):
+                            st.write(f"{i+1}. {p}")
 # ---------------- PAGE 4 (Grapher) ----------------
-
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import io
-from scipy import stats
-import math
 
 def parse_xy_input(text):
     points = []
@@ -630,6 +763,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
