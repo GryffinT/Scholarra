@@ -200,7 +200,7 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     if selection == "Scholarly":
         # -----------------------------
-        # Sources dictionary (expanded)
+        # Sources dictionary (example)
         # -----------------------------
         SOURCES = {
             "History": {
@@ -269,6 +269,7 @@ if st.session_state.page == 3:
                 }
             }
         }
+
         
         # -----------------------------
         # Hidden character injection
@@ -278,14 +279,19 @@ if st.session_state.page == 3:
             return zwsp.join(list(text))
         
         # -----------------------------
+        # Extract text from HTML
+        # -----------------------------
+        def extract_text(html):
+            soup = BeautifulSoup(html, "html.parser")
+            paragraphs = soup.find_all("p")
+            text = " ".join(p.get_text() for p in paragraphs)
+            return text[:1000]  # limit per source
+        
+        # -----------------------------
         # Topic + type classification
         # -----------------------------
         def classify_topic(user_input):
-            prompt = (
-                f"Classify the topic of this input: '{user_input}'. "
-                "Return ONLY main_topic and sub_type separated by a comma. "
-                "Example output: History, event"
-            )
+            prompt = f"Classify the topic of this input: '{user_input}'. Return main_topic and sub_type separated by comma."
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
@@ -294,56 +300,66 @@ if st.session_state.page == 3:
             try:
                 main_topic, sub_type = classification.split(",")
                 return main_topic.strip(), sub_type.strip()
-            except ValueError:
-                return "History", "event"  # fallback
+            except:
+                return "History", "event"
         
         # -----------------------------
-        # Build URLs for sources
+        # Build URLs
         # -----------------------------
         def build_urls(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
             for source_name, variants in SOURCES.get(main_topic, {}).items():
                 if sub_type in variants:
-                    url = variants[sub_type].replace("[TOPIC]", encoded_query)
-                    urls.append(url)
+                    urls.append((source_name, variants[sub_type].replace("[TOPIC]", encoded_query)))
             return urls
         
         # -----------------------------
-        # Async fetching of URLs
+        # Async fetch
         # -----------------------------
         async def fetch_url(client, url):
             try:
-                r = await client.get(url, timeout=10.0)
-                return r.text
+                r = await client.get(url, timeout=10)
+                return extract_text(r.text)
             except Exception as e:
                 return f"Error fetching {url}: {e}"
         
         async def fetch_all(urls):
             async with httpx.AsyncClient() as client:
-                tasks = [fetch_url(client, url) for url in urls]
-                results = await asyncio.gather(*tasks)
-            return results
+                tasks = [fetch_url(client, url) for _, url in urls]
+                return await asyncio.gather(*tasks)
         
         # -----------------------------
-        # Generate GPT answer
+        # GPT summarization for a chunk
         # -----------------------------
-        def answer_user(user_input):
+        def summarize_chunk(text_chunk, user_input):
+            prompt = f"Using the following content:\n{text_chunk}\nSummarize factual info about '{user_input}' (~100 words), cite sources."
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
+        
+        # -----------------------------
+        # Generate final answer with chunking
+        # -----------------------------
+        def answer_user(user_input, chunk_size=2):
             main_topic, sub_type = classify_topic(user_input)
             urls = build_urls(user_input, main_topic, sub_type)
             
-            # Fetch all sources asynchronously
-            contents = asyncio.run(fetch_all(urls))
+            # Fetch all sources async
+            all_texts = asyncio.run(fetch_all(urls))
             
-            # Combine content
-            combined_text = "\n\n".join(contents)
+            # Chunking
+            summaries = []
+            for i in range(0, len(all_texts), chunk_size):
+                chunk_text = "\n\n".join(all_texts[i:i+chunk_size])
+                summary = summarize_chunk(chunk_text, user_input)
+                summaries.append(summary)
             
-            # GPT prompt for synthesis
-            prompt = (
-                f"Using the following content from multiple sources:\n{combined_text}\n\n"
-                f"Synthesize a concise factual answer about '{user_input}', "
-                "cite sources, and insert hidden characters (zero-width) to prevent copy-paste."
-            )
+            # Final synthesis
+            final_text = "\n\n".join(summaries)
+            prompt = f"Combine the following summaries into a concise factual answer about '{user_input}', cite sources, and add hidden characters to prevent copy-paste:\n{final_text}"
             
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -790,6 +806,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
