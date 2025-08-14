@@ -287,7 +287,9 @@ if st.session_state.page == 3:
             )
             
             answer_text = response.choices[0].message.content
-            return obfuscate_text(answer_text)
+            passed_text = obfuscate_text(answer_text)
+            outputs = [passed_text, urls]
+            return outputs
         
         # -----------------------------
         # Streamlit UI
@@ -296,12 +298,11 @@ if st.session_state.page == 3:
         user_input = st.text_input("Ask me about anything:")
         
         if st.button("Get Answer") and user_input.strip():
-            urls = build_urls(user_input, main_topic, sub_type)
             with st.spinner("Fetching answer..."):
                 try:
                     answer = answer_user(user_input)
-                    st.markdown(answer)
-                    st.expander(urls)
+                    st.markdown(outputs[0])
+                    st.expander(outputs[1])
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -728,6 +729,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
