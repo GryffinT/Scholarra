@@ -224,8 +224,9 @@ if st.session_state.page == 3:
                 model="gpt-4-turbo",
                 messages=[{"role": "system", "content": prompt}]
             )
-            topic = resp.choices[0].message["content"].strip().lower()
+            topic = resp.choices[0].message.content.strip().lower()
             return topic if topic in SOURCE_TOPIC else "history"
+
 
         # --------------------------
         # 3. Retrieve content from sources
@@ -763,6 +764,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
