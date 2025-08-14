@@ -374,20 +374,13 @@ if st.session_state.page == 3:
         # -------------------------------
 
         def sanitize_topic_for_url(topic, is_event=False):
-            """
-            Prepare topic string for URL:
-            - Convert to lowercase
-            - Replace spaces with hyphens
-            - Remove punctuation
-            - Optionally prepend 'The-' for events
-            """
-            topic = topic.strip()
-            topic = topic.lower()
-            topic = re.sub(r'\s+', '-', topic)       # spaces -> hyphens
-            topic = re.sub(r'[^\w\-]', '', topic)   # remove punctuation
+            topic = topic.strip().lower()                  # lowercase
+            topic = re.sub(r'\s+', '-', topic)            # spaces -> hyphens
+            topic = re.sub(r'[^\w\-]', '', topic)         # remove punctuation
             if is_event:
-                topic = "The-" + topic
+                topic = "the-" + topic
             return topic
+
         
         
         def construct_source_url(source_name, topic, mode="general"):
@@ -1159,6 +1152,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
