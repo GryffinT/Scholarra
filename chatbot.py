@@ -282,7 +282,7 @@ if st.session_state.page == 3:
             )
             
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-5",
                 messages=[{"role": "user", "content": search_instruction}]
             )
             
@@ -726,5 +726,6 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
