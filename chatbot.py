@@ -360,12 +360,14 @@ if st.session_state.page == 3:
                     st.markdown(answer)
                     
                     st.subheader("References")
-                    st.table([
-                        {"Citation": src["citation"], "Name": src["name"], "Location": src["location"], "URL": src["url"]}
-                        for src in sources
-                    ])
+                    for src in sources:
+                        with st.expander(src["citation"]):
+                            st.markdown(f"**Name:** {src['name']}")
+                            st.markdown(f"**Location:** {src['location']}")
+                            st.markdown(f"**URL:** [{src['url']}]({src['url']})")
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
+
 
 
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -792,6 +794,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
