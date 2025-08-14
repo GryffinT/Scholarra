@@ -651,7 +651,7 @@ if st.session_state.page == 3:
         # -------------------------------
         # Streamlit UI
         # -------------------------------
-         st.title("Scholarly Assistant")
+        st.title("Scholarly Assistant")
         
         query = st.text_input("Enter your academic question:")
         
@@ -1149,6 +1149,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
