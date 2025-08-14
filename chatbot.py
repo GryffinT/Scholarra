@@ -222,64 +222,13 @@ if st.session_state.page == 3:
                     "name": "JSTOR",
                     "location": "USA"
                 }
-            },
-            "Math": {
-                "mathworld": {
-                    "concept": "https://mathworld.wolfram.com/[TOPIC].html",
-                    "theorem": "https://mathworld.wolfram.com/search/?query=[TOPIC]",
-                    "name": "MathWorld",
-                    "location": "USA"
-                },
-                "wikipedia": {
-                    "concept": "https://en.wikipedia.org/wiki/[TOPIC]",
-                    "theorem": "https://en.wikipedia.org/wiki/[TOPIC]",
-                    "name": "Wikipedia",
-                    "location": "Global"
-                }
-            },
-            "Physics": {
-                "nature": {
-                    "discovery": "https://www.nature.com/search?q=[TOPIC]",
-                    "concept": "https://www.nature.com/search?q=[TOPIC]",
-                    "name": "Nature",
-                    "location": "UK"
-                },
-                "sciencedirect": {
-                    "discovery": "https://www.sciencedirect.com/search?qs=[TOPIC]",
-                    "concept": "https://www.sciencedirect.com/search?qs=[TOPIC]",
-                    "name": "ScienceDirect",
-                    "location": "Global"
-                }
-            },
-            "English": {
-                "poetryfoundation": {
-                    "poem": "https://www.poetryfoundation.org/search?query=[TOPIC]",
-                    "author": "https://www.poetryfoundation.org/poets/[TOPIC]",
-                    "name": "Poetry Foundation",
-                    "location": "USA"
-                },
-                "britannica": {
-                    "literature": "https://www.britannica.com/art/[TOPIC]",
-                    "author": "https://www.britannica.com/biography/[TOPIC]",
-                    "name": "Britannica",
-                    "location": "Chicago, USA"
-                }
-            },
-            "Chemistry": {
-                "nature": {
-                    "compound": "https://www.nature.com/search?q=[TOPIC]",
-                    "discovery": "https://www.nature.com/search?q=[TOPIC]",
-                    "name": "Nature",
-                    "location": "UK"
-                },
-                "sciencedirect": {
-                    "compound": "https://www.sciencedirect.com/search?qs=[TOPIC]",
-                    "discovery": "https://www.sciencedirect.com/search?qs=[TOPIC]",
-                    "name": "ScienceDirect",
-                    "location": "Global"
-                }
             }
         }
+        
+        # -----------------------------
+        # GPT client (already configured)
+        # -----------------------------
+        # client = your_preconfigured_client
         
         # -----------------------------
         # Hidden-character obfuscation
@@ -295,7 +244,7 @@ if st.session_state.page == 3:
             soup = BeautifulSoup(html, "html.parser")
             paragraphs = soup.find_all("p")
             text = " ".join(p.get_text() for p in paragraphs)
-            return text[:1000]  # limit per source to avoid token overload
+            return text[:1000]  # limit per source
         
         # -----------------------------
         # Classify topic
@@ -319,20 +268,12 @@ if st.session_state.page == 3:
         def build_urls_with_citations(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
-            topic_sources = SOURCES.get(main_topic, {})
-            if not topic_sources:
-                return urls
-        
-            for source_name, variants in topic_sources.items():
-                # Use requested sub_type if exists; otherwise pick the first key in variants
-                sub_type_use = sub_type if sub_type in variants else next((k for k in variants if k not in ["name","location"]), None)
-                if not sub_type_use:
-                    continue
-                url_template = variants.get(sub_type_use)
-                if url_template:
+            for source_name, variants in SOURCES.get(main_topic, {}).items():
+                if sub_type in variants:
+                    url = variants[sub_type].replace("[TOPIC]", encoded_query)
                     urls.append({
                         "citation": source_name.title(),
-                        "url": url_template.replace("[TOPIC]", encoded_query),
+                        "url": url,
                         "name": variants.get("name", source_name.title()),
                         "location": variants.get("location", "Unknown")
                     })
@@ -374,15 +315,22 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
         
         # -----------------------------
+        # Filter sources that are actually cited
+        # -----------------------------
+        def filter_cited_sources(answer_text, all_sources):
+            cited_sources = []
+            for src in all_sources:
+                if re.search(rf"\({src['citation']}", answer_text):
+                    cited_sources.append(src)
+            return cited_sources
+        
+        # -----------------------------
         # Generate final answer with chunking
         # -----------------------------
         def answer_user(user_input, chunk_size=2):
             main_topic, sub_type = classify_topic(user_input)
             urls_with_citations = build_urls_with_citations(user_input, main_topic, sub_type)
             
-            if not urls_with_citations:
-                raise ValueError("No sources found for this topic and type.")
-        
             all_texts = asyncio.run(fetch_all(urls_with_citations))
             
             summaries = []
@@ -408,7 +356,12 @@ if st.session_state.page == 3:
                 messages=[{"role": "user", "content": prompt}]
             )
             answer_text = response.choices[0].message.content
-            return obfuscate_text(answer_text), urls_with_citations
+            obfuscated = obfuscate_text(answer_text)
+            
+            # Only include sources actually cited in the answer
+            cited_sources = filter_cited_sources(answer_text, urls_with_citations)
+            
+            return obfuscated, cited_sources
         
         # -----------------------------
         # Streamlit UI
@@ -419,11 +372,11 @@ if st.session_state.page == 3:
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    answer, sources = answer_user(user_input)
+                    answer, cited_sources = answer_user(user_input)
                     st.markdown(answer)
                     
                     st.subheader("References")
-                    for src in sources:
+                    for src in cited_sources:
                         with st.expander(src["citation"]):
                             st.markdown(f"**Name:** {src['name']}")
                             st.markdown(f"**Location:** {src['location']}")
@@ -854,6 +807,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
