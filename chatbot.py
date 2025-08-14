@@ -396,11 +396,21 @@ if st.session_state.page == 3:
         
             # 2. Generate AI-suggested related terms
             related_terms = generate_related_terms(main_topic)
-            all_terms = [main_topic] + related_terms
+            
+            # 3. Prepare variants for each term
+            all_terms = []
+            for term in [main_topic] + related_terms:
+                term_variants = set()
+                term_variants.add(term.title())       # Capitalized
+                term_variants.add(term.lower())       # Lowercase
+                # Add "The " prefix if likely an event (basic heuristic)
+                if any(word in term.lower() for word in ["war", "revolution", "holocaust"]):
+                    term_variants.add("The " + term.title())
+                all_terms.extend(list(term_variants))
         
             gathered_chunks = []
         
-            # 3. Fetch chunks for all terms
+            # 4. Fetch chunks for all variants
             for term in all_terms:
                 sources = [
                     {"name": "Britannica", "url": construct_britannica_url(term)},
@@ -412,14 +422,14 @@ if st.session_state.page == 3:
                     for c in top_chunks:
                         gathered_chunks.append({"text": c, "name": src["name"], "url": src["url"]})
         
-            # 4. Fallback if no content found
+            # 5. Fallback if no content found
             if not gathered_chunks:
                 return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join([construct_britannica_url(main_topic), construct_history_com_url(main_topic)])}"
         
-            # 5. Combine chunks for GPT context
+            # 6. Combine chunks for GPT context
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
         
-            # 6. GPT prompt
+            # 7. GPT prompt
             prompt = f"""
         You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
         Include in-text citations and a list of sources at the end.
@@ -436,6 +446,7 @@ if st.session_state.page == 3:
             )
             answer = resp.choices[0].message.content.strip()
             return answer
+
 
         
         # -------------------------------
@@ -874,6 +885,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
