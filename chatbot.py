@@ -277,7 +277,7 @@ if st.session_state.page == 3:
             
             search_instruction = (
                 f"Fetch factual information about '{user_input}' from these sources: {urls}.If there are no sources search from Britannica, Jstor, Oxford, Harvard, Stanford, John Hopkins, Mayo Clinic, and other academically accepted sources "
-                "Synthesize a concise, verbatim, and academic answer (~30 words), cite the sources with intext citation, "
+                "Synthesize a concise, verbatim, and academic answer, using quotation marks when applicable, each answer should have at least 1 quote(<500 words), cite the sources with intext citation, "
                 "and insert hidden characters (zero-width) between letters to prevent direct copy-paste."
             )
             
@@ -302,7 +302,9 @@ if st.session_state.page == 3:
                 try:
                     answer = answer_user(user_input)
                     st.markdown(answer[0])
-                    st.expander(answer[1])
+                    source_expander = st.expander(label="Sources")
+                    with source_expander:
+                        st.write("Sources")
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
 # ---------------- PAGE 4 (Grapher) ----------------
@@ -729,6 +731,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
