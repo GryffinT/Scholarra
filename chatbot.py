@@ -199,20 +199,37 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if selection == "Scholarly":
-        
         # -----------------------------
-        # Expanded sources dictionary
+        # Sources dictionary with metadata
         # -----------------------------
         SOURCES = {
             "History": {
-                "britannica": {"event": "https://www.britannica.com/event/[TOPIC]", "person": "https://www.britannica.com/biography/[TOPIC]"},
-                "history_com": {"event": "https://www.history.com/topics/[TOPIC]", "person": "https://www.history.com/topics/people/[TOPIC]"},
-                "jstor": {"event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel", "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel"},
-                "sciencedirect": {"event": "https://www.sciencedirect.com/search?qs=[TOPIC]", "person": "https://www.sciencedirect.com/search?qs=[TOPIC]"},
-                "stanford_phil": {"event": "https://plato.stanford.edu/search/search.html?query=[TOPIC]", "person": "https://plato.stanford.edu/search/search.html?query=[TOPIC]"}
+                "britannica": {
+                    "event": "https://www.britannica.com/event/[TOPIC]",
+                    "person": "https://www.britannica.com/biography/[TOPIC]",
+                    "name": "Britannica",
+                    "location": "Chicago, USA"
+                },
+                "history_com": {
+                    "event": "https://www.history.com/topics/[TOPIC]",
+                    "person": "https://www.history.com/topics/people/[TOPIC]",
+                    "name": "History.com",
+                    "location": "USA"
+                },
+                "jstor": {
+                    "event": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                    "person": "https://www.jstor.org/action/doBasicSearch?Query=[TOPIC]&so=rel",
+                    "name": "JSTOR",
+                    "location": "USA"
+                }
+                # Add more sources if needed
             }
-            # Add other topics like Math, English similarly
         }
+        
+        # -----------------------------
+        # GPT client (already configured)
+        # -----------------------------
+        # client = your_preconfigured_client
         
         # -----------------------------
         # Hidden-character obfuscation
@@ -231,7 +248,7 @@ if st.session_state.page == 3:
             return text[:1000]  # limit per source
         
         # -----------------------------
-        # Classify topic and sub-type
+        # Classify topic
         # -----------------------------
         def classify_topic(user_input):
             prompt = f"Classify the topic of this input: '{user_input}'. Return main_topic and sub_type separated by comma."
@@ -247,7 +264,7 @@ if st.session_state.page == 3:
                 return "History", "event"
         
         # -----------------------------
-        # Build URLs with citation names
+        # Build URLs with citations and metadata
         # -----------------------------
         def build_urls_with_citations(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
@@ -255,8 +272,12 @@ if st.session_state.page == 3:
             for source_name, variants in SOURCES.get(main_topic, {}).items():
                 if sub_type in variants:
                     url = variants[sub_type].replace("[TOPIC]", encoded_query)
-                    citation = source_name.title()  # e.g., 'Britannica'
-                    urls.append({"citation": citation, "url": url})
+                    urls.append({
+                        "citation": source_name.title(),
+                        "url": url,
+                        "name": variants.get("name", source_name.title()),
+                        "location": variants.get("location", "Unknown")
+                    })
             return urls
         
         # -----------------------------
@@ -284,7 +305,7 @@ if st.session_state.page == 3:
         
         {text_chunk}
         
-        Write a concise factual answer about '{user_input}' (~100 words), 
+        Write a concise factual answer about '{user_input}' (~100 words),
         include MLA-style in-text citations using these sources: {citation_names}.
         """
             response = client.chat.completions.create(
@@ -294,7 +315,7 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
         
         # -----------------------------
-        # Generate final answer with chunking
+        # Generate final answer with chunking and references
         # -----------------------------
         def answer_user(user_input, chunk_size=2):
             main_topic, sub_type = classify_topic(user_input)
@@ -338,12 +359,14 @@ if st.session_state.page == 3:
                     answer, sources = answer_user(user_input)
                     st.markdown(answer)
                     
-                    st.subheader("Sources")
-                    for src in sources:
-                        with st.expander(src["citation"]):
-                            st.write(src["url"])
+                    st.subheader("References")
+                    st.table([
+                        {"Citation": src["citation"], "Name": src["name"], "Location": src["location"], "URL": src["url"]}
+                        for src in sources
+                    ])
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
+
 
 # ---------------- PAGE 4 (Grapher) ----------------
 
@@ -769,6 +792,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
