@@ -554,25 +554,19 @@ if st.session_state.page == 3:
         
             gathered_chunks = []
         
-            # 4. Fetch chunks for all variants
+            # 4. Fetch chunks for all variants, sources, and modes
             for term in all_terms:
-                sources = [
-                    {"name": "britannica", "mode": "general"},
-                    {"name": "history_com", "mode": "general"}
-                ]
-                for src in sources:
-                    url = construct_source_url(src["name"], term, mode=src["mode"])
-                    chunks = retrieve_source_chunks(url)
-                    top_chunks = semantic_search(chunks, query)
-                    for c in top_chunks:
-                        gathered_chunks.append({"text": c, "name": src["name"], "url": url})
+                for source_name, modes in BASE_URLS.items():          # Loop all sources
+                    for mode in modes.keys():                         # Loop all modes
+                        url = construct_source_url(source_name, term, mode=mode)
+                        chunks = retrieve_source_chunks(url)
+                        top_chunks = semantic_search(chunks, query)
+                        for c in top_chunks:
+                            gathered_chunks.append({"text": c, "name": source_name, "url": url})
         
             # 5. Fallback if no content found
             if not gathered_chunks:
-                fallback_urls = [
-                    construct_source_url("britannica", main_topic),
-                    construct_source_url("history_com", main_topic)
-                ]
+                fallback_urls = [construct_source_url(src, main_topic) for src in BASE_URLS.keys()]
                 return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join(fallback_urls)}"
         
             # 6. Combine chunks for GPT context
@@ -596,10 +590,6 @@ if st.session_state.page == 3:
             answer = resp.choices[0].message.content.strip()
             return answer
 
-        
-
-
-        
         # -------------------------------
         # Streamlit UI
         # -------------------------------
@@ -1036,6 +1026,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
