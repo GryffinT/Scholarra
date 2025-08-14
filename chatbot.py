@@ -276,9 +276,7 @@ if st.session_state.page == 3:
             )
             
             answer_text = response.choices[0].message.content
-            passed_text = obfuscate_text(answer_text)
-            outputs = [passed_text, urls]
-            return outputs
+            return answer_text
             
         def extract_sources(Intake_message):
             generation_instructions = " DO THIS: Scan through this text and locate all sources within it, likely embedded in parenthacies, moreover list each source used and write a little description on each source", Intake_message
@@ -729,6 +727,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
