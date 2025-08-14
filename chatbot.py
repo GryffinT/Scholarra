@@ -140,7 +140,8 @@ if st.session_state.page == 3 or st.session_state.page == 4 or st.session_state.
         st.session_state.page = 1
 
 if st.session_state.page == 3:
-    if st.button("Standard"):
+    selection = st.selectbox("AI Mode", ["Standard", "Scholarly"]):
+    if selection == "Standard"
         st.title("Scholarra interface")
         st.markdown("""Powered by Open AI APIs""")
     
@@ -629,6 +630,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
