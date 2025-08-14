@@ -211,6 +211,19 @@ if st.session_state.page == 3:
         }
         
         # -------------------------------
+        # Clean query / extract main topic
+        # -------------------------------
+        def extract_topic_from_query(query):
+            query = query.lower()
+            # Remove common question words
+            query = re.sub(r'\b(what|who|when|where|is|are|was|were|the|a|an|of)\b', '', query)
+            # Remove punctuation
+            query = re.sub(r'[^\w\s]', '', query)
+            # Collapse multiple spaces
+            query = re.sub(r'\s+', ' ', query)
+            return query.strip()
+        
+        # -------------------------------
         # Determine query type
         # -------------------------------
         def determine_query_type(query):
@@ -228,17 +241,18 @@ if st.session_state.page == 3:
         # Construct dynamic URLs
         # -------------------------------
         def construct_britannica_url(query):
-            query_type = determine_query_type(query)
+            main_topic = extract_topic_from_query(query)
+            query_type = determine_query_type(main_topic)
             base = BASE_URLS["britannica"].get(query_type, BASE_URLS["britannica"]["general"])
-            formatted_query = urllib.parse.quote(query.replace(" ", "-"))
+            formatted_query = urllib.parse.quote(main_topic.replace(" ", "-"))
             url = f"{base}/{formatted_query}"
             return url
         
         def construct_history_com_url(query):
-            # History.com uses topic-based URLs, could be refined
-            query_type = determine_query_type(query)
+            main_topic = extract_topic_from_query(query)
+            query_type = determine_query_type(main_topic)
             base = BASE_URLS["history_com"]["general"]
-            formatted_query = urllib.parse.quote(query.replace(" ", "-"))
+            formatted_query = urllib.parse.quote(main_topic.replace(" ", "-"))
             url = f"{base}/{formatted_query}"
             return url
         
@@ -251,7 +265,6 @@ if st.session_state.page == 3:
                 soup = BeautifulSoup(resp.text, "html.parser")
                 paragraphs = soup.find_all("p")
                 text = " ".join(p.get_text() for p in paragraphs)
-                # Chunk into ~500-word pieces
                 words = text.split()
                 chunks = [" ".join(words[i:i+500]) for i in range(0, len(words), 500)]
                 return chunks
@@ -286,7 +299,7 @@ if st.session_state.page == 3:
         # Generate scholarly answer with GPT
         # -------------------------------
         def generate_scholarly_answer(query):
-            # Construct source URLs
+            # Construct source URLs dynamically
             sources = [
                 {"name": "Britannica", "url": construct_britannica_url(query)},
                 {"name": "History.com", "url": construct_history_com_url(query)}
@@ -302,7 +315,6 @@ if st.session_state.page == 3:
             if not gathered_chunks:
                 return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join([s['url'] for s in sources])}"
         
-            # Prepare prompt for GPT
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
             prompt = f"""
             You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
@@ -757,6 +769,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
