@@ -140,62 +140,62 @@ if st.session_state.page == 3 or st.session_state.page == 4 or st.session_state.
         st.session_state.page = 1
 
 if st.session_state.page == 3:
-    st.button("Standard")
-    st.button("Scholarly")
-    st.title("Scholarra interface")
-    st.markdown("""Powered by Open AI APIs""")
-
-    # Initialize chat history with system prompt if not exists
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = [
-            {
-                "role": "system",
-                "content": (
-                    "You are a helpful and ethical tutor. Explain concepts clearly and factually, using only scholarly and widely accepted academic sources and guide the user to learn by themselves. "
-                    "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, priorotize encouraging critical thinking and provide hints or explanations, with intext citations and a full sources link set at the bottom.\n\n"
-                    "If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
-                    "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
-                    "Use a friendly, patient, high-school friendly, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
-                )
-            }
-        ]
-
-    # If chat history only contains the system prompt, send initial greeting
-    if len(st.session_state.chat_history) == 1:
-        with st.spinner("Loading AI tutor..."):
-            try:
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=st.session_state.chat_history + [{"role": "user", "content": "start"}]
-                )
-                ai_message = response.choices[0].message.content
-                st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
-            except Exception as e:
-                st.error(f"Error contacting AI: {e}")
-
-    user_input = st.chat_input("Ask me something about your coursework...")
-
-    # Buttons below the chat input
-    if user_input:
-        # Append user message
-        st.session_state.chat_history.append({"role": "user", "content": user_input})
-
-        with st.spinner("Thinking..."):
-            try:
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=st.session_state.chat_history
-                )
-                ai_message = response.choices[0].message.content
-                st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
-            except Exception as e:
-                st.error(f"Error contacting AI: {e}")
-
-    # Display chat messages except the system prompt
-    for msg in st.session_state.chat_history:
-        if msg["role"] != "system":
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+    if st.button("Standard"):
+        st.title("Scholarra interface")
+        st.markdown("""Powered by Open AI APIs""")
+    
+        # Initialize chat history with system prompt if not exists
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a helpful and ethical tutor. Explain concepts clearly and factually, using only scholarly and widely accepted academic sources and guide the user to learn by themselves. "
+                        "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, priorotize encouraging critical thinking and provide hints or explanations, with intext citations and a full sources link set at the bottom.\n\n"
+                        "If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
+                        "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
+                        "Use a friendly, patient, high-school friendly, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
+                    )
+                }
+            ]
+    
+        # If chat history only contains the system prompt, send initial greeting
+        if len(st.session_state.chat_history) == 1:
+            with st.spinner("Loading AI tutor..."):
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-3.5-turbo",
+                        messages=st.session_state.chat_history + [{"role": "user", "content": "start"}]
+                    )
+                    ai_message = response.choices[0].message.content
+                    st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
+                except Exception as e:
+                    st.error(f"Error contacting AI: {e}")
+    
+        user_input = st.chat_input("Ask me something about your coursework...")
+    
+        # Buttons below the chat input
+        if user_input:
+            # Append user message
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+    
+            with st.spinner("Thinking..."):
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-3.5-turbo",
+                        messages=st.session_state.chat_history
+                    )
+                    ai_message = response.choices[0].message.content
+                    st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
+                except Exception as e:
+                    st.error(f"Error contacting AI: {e}")
+    
+        # Display chat messages except the system prompt
+        for msg in st.session_state.chat_history:
+            if msg["role"] != "system":
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+    if st.button("Scholarly"):
 
 # ---------------- PAGE 4 (Grapher) ----------------
 
@@ -628,6 +628,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
