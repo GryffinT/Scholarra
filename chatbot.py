@@ -222,6 +222,62 @@ if st.session_state.page == 3:
                     "name": "JSTOR",
                     "location": "USA"
                 }
+            },
+            "Math": {
+                "mathworld": {
+                    "concept": "https://mathworld.wolfram.com/[TOPIC].html",
+                    "theorem": "https://mathworld.wolfram.com/search/?query=[TOPIC]",
+                    "name": "MathWorld",
+                    "location": "USA"
+                },
+                "wikipedia": {
+                    "concept": "https://en.wikipedia.org/wiki/[TOPIC]",
+                    "theorem": "https://en.wikipedia.org/wiki/[TOPIC]",
+                    "name": "Wikipedia",
+                    "location": "Global"
+                }
+            },
+            "Physics": {
+                "nature": {
+                    "discovery": "https://www.nature.com/search?q=[TOPIC]",
+                    "concept": "https://www.nature.com/search?q=[TOPIC]",
+                    "name": "Nature",
+                    "location": "UK"
+                },
+                "sciencedirect": {
+                    "discovery": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                    "concept": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                    "name": "ScienceDirect",
+                    "location": "Global"
+                }
+            },
+            "English": {
+                "poetryfoundation": {
+                    "poem": "https://www.poetryfoundation.org/search?query=[TOPIC]",
+                    "author": "https://www.poetryfoundation.org/poets/[TOPIC]",
+                    "name": "Poetry Foundation",
+                    "location": "USA"
+                },
+                "britannica": {
+                    "literature": "https://www.britannica.com/art/[TOPIC]",
+                    "author": "https://www.britannica.com/biography/[TOPIC]",
+                    "name": "Britannica",
+                    "location": "Chicago, USA"
+                }
+            },
+            "Chemistry": {
+                "nature": {
+                    "compound": "https://www.nature.com/search?q=[TOPIC]",
+                    "discovery": "https://www.nature.com/search?q=[TOPIC]",
+                    "name": "Nature",
+                    "location": "UK"
+                },
+                "sciencedirect": {
+                    "compound": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                    "discovery": "https://www.sciencedirect.com/search?qs=[TOPIC]",
+                    "name": "ScienceDirect",
+                    "location": "Global"
+                }
             }
         }
         
@@ -263,13 +319,15 @@ if st.session_state.page == 3:
         def build_urls_with_citations(user_input, main_topic, sub_type):
             encoded_query = quote(user_input)
             urls = []
-            for source_name, variants in SOURCES.get(main_topic, {}).items():
-                # Fallback if sub_type not in variants
-                if sub_type not in variants:
-                    sub_type_use = "event"
-                else:
-                    sub_type_use = sub_type
+            topic_sources = SOURCES.get(main_topic, {})
+            if not topic_sources:
+                return urls
         
+            for source_name, variants in topic_sources.items():
+                # Use requested sub_type if exists; otherwise pick the first key in variants
+                sub_type_use = sub_type if sub_type in variants else next((k for k in variants if k not in ["name","location"]), None)
+                if not sub_type_use:
+                    continue
                 url_template = variants.get(sub_type_use)
                 if url_template:
                     urls.append({
@@ -372,7 +430,6 @@ if st.session_state.page == 3:
                             st.markdown(f"**URL:** [{src['url']}]({src['url']})")
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
-                            
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -797,6 +854,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
