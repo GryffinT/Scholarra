@@ -196,6 +196,7 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
     if st.button("Scholarly"):
+        pass
 
 # ---------------- PAGE 4 (Grapher) ----------------
 
@@ -628,6 +629,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
