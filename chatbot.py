@@ -576,74 +576,75 @@ if st.session_state.page == 3:
         # -------------------------------
         # Scholarly answer generation
         # -------------------------------
-        def generate_scholarly_answer(query, max_related_terms=3):
+        # 1️⃣ Search for real URLs dynamically using site search
+        def search_source_urls(query, source_domain, max_results=3):
             """
-            Generate a scholarly answer to a query using AI, semantic search, and multiple sources.
-            
-            Steps:
-            1. Normalize main topic.
-            2. Generate AI-suggested related terms.
-            3. Prepare term variants (title case, optional 'The ' prefix for events).
-            4. Fetch all source chunks asynchronously.
-            5. Perform semantic search to select top relevant chunks.
-            6. Fallback if no chunks found.
-            7. Combine chunks for GPT context and generate scholarly response.
+            Use a search engine API to get working URLs for a topic from a source.
+            Example with Bing Search API (Google Custom Search works similarly).
             """
-            # --- Step 1: Normalize main topic ---
+            search_query = f"site:{source_domain} {query}"
+            # Call search API (Bing, Google, etc.) here and return top URLs
+            # For example purposes, this is a placeholder:
+            results = bing_search_api(query=search_query, count=max_results)
+            valid_urls = [r['url'] for r in results if r['status'] == 200]
+            return valid_urls
+        
+        # 2️⃣ Fetch chunks from valid URLs
+        async def gather_chunks_from_search(query, source_domains):
+            gathered_chunks = []
+            async with aiohttp.ClientSession() as session:
+                tasks = []
+                for domain in source_domains:
+                    urls = search_source_urls(query, domain)
+                    for url in urls:
+                        tasks.append(fetch_chunks(session, url, domain))
+                results = await asyncio.gather(*tasks)
+                for res in results:
+                    gathered_chunks.extend(res)
+            return gathered_chunks
+        
+        # 3️⃣ Generate scholarly answer
+        def generate_scholarly_answer_dynamic(query, max_related_terms=3):
             main_topic = extract_and_normalize_topic(query)
-        
-            # --- Step 2: Generate related terms ---
             related_terms = generate_related_terms(main_topic)[:max_related_terms]
+            all_terms = [main_topic] + related_terms
         
-            # --- Step 3: Prepare term variants ---
-            all_terms = set()
-            for term in [main_topic] + related_terms:
-                all_terms.add(term.title())
-                if any(word in term.lower() for word in ["war", "revolution", "holocaust", "battle", "conflict"]):
-                    all_terms.add("The " + term.title())
-            all_terms = list(all_terms)
-        
-            # --- Step 4: Fetch all chunks asynchronously ---
+            # Run async search + chunk retrieval
             try:
                 loop = asyncio.get_event_loop()
             except RuntimeError:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-            
-            gathered_chunks = loop.run_until_complete(gather_all_chunks(all_terms))
         
-            # --- Step 5: Semantic search ---
-            if gathered_chunks:
-                combined_texts = [c["text"] for c in gathered_chunks]
-                top_chunks_texts = semantic_search(combined_texts, query)
-                gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks_texts]
-        
-            # --- Step 6: Fallback if no content ---
-            if not gathered_chunks:
-                fallback_urls = [construct_source_url(src, main_topic) for src in BASE_URLS.keys()]
-                return (f"No scholarly content found for '{query}'. "
-                        f"You can check the sources manually: {', '.join(fallback_urls)}")
-        
-            # --- Step 7: Combine chunks for GPT context ---
-            context_text = "\n\n".join(
-                [f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks]
+            source_domains = ["britannica.com", "history.com", "plato.stanford.edu", "iep.utm.edu"]
+            gathered_chunks = loop.run_until_complete(
+                gather_chunks_from_search(main_topic, source_domains)
             )
         
-            # --- Step 8: GPT prompt ---
+            # Semantic search
+            if gathered_chunks:
+                combined_texts = [c["text"] for c in gathered_chunks]
+                top_chunks = semantic_search(combined_texts, query)
+                gathered_chunks = [c for c in gathered_chunks if c["text"] in top_chunks]
+        
+            if not gathered_chunks:
+                return f"No scholarly content found for '{query}' after search."
+        
+            # Combine chunks and call GPT
+            context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
             prompt = f"""
-        You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
-        Include in-text citations and a list of sources at the end.
+            You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
+            Include in-text citations and a list of sources at the end.
         
-        User Query: {query}
+            User Query: {query}
         
-        Source Texts:
-        {context_text}
-        """
+            Source Texts:
+            {context_text}
+            """
             resp = client.chat.completions.create(
                 model="gpt-4-turbo",
                 messages=[{"role": "system", "content": prompt}]
             )
-            
             return resp.choices[0].message.content.strip()
 
         # -------------------------------
@@ -1147,6 +1148,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
