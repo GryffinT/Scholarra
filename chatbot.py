@@ -214,19 +214,24 @@ if st.session_state.page == 3:
         # -------------------------------
         # Known topics and normalization
         # -------------------------------
-        TOPIC_NORMALIZATION = {
-            "ww2": "World War 2",
-            "world war ii": "World War 2",
-            "wwii": "World War 2",
-            "ww1": "World War 1",
-            "wwi": "World War 1",
-            "holocost": "Holocaust",
-            "holocaust": "Holocaust",
-            "french rev": "French Revolution",
-            "french revolution": "French Revolution"
-        }
-        
-        KNOWN_TOPICS = list(TOPIC_NORMALIZATION.values())
+        def extract_and_normalize_topic(user_query):
+            """
+            1. Lowercase and remove punctuation.
+            2. Use rapidfuzz to find the closest known topic.
+            """
+            user_query_clean = user_query.lower()
+            
+            # Find the best match from KNOWN_TOPICS
+            match, score, _ = process.extractOne(
+                user_query_clean, 
+                KNOWN_TOPICS
+            )
+            
+            if score > 70:  # threshold for fuzzy match
+                return match
+            else:
+                # If no close match, return the AI-suggested main topic
+                return user_query_clean.title()
         
         # -------------------------------
         # Extract main topic from user query 
@@ -255,6 +260,27 @@ if st.session_state.page == 3:
             topic = normalize_topic(topic)
             topic = correct_typo(topic)
             return topic
+
+        # -----------------------------
+        # AI-generated related terms
+        # -----------------------------
+        def generate_related_terms(query, max_terms=5):
+            prompt = (
+                "You are an academic assistant.\n"
+                f'Given the topic: "{query}",\n'
+                f"provide up to {max_terms} short, relevant keywords or related topics\n"
+                "that could help expand a search for scholarly sources.\n"
+                "Reply with a comma-separated list only."
+            )
+        
+            resp = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[{"role": "system", "content": prompt}]
+            )
+            
+            related_text = resp.choices[0].message.content.strip()
+            related_terms = [t.strip() for t in related_text.split(",") if t.strip()]
+            return related_terms
         
         # -------------------------------
         # Determine query type
@@ -351,35 +377,35 @@ if st.session_state.page == 3:
         # Generate scholarly answer with GPT
         # -------------------------------
         def generate_scholarly_answer(query):
-            # Normalize main topic
+            # 1. Normalize main topic
             main_topic = extract_and_normalize_topic(query)
         
-            # Generate related terms dynamically
+            # 2. Generate AI-suggested related terms
             related_terms = generate_related_terms(main_topic)
             all_terms = [main_topic] + related_terms
         
             gathered_chunks = []
         
-            # Loop through each term and fetch chunks
+            # 3. Fetch chunks for all terms
             for term in all_terms:
                 sources = [
                     {"name": "Britannica", "url": construct_britannica_url(term)},
                     {"name": "History.com", "url": construct_history_com_url(term)}
                 ]
-        
                 for src in sources:
                     chunks = retrieve_source_chunks(src["url"])
                     top_chunks = semantic_search(chunks, query)
                     for c in top_chunks:
                         gathered_chunks.append({"text": c, "name": src["name"], "url": src["url"]})
         
+            # 4. Fallback if no content found
             if not gathered_chunks:
                 return f"No scholarly content found for '{query}'. You can check the sources manually: {', '.join([construct_britannica_url(main_topic), construct_history_com_url(main_topic)])}"
         
-            # Combine the chunks for GPT context
+            # 5. Combine chunks for GPT context
             context_text = "\n\n".join([f"{c['text']} (Source: {c['name']}, {c['url']})" for c in gathered_chunks])
-            
-            # GPT prompt
+        
+            # 6. GPT prompt
             prompt = f"""
         You are an academic assistant. Based on the following source texts, provide a scholarly, factual response to the user's query.
         Include in-text citations and a list of sources at the end.
@@ -834,6 +860,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
