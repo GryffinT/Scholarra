@@ -298,7 +298,7 @@ if st.session_state.page == 3:
             with st.spinner("Fetching answer..."):
                 try:
                     answer = answer_user(user_input)
-                    st.markdown(answer[0])
+                    st.markdown(answer)
                     source_expander = st.expander(label="Sources")
                     with source_expander:
                         source_text = extract_sources(answer)
@@ -729,6 +729,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
