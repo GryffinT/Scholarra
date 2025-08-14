@@ -198,18 +198,69 @@ if st.session_state.page == 3:
         SOURCE_TOPIC = {
             "history": [
                 {"name": "Encyclopaedia Britannica", "url": "https://www.britannica.com"},
-                {"name": "Stanford Encyclopedia of Philosophy", "url": "https://plato.stanford.edu"},
+                {"name": "Oxford Research Encyclopedias: History", "url": "https://oxfordre.com/history"},
+                {"name": "JSTOR History Collection", "url": "https://www.jstor.org/"},
+                {"name": "Cambridge Histories Online", "url": "https://www.cambridge.org/core/collections/cambridge-histories-online"},
+                {"name": "ProQuest History Database", "url": "https://www.proquest.com/products-services/pqdtglobal.html"},
             ],
             "science": [
                 {"name": "Nature", "url": "https://www.nature.com"},
                 {"name": "ScienceDirect", "url": "https://www.sciencedirect.com"},
+                {"name": "Oxford Research Encyclopedias: Science", "url": "https://oxfordre.com/science"},
+                {"name": "SpringerLink", "url": "https://link.springer.com/"},
+                {"name": "PubMed", "url": "https://pubmed.ncbi.nlm.nih.gov/"},
             ],
             "philosophy": [
                 {"name": "Stanford Encyclopedia of Philosophy", "url": "https://plato.stanford.edu"},
                 {"name": "Internet Encyclopedia of Philosophy", "url": "https://iep.utm.edu"},
+                {"name": "PhilPapers", "url": "https://philpapers.org"},
+                {"name": "Oxford Research Encyclopedias: Philosophy", "url": "https://oxfordre.com/philosophy"},
+                {"name": "Journal of Philosophy", "url": "https://www.journals.uchicago.edu/toc/jph/current"},
+            ],
+            "computer science": [
+                {"name": "ACM Digital Library", "url": "https://dl.acm.org/"},
+                {"name": "IEEE Xplore Digital Library", "url": "https://ieeexplore.ieee.org/"},
+                {"name": "SpringerLink Computer Science", "url": "https://link.springer.com/"},
+                {"name": "ScienceDirect Computer Science", "url": "https://www.sciencedirect.com/"},
+                {"name": "arXiv Computer Science", "url": "https://arxiv.org/archive/cs"},
+            ],
+            "mathematics": [
+                {"name": "Mathematics Genealogy Project", "url": "https://www.mathgenealogy.org/"},
+                {"name": "SpringerLink Mathematics", "url": "https://link.springer.com/"},
+                {"name": "MathSciNet", "url": "https://mathscinet.ams.org/"},
+                {"name": "arXiv Mathematics", "url": "https://arxiv.org/archive/math"},
+                {"name": "Oxford Research Encyclopedias: Mathematics", "url": "https://oxfordre.com/mathematics"},
+            ],
+            "english": [
+                {"name": "JSTOR English Literature", "url": "https://www.jstor.org/"},
+                {"name": "Project MUSE", "url": "https://muse.jhu.edu/"},
+                {"name": "Oxford Research Encyclopedias: English Language and Literature", "url": "https://oxfordre.com/englishlanguageandliterature"},
+                {"name": "Cambridge Core: English Literature", "url": "https://www.cambridge.org/core/subjects/english"},
+                {"name": "MLA International Bibliography", "url": "https://www.mla.org/Publications/MLA-International-Bibliography"},
+            ],
+            "spanish": [
+                {"name": "Hispanic American Periodicals Index (HAPI)", "url": "https://hapi.uoregon.edu/"},
+                {"name": "Dialnet", "url": "https://dialnet.unirioja.es/"},
+                {"name": "JSTOR Spanish Literature", "url": "https://www.jstor.org/"},
+                {"name": "Oxford Research Encyclopedias: Spanish Studies", "url": "https://oxfordre.com/spanishstudies"},
+                {"name": "Project MUSE: Spanish & Latin American Studies", "url": "https://muse.jhu.edu/"},
+            ],
+            "psychology": [
+                {"name": "APA PsycNet", "url": "https://psycnet.apa.org/"},
+                {"name": "PubMed Psychology", "url": "https://pubmed.ncbi.nlm.nih.gov/"},
+                {"name": "ScienceDirect Psychology", "url": "https://www.sciencedirect.com/"},
+                {"name": "SpringerLink Psychology", "url": "https://link.springer.com/"},
+                {"name": "Oxford Research Encyclopedias: Psychology", "url": "https://oxfordre.com/psychology"},
+            ],
+            "economics": [
+                {"name": "JSTOR Economics", "url": "https://www.jstor.org/"},
+                {"name": "NBER Working Papers", "url": "https://www.nber.org/"},
+                {"name": "ScienceDirect Economics", "url": "https://www.sciencedirect.com/"},
+                {"name": "SpringerLink Economics", "url": "https://link.springer.com/"},
+                {"name": "Oxford Research Encyclopedias: Economics", "url": "https://oxfordre.com/economics"},
             ]
         }
-        
+
         # --------------------------
         # 2. Topic Classification
         # --------------------------
@@ -765,6 +816,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
