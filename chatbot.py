@@ -774,8 +774,11 @@ if st.session_state.page >= 3:
             "Enter your note here",
             value=st.session_state.sidebar_note,
             key="sidebar_note_area",
-            height=800
+            height=500
         )
+        side_source_expander = st.expander("AI sources")
+        with side_source_expander:
+            st.write("Sources")
 
 # ---------------- PAGE 5 (User Info) ----------------
 
@@ -862,6 +865,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
