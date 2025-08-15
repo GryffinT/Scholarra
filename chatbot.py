@@ -163,6 +163,7 @@ if st.session_state.page == 2:
     # -----------------------------
     #st.text_input("Enter use key", key="user_key")  # updates st.session_state.user_key
     key = get_key()
+    st.session_state["shared_data"] = key
 
     # Local “global-like” variable for convenience
     st.write("Your key is:", key)
@@ -808,11 +809,8 @@ if st.session_state.page == 5:
     key_expandable = st.expander(label="Account specifics ")
     with key_expandable:
         # safely get the user_key from session_state, or show default text
-        key = st.session_state.get("user_key", None)
-        if key:
-            st.write("Your key is: ", user_key)
-        else:
-            st.write("No key entered yet")
+        key = st.session_state["shared_data"]
+        st.write(f"Currently logged in using key: {key}")
         ID = None
         st.write("Your account ID is: ", ID)
 
@@ -887,6 +885,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
