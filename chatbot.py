@@ -777,23 +777,28 @@ if st.session_state.page >= 3:
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
-    key_expandable = st.expander(label="Personal Key")
+    key_expandable = st.expander(label="Account specifics ")
     with key_expandable:
         # safely get the user_key from session_state, or show default text
         key = st.session_state.get("user_key", None)
         if key:
-            st.write("Your key is:", key)
+            st.write("Your key is: ", key)
         else:
             st.write("No key entered yet")
+        ID = None
+        st.write("Your account ID is: ", ID)
 
-    plan_expandable = st.expander(label="Name")
+    plan_expandable = st.expander(label="Subscription")
     with plan_expandable:
         PLAN = None
         st.write("Your're subscribed to the ", PLAN, " plan.")
-    plan_expandable = st.expander(label="Name")
+    plan_expandable = st.expander(label="Personal information")
     with plan_expandable:
-        PLAN = None
-        st.write("Your're subscribed to the ", PLAN, " plan.")
+        NAME = None
+        AGE = None
+        st.write("Your name is ", NAME)
+        st.wrote("Your name is ", AGE)
+
 
 
 
