@@ -809,13 +809,15 @@ if st.session_state.page == 7:
     accepted_courses = ["Koziar's Excel Course"]
 
     entered_course_key = st.text_input("Enter course key")
-    course_media = {"Koziar's Excel Course": [os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf")] }
+    course_media = {"Koziar's Excel Course": [os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"), os.path.join(base_path, "Syllabus TTS.mp3")] }
     # Check if the entered key exists and is accepted
     if entered_course_key in student_course_keys:
         course_name = student_course_keys[entered_course_key]
         if course_name in accepted_courses:
             st.title(course_name)
             syllabus = course_media[course_name][0]  # file path
+            syllabus_tts = course_media[course_name][1]
+            st.audio(syllabus_tts)
             
             with open(syllabus, "rb") as f:  # read file contents
                 st.download_button(
@@ -830,6 +832,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
