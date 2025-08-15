@@ -174,21 +174,6 @@ if st.session_state.page == 2:
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-if st.session_state.page >= 3:
-    main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
-    if main_switch == "Grapher":
-        st.session_state.page = 4
-    if main_switch == "Messager":
-        st.session_state.page = 3
-    if main_switch == "Login":
-        st.session_state.page = 1
-    if main_switch == "Account Info":
-        st.session_state.page = 5
-    if main_switch == "Analytics":
-        st.session_state.page = 6
-    if main_switch == "Courses":
-        st.session_state.page = 7
-
 if st.session_state.page == 3:
     AI_expander = st.expander("Control panel")
     with AI_expander:
@@ -771,7 +756,22 @@ if st.session_state.page == 4:
 if st.session_state.page >= 3:
     with st.sidebar:
         st.header("Scholarra terminal")
-        st.markdown("Here you can take notes, view sources, and operate the Scholarra app.")
+        st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
+
+        if st.session_state.page >= 3:
+            main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
+            if main_switch == "Grapher":
+                st.session_state.page = 4
+            if main_switch == "Messager":
+                st.session_state.page = 3
+            if main_switch == "Login":
+                st.session_state.page = 1
+            if main_switch == "Account Info":
+                st.session_state.page = 5
+            if main_switch == "Analytics":
+                st.session_state.page = 6
+            if main_switch == "Courses":
+                st.session_state.page = 7
             
         notes_expander = st.expander("Notes")
         with notes_expander:
@@ -873,6 +873,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
