@@ -22,7 +22,10 @@ from pdf2image import convert_from_path
 key = None
 def get_key():
     user_key = st.text_input("Enter use key")
+    print (user_key)
     return user_key
+
+
 
 st.markdown(
     """
@@ -149,7 +152,7 @@ if st.session_state.page == 2:
     # User key input (persistent)
     # -----------------------------
     #st.text_input("Enter use key", key="user_key")  # updates st.session_state.user_key
-    get_key()
+    key = get_key()
 
     # Local “global-like” variable for convenience
     st.write("Your key is:", key)
@@ -859,6 +862,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
