@@ -842,7 +842,7 @@ if st.session_state.page == 7:
 
                 segment_completion = st.checkbox("Completed")
                 if segment_completion == true:
-                    st.success("Congratulations on completing this segment! You can close it and continue to the next one.)
+                    st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                     st.balloons
                 
         else:
@@ -851,6 +851,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
