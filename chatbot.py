@@ -770,17 +770,20 @@ if st.session_state.page == 4:
 
 if st.session_state.page >= 3:
     with st.sidebar:
-        st.header("Side Notes")
-
-        if "sidebar_note" not in st.session_state:
-            st.session_state.sidebar_note = ""
-
-        st.session_state.sidebar_note = st.text_area(
-            "Enter your note here",
-            value=st.session_state.sidebar_note,
-            key="sidebar_note_area",
-            height=500
-        )
+        st.header("Scholarra terminal")
+        st.markdown("Here you can take notes, view sources, and operate the Scholarra app.")
+            
+        notes_expander = st.expander("Notes")
+        with notes_expander:
+            if "sidebar_note" not in st.session_state:
+                st.session_state.sidebar_note = ""
+    
+            st.session_state.sidebar_note = st.text_area(
+                "Enter your note here",
+                value=st.session_state.sidebar_note,
+                key="sidebar_note_area",
+                height=500
+            )
         side_source_expander = st.expander("AI sources")
         with side_source_expander:
             st.write("Sources")
@@ -870,6 +873,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
