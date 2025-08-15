@@ -163,8 +163,10 @@ if st.session_state.page == 2:
     # -----------------------------
     #st.text_input("Enter use key", key="user_key")  # updates st.session_state.user_key
     
-    if 'use_key' not in st.session_state:
-        st.session_state['use_key'] = get_key()
+    
+    st.session_state['use_key'] = get_key()
+    key = sy.session_state['use_key']
+
 
     # Local “global-like” variable for convenience
     st.write("Your key is:", key)
@@ -304,7 +306,7 @@ if st.session_state.page == 3:
                     "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
                     "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
                     "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
-                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("OECD Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
+                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
                     "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
                     "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
@@ -886,6 +888,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
