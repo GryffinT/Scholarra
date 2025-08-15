@@ -764,8 +764,8 @@ if st.session_state.page >= 3:
         time.sleep(1)
         bar.empty()
         st.session_state.page = page
-        st.experimental_rerun()
         
+    num = 0
     
     with st.sidebar:
         st.header("Scholarra terminal")
@@ -775,6 +775,7 @@ if st.session_state.page >= 3:
             main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
             if main_switch == "Login":
                 progress_bar("Loading login screen", 1)
+                num += 1
             if main_switch == "Grapher":
                 st.session_state.page = 4
             if main_switch == "Messager":
@@ -888,6 +889,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
