@@ -118,7 +118,13 @@ elif st.session_state.page == 2:
     scatter_path = os.path.join(base_path, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
     st.header("")
-    key = st.text_input("Enter use key")
+    # This creates a session_state entry called "user_key"
+    st.text_input("Enter use key", key="user_key")
+    
+    # Access it anywhere in the app safely
+    key = st.session_state.user_key
+    st.write("Your key is:", key)
+
     access_keys = ["pibble67"]
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -745,7 +751,9 @@ if st.session_state.page >= 3:
 if st.session_state.page == 5:
     key_expandable = st.expander(label="Personal Key")
     with key_expandable:
-        st.write(st.session_state.key)
+        st.write(st.session_state.user_key)  # <-- use the session_state key you defined
+
+
 
 
 
