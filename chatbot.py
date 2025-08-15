@@ -17,6 +17,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from rapidfuzz import process
 import asyncio
 import aiohttp
+from pdf2image import convert_from_path
+
 
 st.markdown(
     """
@@ -813,13 +815,15 @@ if st.session_state.page == 7:
         course_name = student_course_keys[entered_course_key]
         if course_name in accepted_courses:
             st.title(course_name)
-            st.image(course_media[course_name][0])
+            syllabus = convert_from_path(course_media[course_name][0])
+            st.image(syllabus[0])
         else:
             st.warning("This course key is not accepted.")
     elif entered_course_key:
         st.error("Invalid course key.")
 
         
+
 
 
 
