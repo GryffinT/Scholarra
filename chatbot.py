@@ -754,18 +754,31 @@ if st.session_state.page == 4:
 # ---------------- PAGE 3-5 (Notes) ----------------
 
 if st.session_state.page >= 3:
+
+    def progress_bar(loading_text, page):
+        bar = st.progress(0, text=loading_text)
+        for percent_complete in range(100):
+            time.sleep(0.01)
+            bar.progress(percent_complete + 1, text=loading_text)
+        time.sleep(1)
+        bar.empty()
+        st.session_state.page = page
+        
+    
     with st.sidebar:
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
         if st.session_state.page >= 3:
             main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
+            if main_switch == "Login":
+                progress_bar("Loading login screen", 1)
             if main_switch == "Grapher":
                 st.session_state.page = 4
             if main_switch == "Messager":
                 st.session_state.page = 3
-            if main_switch == "Login":
-                st.session_state.page = 1
+            #if main_switch == "Login":
+                #st.session_state.page = 1
             if main_switch == "Account Info":
                 st.session_state.page = 5
             if main_switch == "Analytics":
@@ -779,7 +792,7 @@ if st.session_state.page >= 3:
                 st.session_state.sidebar_note = ""
     
             st.session_state.sidebar_note = st.text_area(
-                "Enter your note here",
+                "Enter your notes here",
                 value=st.session_state.sidebar_note,
                 key="sidebar_note_area",
                 height=500
@@ -873,6 +886,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
