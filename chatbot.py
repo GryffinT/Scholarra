@@ -764,6 +764,7 @@ if st.session_state.page >= 3:
         time.sleep(1)
         bar.empty()
         st.session_state.page = page
+        st.experimental_rerun()
         
     
     with st.sidebar:
@@ -887,6 +888,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
