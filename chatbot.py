@@ -810,7 +810,7 @@ if st.session_state.page == 5:
         # safely get the user_key from session_state, or show default text
         key = st.session_state.get("user_key", None)
         if key:
-            st.write("Your key is: ", key)
+            st.write("Your key is: ", user_key)
         else:
             st.write("No key entered yet")
         ID = None
@@ -887,6 +887,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
