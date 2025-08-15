@@ -751,7 +751,9 @@ if st.session_state.page >= 3:
 if st.session_state.page == 5:
     key_expandable = st.expander(label="Personal Key")
     with key_expandable:
-        st.write(st.session_state.user_key)  # <-- use the session_state key you defined
+        st.write(st.session_state.get("user_key", "No key entered yet"))
+
+
 
 
 
