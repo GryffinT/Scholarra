@@ -162,9 +162,9 @@ if st.session_state.page == 2:
     # User key input (persistent)
     # -----------------------------
     #st.text_input("Enter use key", key="user_key")  # updates st.session_state.user_key
-    key = get_key()
-    if 'key' not in st.session_state:
-        st.session_state['use_key'] = key
+    
+    if 'use_key' not in st.session_state:
+        st.session_state['use_key'] = get_key()
 
     # Local “global-like” variable for convenience
     st.write("Your key is:", key)
@@ -886,6 +886,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
