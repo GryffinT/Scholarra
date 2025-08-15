@@ -13,6 +13,7 @@ import io
 from scipy import stats
 import math
 import urllib.parse
+import time
 from sklearn.metrics.pairwise import cosine_similarity
 from rapidfuzz import process
 import asyncio
@@ -886,6 +887,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
