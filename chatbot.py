@@ -809,12 +809,20 @@ if st.session_state.page == 7:
     accepted_courses = ["Koziar's Excel Course"]
 
     entered_course_key = st.text_input("Enter course key")
-    course_media = {"Koziar's Excel Course": [os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"), os.path.join(base_path, "Syllabus TTS.mp3")] }
+    course_media = {
+        "Koziar's Excel Course": 
+        [
+            os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"),
+            os.path.join(base_path, "Syllabus TTS.mp3"),
+            "We’re excited to have you here! In this course, you’ll explore the core skills of Excel—from organizing worksheets and managing data to using formulas, functions, and charts. Our goal is to help you become confident and efficient in Excel, whether for everyday tasks, professional projects, or preparing for the MO-200 certification. Let’s get started and make Excel work for you!"
+                                             ] }
     # Check if the entered key exists and is accepted
     if entered_course_key in student_course_keys:
         course_name = student_course_keys[entered_course_key]
         if course_name in accepted_courses:
             st.title(course_name)
+            st.write(course_media[course_name][2])
+            st.container
             syllabus = course_media[course_name][0]  # file path
             syllabus_tts = course_media[course_name][1]
             st.audio(syllabus_tts)
@@ -832,6 +840,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
