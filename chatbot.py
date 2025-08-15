@@ -157,23 +157,16 @@ if st.session_state.page == 2:
     # Scatterplot image
     scatter_path = os.path.join(base_path, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
-
-    # -----------------------------
-    # User key input (persistent)
-    # -----------------------------
-    #st.text_input("Enter use key", key="user_key")  # updates st.session_state.user_key
-    
     
     st.session_state['use_key'] = get_key()
     key = st.session_state['use_key']
 
-
-    # Local “global-like” variable for convenience
     st.write("Your key is:", key)
 
     # -----------------------------
     # Access control & navigation
     # -----------------------------
+    
     access_keys = ["pibble67"]
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -661,17 +654,6 @@ if st.session_state.page == 4:
 
             st.plotly_chart(fig, use_container_width=True)
 
-            # Defunct image download
-            #img_bytes = fig.to_image(format="png")
-            #btn_label = f"Download {graph_type} as PNG"
-            #st.download_button(
-            #    label=btn_label,
-            #    data=img_bytes,
-            #    file_name=f"{graph_type.replace(' ', '_').lower()}.png",
-            #    mime="image/png"
-            #)
-
-
         # Statistical calculations display
         if stat_functions:
             st.subheader("Additional Statistical Calculations")
@@ -809,11 +791,11 @@ if st.session_state.page >= 3:
 if st.session_state.page == 5:
     st.title("Account Info")
     st.write("Find your account info below.")
-    key_expandable = st.expander(label="Account specifics ")
+    used_key = st.session_state['use_key']
+    key_expandable = st.expander(label="Account specifics")
     with key_expandable:
         # safely get the user_key from session_state, or show default text
-        key_used = st.session_state['use_key']
-        st.write(f"Currently logged in using key: {key_used}")
+        st.write(f"Currently logged in using key: {used_key}")
         ID = None
         st.write("Your account ID is: ", ID)
 
@@ -888,6 +870,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
