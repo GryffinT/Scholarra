@@ -777,6 +777,8 @@ if st.session_state.page >= 3:
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
+    st.title("Account Info")
+    st.write("Find your account info below.")
     key_expandable = st.expander(label="Account specifics ")
     with key_expandable:
         # safely get the user_key from session_state, or show default text
@@ -798,6 +800,7 @@ if st.session_state.page == 5:
         AGE = None
         st.write("Your name is ", NAME)
         st.write("Your age is ", AGE)
+
 
 
 
