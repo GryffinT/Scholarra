@@ -18,6 +18,8 @@ from rapidfuzz import process
 import asyncio
 import aiohttp
 
+key = None
+
 
 st.markdown(
     """
@@ -119,7 +121,8 @@ elif st.session_state.page == 2:
     scatter_path = os.path.join(base_path, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
     st.header("")
-    global key = st.text_input("Enter use key")
+    global key
+    key = st.text_input("Enter use key")
     access_keys = ["pibble67"]
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -747,6 +750,7 @@ if st.session_state.page == 5:
     key_expandable = st.expander(label="Personal Key")
     with key_expandable:
         st.write(key)
+
 
 
 
