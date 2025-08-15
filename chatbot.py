@@ -132,7 +132,7 @@ elif st.session_state.page == 2:
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-if st.session_state.page == 3 or st.session_state.page == 4 or st.session_state.page == 5 or st.session_state.page == 6:
+if st.session_state.page >= 3
     main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
     if main_switch == "Grapher":
         st.session_state.page = 4
@@ -742,6 +742,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
