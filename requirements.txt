@@ -11,3 +11,4 @@ scikit-learn
 rapidfuzz
 aiohttp
 asyncio
+pdf2image
