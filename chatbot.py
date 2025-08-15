@@ -20,6 +20,15 @@ import asyncio
 import aiohttp
 from pdf2image import convert_from_path
 
+def progress_bar(loading_text, page):
+    bar = st.progress(0, text=loading_text)
+    for percent_complete in range(100):
+        time.sleep(0.01)
+        bar.progress(percent_complete + 1, text=loading_text)
+    time.sleep(1)
+    bar.empty()
+    st.session_state.page = page
+
 key = None
 def get_key():
     user_key = st.text_input("Enter use key")
@@ -754,18 +763,7 @@ if st.session_state.page == 4:
 
 # ---------------- PAGE 3-5 (Notes) ----------------
 
-if st.session_state.page >= 3:
-
-    def progress_bar(loading_text, page):
-        bar = st.progress(0, text=loading_text)
-        for percent_complete in range(100):
-            time.sleep(0.01)
-            bar.progress(percent_complete + 1, text=loading_text)
-        time.sleep(1)
-        bar.empty()
-        st.session_state.page = page
-        
-    num = 0
+if st.session_state.page >= 3:        
     
     with st.sidebar:
         st.header("Scholarra terminal")
@@ -774,8 +772,8 @@ if st.session_state.page >= 3:
         if st.session_state.page >= 3:
             main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
             if main_switch == "Login":
-                progress_bar("Loading login screen", 1)
-                num += 1
+                st.session_state.page = 8
+                
             if main_switch == "Grapher":
                 st.session_state.page = 4
             if main_switch == "Messager":
@@ -888,7 +886,15 @@ if st.session_state.page == 7:
     elif entered_course_key:
         st.error("Invalid course key.")
 
+# ---------------- PAGE 8 (Loading Screen) ----------------
+
+if st.session_state.page == 8:
+    progress_bar("Loading", 1)
+
+
+
         
+
 
 
 
