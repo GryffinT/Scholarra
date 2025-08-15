@@ -797,7 +797,8 @@ if st.session_state.page == 5:
         NAME = None
         AGE = None
         st.write("Your name is ", NAME)
-        st.wrote("Your name is ", AGE)
+        st.write("Your age is ", AGE)
+
 
 
 
