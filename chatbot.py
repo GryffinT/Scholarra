@@ -845,6 +845,9 @@ if st.session_state.page == 7:
                 if segment_completion:
                     st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                     st.balloons()
+            lesson_one_expander = st.expander(label="Lesson one")
+            with lesson_one_expander:
+                st.write("XYZ")
                 
         else:
             st.warning("This course key is not accepted.")
@@ -852,6 +855,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
