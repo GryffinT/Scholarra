@@ -810,7 +810,7 @@ if st.session_state.page == 5:
     key_expandable = st.expander(label="Account specifics ")
     with key_expandable:
         # safely get the user_key from session_state, or show default text
-        key_used = st.write(st.session_state.use_key)
+        key_used = st.session_state['use_key']
         st.write(f"Currently logged in using key: {key_used}")
         ID = None
         st.write("Your account ID is: ", ID)
@@ -886,6 +886,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
