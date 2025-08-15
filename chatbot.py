@@ -281,12 +281,6 @@ if st.session_state.page == 3:
                     urls.append(url)
             return urls
         
-        # -----------------------------
-        # Generate GPT answer
-        # -----------------------------
-        def answer_user(user_input):
-            main_topic, sub_type = classify_topic(user_input)
-            urls = build_urls(user_input, main_topic, sub_type)
          # -----------------------------
          # Sources dictionary
          # -----------------------------
@@ -800,6 +794,7 @@ if st.session_state.page == 5:
         AGE = None
         st.write("Your name is ", NAME)
         st.write("Your age is ", AGE)
+
 
 
 
