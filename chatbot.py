@@ -190,7 +190,10 @@ if st.session_state.page >= 3:
         st.session_state.page = 7
 
 if st.session_state.page == 3:
-    selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)"])
+    AI_expander = st.expander("Control panel")
+    with AI_expander:
+        st.header("Scholarra control panel")
+        selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)"])
     if selection == "Standard":
         st.title("Scholarra interface")
         st.markdown("""Powered by Open AI APIs""")
@@ -865,6 +868,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
