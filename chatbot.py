@@ -807,18 +807,20 @@ if st.session_state.page == 7:
     accepted_courses = ["Koziar's Excel Course"]
 
     entered_course_key = st.text_input("Enter course key")
-
+    course_media = {"Koziar's Excel Course": [os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf")] }
     # Check if the entered key exists and is accepted
     if entered_course_key in student_course_keys:
         course_name = student_course_keys[entered_course_key]
         if course_name in accepted_courses:
             st.title(course_name)
+            st.image((course_media(course_name))[0])
         else:
             st.warning("This course key is not accepted.")
     elif entered_course_key:
         st.error("Invalid course key.")
 
         
+
 
 
 
