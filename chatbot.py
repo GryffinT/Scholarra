@@ -120,7 +120,7 @@ elif st.session_state.page == 2:
     st.header("")
     # This creates a session_state entry called "user_key"
     if "key" not in st.session_state:
-        st.session_state['key'] = st.textinput("Enter use key")
+        st.session_state['key'] = st.text_input("Enter use key")
     
     # Access it anywhere in the app safely
     key = st.session_state.user_key
@@ -753,6 +753,7 @@ if st.session_state.page == 5:
     key_expandable = st.expander(label="Personal Key")
     with key_expandable:
         st.write(st.session_state.get("user_key", "No key entered yet"))
+
 
 
 
