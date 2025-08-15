@@ -133,13 +133,19 @@ elif st.session_state.page == 2:
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 if st.session_state.page == 3 or st.session_state.page == 4 or st.session_state.page == 5 or st.session_state.page == 6:
-    main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login"])
+    main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
     if main_switch == "Grapher":
         st.session_state.page = 4
     if main_switch == "Messager":
         st.session_state.page = 3
     if main_switch == "Login":
         st.session_state.page = 1
+    if main_switch == "Account Info":
+        st.session_state.page = 5
+    if main_switch == "Analytics":
+        st.session_state.page = 6
+    if main_switch == "Courses":
+        st.session_state.page = 7
 
 if st.session_state.page == 3:
     selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)"])
@@ -736,6 +742,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
