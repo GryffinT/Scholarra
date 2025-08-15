@@ -803,9 +803,10 @@ if st.session_state.page == 6:
 # ---------------- PAGE 7 (Courses) ----------------
 
 if st.session_state.page == 7:
-    course = st.selectbox(label="Course selection", ["Excel"])
+    course = st.selectbox("Course selection", ["Excel"])
     if course == "Excel":
         
+
 
 
 
