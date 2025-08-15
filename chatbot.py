@@ -193,7 +193,7 @@ if st.session_state.page == 3:
     AI_expander = st.expander("Control panel")
     with AI_expander:
         st.header("Scholarra control panel")
-        st.write("Scholarra is a LLM through openai's API utilizing GPT-5. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.)
+        st.write("Scholarra is a LLM through openai's API utilizing GPT-5. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
         selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)"])
         
     if selection == "Standard":
@@ -870,6 +870,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
