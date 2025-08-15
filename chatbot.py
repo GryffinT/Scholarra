@@ -795,6 +795,18 @@ if st.session_state.page == 5:
         st.write("Your name is ", NAME)
         st.write("Your age is ", AGE)
 
+# ---------------- PAGE 6 (Analytics) ----------------
+
+if st.session_state.page == 6
+
+# ---------------- PAGE 7 (Courses) ----------------
+
+if st.session_state.page == 7:
+    course = st.expander(label="Course selection", ["Excel"])
+    if course == "Excel":
+        
+
+
 
 
 
