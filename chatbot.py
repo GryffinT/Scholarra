@@ -824,6 +824,8 @@ if st.session_state.page == 7:
             st.write(course_media[course_name][2])
             syllabus_expander = st.expander(label="Syllabus")
             with syllabus_expander:
+                st.header("Course syllabus")
+                st.write("Welcome! Here you can find the syllabus for the course, which you can either download in PDF format or listen to below.")
                 syllabus = course_media[course_name][0]  # file path
                 syllabus_tts = course_media[course_name][1]
                 st.audio(syllabus_tts)
@@ -841,6 +843,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
