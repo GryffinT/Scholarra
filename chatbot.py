@@ -822,10 +822,11 @@ if st.session_state.page == 7:
         if course_name in accepted_courses:
             st.title(course_name)
             st.write(course_media[course_name][2])
-            st.container
-            syllabus = course_media[course_name][0]  # file path
-            syllabus_tts = course_media[course_name][1]
-            st.audio(syllabus_tts)
+            syllabus_expander = st.expander(label="Syllabus")
+            with syllabus_expander:
+                syllabus = course_media[course_name][0]  # file path
+                syllabus_tts = course_media[course_name][1]
+                st.audio(syllabus_tts)
             
             with open(syllabus, "rb") as f:  # read file contents
                 st.download_button(
@@ -840,6 +841,7 @@ if st.session_state.page == 7:
         st.error("Invalid course key.")
 
         
+
 
 
 
