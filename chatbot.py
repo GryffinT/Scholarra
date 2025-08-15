@@ -285,8 +285,7 @@ if st.session_state.page == 3:
                 messages=[{"role": "user", "content": search_instruction}]
             )
             
-            return response.choices[0].message["content"]
-
+            return response.choices[0].message.content
             
         def extract_sources(Intake_message):
             generation_instructions = " DO THIS: Scan through this text and locate all sources within it, moreover note down each source used and write a little description on each source" + Intake_message.content
@@ -737,6 +736,7 @@ if st.session_state.page >= 3:
         )
 
 # ---------------- PAGE 5 (User Info) ----------------
+
 
 
 
