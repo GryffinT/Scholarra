@@ -78,54 +78,79 @@ if st.session_state.page == 1:
 
 
 # ---------------- PAGE 2 ----------------
-elif st.session_state.page == 2:
+import streamlit as st
+import os
+
+# Example navigation callbacks
+def last_page():
+    st.session_state.page = st.session_state.page - 1
+
+def next_page():
+    st.session_state.page = st.session_state.page + 1
+
+# Base path for images
+base_path = "."
+
+# -----------------------------
+# Initialize session_state variables
+# -----------------------------
+if "page" not in st.session_state:
+    st.session_state.page = 2  # starting on page 2 for this snippet
+if "user_key" not in st.session_state:
+    st.session_state.user_key = ""  # initialize empty
+
+# -----------------------------
+# Page 2 content
+# -----------------------------
+if st.session_state.page == 2:
     st.markdown(
         "<h3 style='text-align: center;'>Scholarra is an online, machine learning study supplement for students, by students..</h3>",
         unsafe_allow_html=True
     )
-    st.header("")
+
     st.markdown(
         "<h5 style='text-align: center;'>How do we help students?</h5>",
         unsafe_allow_html=True
     )
-    st.write("")
     st.markdown(
         "<h6 style='text-align: center;'>Students can interface with course supplements and various study tools to gain better understanding of class material using adaptive machine learning without the intrusive AI-produced work, stunting their growth.</h6>",
         unsafe_allow_html=True
     )
-    st.header("")
+
     st.markdown(
         "<h5 style='text-align: center;'>Teachers, dont feel too left out!</h5>",
         unsafe_allow_html=True
     )
-    st.write("")
     st.markdown(
         "<h6 style='text-align: center;'>By giving students an outlet for independent study, they may produce higher quality work with less teacher guidance, helping them to become more independent, alleviating teacher work load.</h6>",
         unsafe_allow_html=True
     )
-    st.header("")
+
     st.markdown(
         "<h5 style='text-align: center;'>What is Scholarra?</h5>",
         unsafe_allow_html=True
     )
-    st.write("")
     st.markdown(
-        "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Scholarra, our machine learning tutor, powered by openai, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate neccisary statistics for courses such as, AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
+        "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Scholarra, our machine learning tutor, powered by OpenAI, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate necessary statistics for courses such as AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
         unsafe_allow_html=True
     )
-    st.write("")
+
     # Scatterplot image
     scatter_path = os.path.join(base_path, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
-    st.header("")
-    # This creates a session_state entry called "user_key"
-    if "key" not in st.session_state:
-        st.session_state['key'] = st.text_input("Enter use key")
-    
-    # Access it anywhere in the app safely
+
+    # -----------------------------
+    # User key input (persistent)
+    # -----------------------------
+    st.text_input("Enter use key", key="user_key")  # updates st.session_state.user_key
+
+    # Local “global-like” variable for convenience
     key = st.session_state.user_key
     st.write("Your key is:", key)
 
+    # -----------------------------
+    # Access control & navigation
+    # -----------------------------
     access_keys = ["pibble67"]
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -133,6 +158,8 @@ elif st.session_state.page == 2:
     with col2:
         if key in access_keys or key == "Scholar-EG-01":
             st.button("Next", on_click=next_page)
+        else:
+            st.write("Access denied: Invalid key.")
 
 
 # ---------------- PAGE 3 (Student Chat) ----------------
@@ -752,7 +779,14 @@ if st.session_state.page >= 3:
 if st.session_state.page == 5:
     key_expandable = st.expander(label="Personal Key")
     with key_expandable:
-        st.write(st.session_state.get("user_key", "No key entered yet"))
+        # safely get the user_key from session_state, or show default text
+        key = st.session_state.get("user_key", None)
+        if key:
+            st.write("Your key is:", key)
+        else:
+            st.write("No key entered yet")
+
+
 
 
 
