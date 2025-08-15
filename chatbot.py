@@ -804,13 +804,22 @@ if st.session_state.page == 6:
 
 if st.session_state.page == 7:
     student_course_keys = {"KStudent": "Koziar's Excel Course"}
-    teacher_course_keys = {}
     accepted_courses = ["Koziar's Excel Course"]
+
     entered_course_key = st.text_input("Enter course key")
-    if student_course_keys[entered_course_key] in accepted_courses:
-        st.title(student_course_keys[entered_course_key])
+
+    # Check if the entered key exists and is accepted
+    if entered_course_key in student_course_keys:
+        course_name = student_course_keys[entered_course_key]
+        if course_name in accepted_courses:
+            st.title(course_name)
+        else:
+            st.warning("This course key is not accepted.")
+    elif entered_course_key:
+        st.error("Invalid course key.")
 
         
+
 
 
 
