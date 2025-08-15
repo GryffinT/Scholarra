@@ -744,9 +744,10 @@ if st.session_state.page >= 3:
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
-    key_expandable = st.expandable(label="Personal Key")
+    key_expandable = st.expander(label="Personal Key")
     with key_expandable:
         st.write(key)
+
 
 
 
