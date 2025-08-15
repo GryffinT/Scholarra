@@ -787,8 +787,9 @@ if st.session_state.page >= 3:
             st.write("Sources")
             
 # ---------------- PAGE 5 (info Database) ----------------
-info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin Plan", "NAME": "Admins", "AGE": "N/A" }}
-
+info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A" }}
+plan_info = {"Admin": "As a site admin you have unrestricted access to all features of the app, free of cost.", "User": "As a user you have access to the entire site except for developer features."}
+        
                                                               
 # ---------------- PAGE 5 (User Info) ----------------
 
@@ -801,11 +802,13 @@ if st.session_state.page == 5:
         # safely get the user_key from session_state, or show default text
         st.write(f"Currently logged in using key: {used_key}")
         ID = None
-        st.write("Your account ID is: ", info_dict[used_key]["ID"])
+        st.write("Account ID is: ", info_dict[used_key]["ID"])
 
     plan_expandable = st.expander(label="Subscription")
     with plan_expandable:
         st.write("Your're subscribed to the ", info_dict[used_key]["PLAN"], " plan.")
+        st.write(plan_info[(info_dict[used_key]["PLAN"])])
+        
     plan_expandable = st.expander(label="Personal information")
     with plan_expandable:
         st.write("Your name is ", info_dict[used_key]["NAME"])
@@ -871,6 +874,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
