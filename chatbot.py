@@ -178,7 +178,7 @@ if st.session_state.page == 2:
         if key in access_keys or key == "Scholar-EG-01":
             st.button("Next", on_click=next_page)
         else:
-            st.warning("Access denied: Invalid key.", icon="⚠️")
+    st.warning("Access denied: Invalid key.", icon="⚠️")
 
 
 # ---------------- PAGE 3 (Student Chat) ----------------
@@ -886,6 +886,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
