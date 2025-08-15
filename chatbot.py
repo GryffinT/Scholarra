@@ -786,6 +786,16 @@ if st.session_state.page == 5:
         else:
             st.write("No key entered yet")
 
+    plan_expandable = st.expander(label="Name")
+    with plan_expandable:
+        PLAN = None
+        st.write("Your're subscribed to the ", PLAN, " plan.")
+    plan_expandable = st.expander(label="Name")
+    with plan_expandable:
+        PLAN = None
+        st.write("Your're subscribed to the ", PLAN, " plan.")
+
+
 
 
 
