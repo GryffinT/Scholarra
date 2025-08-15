@@ -177,7 +177,7 @@ if st.session_state.page == 2:
     with col2:
         if key in access_keys or key == "Scholar-EG-01":
             st.button("Next", on_click=next_page)
-        else:
+        elif key not in access_keys or key != "Scholar-EG-01" and key != "":
             with col1:
                 st.warning("Access denied: Invalid key.", icon="⚠️")
 
@@ -887,6 +887,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
