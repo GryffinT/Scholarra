@@ -797,7 +797,8 @@ if st.session_state.page == 5:
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
-if st.session_state.page == 6
+if st.session_state.page == 6:
+    pass
 
 # ---------------- PAGE 7 (Courses) ----------------
 
@@ -805,6 +806,7 @@ if st.session_state.page == 7:
     course = st.expander(label="Course selection", ["Excel"])
     if course == "Excel":
         
+
 
 
 
