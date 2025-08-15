@@ -801,16 +801,15 @@ if st.session_state.page == 5:
         # safely get the user_key from session_state, or show default text
         st.write(f"Currently logged in using key: {used_key}")
         ID = None
-        st.write("Your account ID is: ", ID)
+        st.write("Your account ID is: ", info_dict[used_key]["ID"])
 
     plan_expandable = st.expander(label="Subscription")
     with plan_expandable:
-        PLAN = None
-        st.write("Your're subscribed to the ", PLAN, " plan.")
+        st.write("Your're subscribed to the ", info_dict[used_key]["PLAN"], " plan.")
     plan_expandable = st.expander(label="Personal information")
     with plan_expandable:
-        st.write("Your name is ", info_dict[used_key][2])
-        st.write("Your age is ", info_dict[used_key][3])
+        st.write("Your name is ", info_dict[used_key]["NAME"])
+        st.write("Your age is ", info_dict[used_key]["AGE"])
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
@@ -872,6 +871,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
