@@ -776,7 +776,7 @@ if st.session_state.page >= 3:
             if main_switch == "Messager":
                 progress_bar("Loading AI interface.", 3)
             if main_switch == "Grapher":
-                progress_bar("Loading Scolistics, 4)
+                progress_bar("Loading Scolistics", 4)
             if main_switch == "Account Info":
                 progress_bar("Loading account info", 5)
             if main_switch == "Analytics":
@@ -886,6 +886,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
