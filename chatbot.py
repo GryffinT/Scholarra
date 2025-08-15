@@ -828,19 +828,20 @@ if st.session_state.page == 7:
                 syllabus_tts = course_media[course_name][1]
                 st.audio(syllabus_tts)
             
-            with open(syllabus, "rb") as f:  # read file contents
-                st.download_button(
-                    label="Download Syllabus",
-                    data=f,  # pass the file contents, not the path
-                    file_name=os.path.basename(syllabus),  # name for the downloaded file
-                    mime="application/pdf"
-                )
+                with open(syllabus, "rb") as f:  # read file contents
+                    st.download_button(
+                        label="Download Syllabus",
+                        data=f,  # pass the file contents, not the path
+                        file_name=os.path.basename(syllabus),  # name for the downloaded file
+                        mime="application/pdf"
+                    )
         else:
             st.warning("This course key is not accepted.")
     elif entered_course_key:
         st.error("Invalid course key.")
 
         
+
 
 
 
