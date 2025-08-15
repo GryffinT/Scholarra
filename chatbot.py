@@ -815,15 +815,22 @@ if st.session_state.page == 7:
         course_name = student_course_keys[entered_course_key]
         if course_name in accepted_courses:
             st.title(course_name)
-            poppler_path = r"C:\poppler\bin"
-            syllabus = convert_from_path(course_media[course_name][0], poppler_path=poppler_path)
-            st.image(syllabus[0])
+            syllabus = course_media[course_name][0]  # file path
+            
+            with open(syllabus, "rb") as f:  # read file contents
+                st.download_button(
+                    label="Download Syllabus",
+                    data=f,  # pass the file contents, not the path
+                    file_name=os.path.basename(syllabus),  # name for the downloaded file
+                    mime="application/pdf"
+                )
         else:
             st.warning("This course key is not accepted.")
     elif entered_course_key:
         st.error("Invalid course key.")
 
         
+
 
 
 
