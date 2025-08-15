@@ -803,10 +803,15 @@ if st.session_state.page == 6:
 # ---------------- PAGE 7 (Courses) ----------------
 
 if st.session_state.page == 7:
-    course = st.selectbox("Course selection", ["Excel"])
-    if course == "Excel":
-        st.write("Excel")
+    student_course_keys = {"KStudent": "Koziar's Excel Course"}
+    teacher_course_keys = {}
+    accepted_courses = ["Koziar's Excel Course"]
+    entered_course_key = st.text_input("Enter course key")
+    if student_course_keys[entered_course_key] in accepted_courses:
+        st.title(student_course_keys[entered_course_key])
+
         
+
 
 
 
