@@ -167,7 +167,7 @@ if st.session_state.page == 2:
     # Access control & navigation
     # -----------------------------
     
-    access_keys = ["pibble67"]
+    access_keys = ["pibble67", "3651881"]
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.button("Back", on_click=last_page)
@@ -785,7 +785,11 @@ if st.session_state.page >= 3:
         side_source_expander = st.expander("AI sources")
         with side_source_expander:
             st.write("Sources")
+            
+# ---------------- PAGE 5 (info Database) ----------------
+info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin Plan", "NAME": "Admins", "AGE": "N/A" }}
 
+                                                              
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
@@ -805,10 +809,8 @@ if st.session_state.page == 5:
         st.write("Your're subscribed to the ", PLAN, " plan.")
     plan_expandable = st.expander(label="Personal information")
     with plan_expandable:
-        NAME = None
-        AGE = None
-        st.write("Your name is ", NAME)
-        st.write("Your age is ", AGE)
+        st.write("Your name is ", info_dict[used_key][2])
+        st.write("Your age is ", info_dict[used_key][3])
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
@@ -870,6 +872,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
