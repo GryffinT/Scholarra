@@ -772,24 +772,17 @@ if st.session_state.page >= 3:
         if st.session_state.page >= 3:
             main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
             if main_switch == "Login":
-                progress_bar("Loading login page.", 1)
-                if st.session_state.page == 1:
-                    st.success("Loading successful)
-                               else:
-                               st.error("Error loading requested page, please try again.")
-                
-            if main_switch == "Grapher":
-                st.session_state.page = 4
+                progress_bar("Loading login page.", 2)
             if main_switch == "Messager":
-                st.session_state.page = 3
-            #if main_switch == "Login":
-                #st.session_state.page = 1
+                progress_bar("Loading AI interface.", 3)
+            if main_switch == "Grapher":
+                progress_bar("Loading Scolistics, 4)
             if main_switch == "Account Info":
-                st.session_state.page = 5
+                progress_bar("Loading account info", 5)
             if main_switch == "Analytics":
-                st.session_state.page = 6
+                progress_bar("Loading Scholarra analytics", 6)
             if main_switch == "Courses":
-                st.session_state.page = 7
+                progress_bar("Loading courses", 7)
             
         notes_expander = st.expander("Notes")
         with notes_expander:
@@ -893,6 +886,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
