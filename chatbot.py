@@ -836,13 +836,22 @@ if st.session_state.page == 7:
                         data=f,  # pass the file contents, not the path
                         file_name=os.path.basename(syllabus),  # name for the downloaded file
                         mime="application/pdf"
+                        
+            
                     )
+
+                segment_completion = st.checkbox("Completed")
+                if segment_completion == true:
+                    st.success("Congratulations on completing this segment! You can close it and continue to the next one.)
+                    st.balloons
+                
         else:
             st.warning("This course key is not accepted.")
     elif entered_course_key:
         st.error("Invalid course key.")
 
         
+
 
 
 
