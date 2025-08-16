@@ -178,7 +178,7 @@ if st.session_state.page == 2:
     with col2:
        login_buttom = st.button("Login")
     
-    if login_button:
+    if login_button == True:
         st.login_modal.open()
     
     if login_modal.is_open():
@@ -1003,6 +1003,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
