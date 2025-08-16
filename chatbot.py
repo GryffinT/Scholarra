@@ -904,8 +904,8 @@ if st.session_state.page == 6:
 # ---------------- PAGE 7 (Courses) ----------------
 
 if st.session_state.page == 7:
-    student_course_keys = {"KStudent": "Koziar's Excel Course"}
-    accepted_courses = ["Koziar's Excel Course"]
+    student_course_keys = {"KStudent": "MO-200 Microsoft Excel (Office 2019)"}
+    accepted_courses = ["MO-200 Microsoft Excel (Office 2019)"]
 
     entered_course_key = st.text_input("Enter course key")
     
@@ -967,6 +967,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
