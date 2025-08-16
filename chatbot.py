@@ -333,13 +333,14 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
             
         def extract_sources(Intake_message):
-            generation_instructions = 
-            "Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
-            "1. Source Name & Type (e.g., journal, news outlet, encyclopedia).\n"
-            "2. Credibility/Certifications (e.g., peer-reviewed, government, reputable publisher).\n"
-            "3. Information Used (what detail from the source was included in the text).\n"
-            "4. Link to the specific article/page. If unavailable, provide the homepage link.\n\n" 
-            + Intake_message
+            generation_instructions = (
+                f"Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
+                "1. Source Name & Type (e.g., journal, news outlet, encyclopedia).\n"
+                "2. Credibility/Certifications (e.g., peer-reviewed, government, reputable publisher).\n"
+                "3. Information Used (what detail from the source was included in the text).\n"
+                "4. Link to the specific article/page. If unavailable, provide the homepage link.\n\n" 
+                + Intake_message
+            )
             
             response = client.chat.completions.create(
                 model="gpt-5-mini",
@@ -943,6 +944,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
