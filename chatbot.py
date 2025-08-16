@@ -756,9 +756,11 @@ if st.session_state.page == 4:
                 reg_rows.append(f"X-intercept: {xi_str}")
 
             if reg_rows:
-                st.markdown("**Regression Statistics:**")
-                for line in reg_rows:
-                    st.write(f"- {line}")
+                regression_expander = st.expander("Regression statistics")
+                with regression_expander:
+                    st.header("Regression statistics")
+                    for line in reg_rows:
+                        st.write(f"- {line}")
             if "Linear Regression (slope & intercept)" in stat_functions:
                 reg_rows.append(f"Slope: {stats_dict['regression_slope']:.4f}")
                 reg_rows.append(f"Y Intercept: {stats_dict['regression_intercept']:.4f}")
@@ -909,6 +911,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
