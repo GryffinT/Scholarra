@@ -756,9 +756,9 @@ if st.session_state.page == 4:
                 reg_rows.append(f"X-intercept: {xi_str}")
 
             if reg_rows:
-                regression_expander = st.expander("Regression statistics")
+                regression_expander = st.expander("Regression calculations")
                 with regression_expander:
-                    st.header("Regression statistics")
+                    st.header("Regression calculations")
                     for line in reg_rows:
                         st.write(f"- {line}")
             if "Linear Regression (slope & intercept)" in stat_functions:
@@ -767,19 +767,22 @@ if st.session_state.page == 4:
 
             # T-test comparing means of y-values in Dataset 1 and Dataset 2
             if "T-test: Compare means of Dataset 1 and Dataset 2" in stat_functions:
-                if df2 is None:
-                    st.warning("Dataset 2 not provided. Cannot perform T-test.")
-                else:
-                    t_stat, p_val = stats.ttest_ind(df1['y'], df2['y'], equal_var=False)
-                    st.write("### T-test: Compare means of Dataset 1 and Dataset 2 (y values)")
-                    st.write(f"T-statistic: {t_stat:.4f}")
-                    st.write(f"P-value: {p_val:.6f}")
-
-                    alpha = 0.05
-                    if p_val < alpha:
-                        st.success(f"Reject the null hypothesis at α={alpha}: The means are statistically different.")
+                t_test_expander = st.expander("T test calculations")
+                with t_test_expander:
+                    st.header("T-test calculations")
+                    st.write("A T-test is a calculation to determine if there is a significant difference between two or more datasets.)
+                    if df2 is None:
+                        st.warning("Unable to conduct T-test, did you forget to fill out data for dataset 2?")
                     else:
-                        st.info(f"Fail to reject the null hypothesis at α={alpha}: No statistically significant difference between means.")
+                        t_stat, p_val = stats.ttest_ind(df1['y'], df2['y'], equal_var=False)
+                        st.write(f"T-statistic: {t_stat:.4f}")
+                        st.write(f"P-value: {p_val:.6f}")
+    
+                        alpha = 0.05
+                        if p_val < alpha:
+                            st.success(f"Null hypothesis rejected at an αlpha of {alpha} because The means of the datasets are statistically different.")
+                        else:
+                            st.info(f"Null hypotehsis accepted at an alpha of {alpha} there is no statistically significant difference between the means oof the datasets.")
 
     else:
         st.info("Select at least one graph type to display.")
@@ -911,6 +914,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
