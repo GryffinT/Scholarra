@@ -415,6 +415,12 @@ if st.session_state.page == 4:
         graph_label = st.text_input("Graph label:")
         x_label = st.text_input("X-axis label:", value="x")
         y_label = st.text_input("Y-axis label:", value="y")
+        func_input = None
+        graph_types = st.multiselect(
+            "Select one or more graph types to display:",
+            ["Line chart", "Bar chart", "Area chart", "Scatter plot"],
+            default=["Line chart"]
+        )
 
     # Re-formatted dataset 1
     
@@ -440,6 +446,51 @@ if st.session_state.page == 4:
         """)
         data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
 
+    # Statistical options selection
+
+    statistical_expander = st.expander("Statistics options")
+    with statistical_expander:
+
+        # Which data sets to use for the calculations
+        
+        calc_on_option = st.selectbox(
+            "Calculate statistics on:",
+            options=["Dataset 1", "Dataset 2", "Both Combined"],
+            index=0
+        )
+
+        # Calculation selection
+        
+        stat_functions = st.multiselect("Select additional statistical calculations:",
+            [
+                "Mean",
+                "Median",
+                "Mode",
+                "Standard Deviation",
+                "Standard Error of the Mean",
+                "Linear Regression (slope & intercept)",
+                "Statistical Significance (p-value for slope)",
+                "X Intercept",
+                "Correlation Coefficient",
+                "T-test: Compare means of Dataset 1 and Dataset 2"
+            ],
+            default=[]
+        )
+        
+        # Stats visualization selection
+        
+        visualization_options = st.multiselect(
+            "Select additional visual elements on graphs:",
+            [
+                "Show Standard Deviation as error bars",
+                "Show Standard Error of the Mean (SEM) as error bars"
+            ],
+            default=[]
+        )
+
+        num_points = None
+        
+
     def safe_eval_func(expr, x_vals):
         # Use numexpr if available for safer evaluation, else fallback
         try:
@@ -455,51 +506,6 @@ if st.session_state.page == 4:
             except Exception as e2:
                 st.error(f"Error evaluating function: {e2}")
                 return None
-
-    graph_types = st.multiselect(
-        "Select one or more graph types to display:",
-        ["Line chart", "Bar chart", "Area chart", "Scatter plot"],
-        default=["Line chart"]
-    )
-
-    stat_functions = st.multiselect(
-        "Select additional statistical calculations:",
-        [
-            "Mean",
-            "Median",
-            "Mode",
-            "Standard Deviation",
-            "Standard Error of the Mean",
-            "Linear Regression (slope & intercept)",
-            "Statistical Significance (p-value for slope)",
-            "X Intercept",
-            "Correlation Coefficient",
-            "T-test: Compare means of Dataset 1 and Dataset 2"
-        ],
-        default=[]
-    )
-    
-    # New visualization options for error bars
-    visualization_options = st.multiselect(
-        "Select additional visual elements on graphs:",
-        [
-            "Show Standard Deviation as error bars",
-            "Show Standard Error of the Mean (SEM) as error bars"
-        ],
-        default=[]
-    )
-
-    calc_on_option = st.selectbox(
-        "Calculate statistics on:",
-        options=["Dataset 1", "Dataset 2", "Both Combined"],
-        index=0
-    )
-
-    num_points = st.selectbox(
-        "If no data entered in Dataset 1, select number of points to generate:",
-        options=list(range(1, 101)),
-        index=9
-    )
 
     # Parse Dataset 1 or generate fallback
     if data_input_1.strip():
@@ -890,6 +896,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
