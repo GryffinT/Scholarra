@@ -218,7 +218,7 @@ if st.session_state.page == 3:
             with st.spinner("Loading AI tutor..."):
                 try:
                     response = client.chat.completions.create(
-                        model="gpt-5",
+                        model="o3-deep-research",
                         messages=st.session_state.chat_history + [{"role": "user", "content": "start"}]
                     )
                     ai_message = response.choices[0].message.content
@@ -236,7 +236,7 @@ if st.session_state.page == 3:
             with st.spinner("Thinking..."):
                 try:
                     response = client.chat.completions.create(
-                        model="gpt-5",
+                        model="o3-deep-research",
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
@@ -270,7 +270,7 @@ if st.session_state.page == 3:
                 "Example output: History, event"
             )
             response = client.chat.completions.create(
-                model="gpt-5",
+                model="o3-deep-research",
                 messages=[{"role": "user", "content": prompt}]
             )
             classification = response.choices[0].message.content.strip()
@@ -326,7 +326,7 @@ if st.session_state.page == 3:
             )
             
             response = client.chat.completions.create(
-                model="gpt-5",
+                model="o3-deep-research",
                 messages=[{"role": "user", "content": search_instruction}]
             )
             
@@ -936,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
