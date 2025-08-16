@@ -800,7 +800,7 @@ if st.session_state.page == 4:
 if st.session_state.page >= 3:        
     
     with st.sidebar:
-        st.sidebar.image(logo[0], use_column_width=True)
+        st.sidebar.image(logo[0], use_container_width=True)
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
@@ -923,6 +923,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
