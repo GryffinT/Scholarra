@@ -157,10 +157,10 @@ if st.session_state.page == 2:
     scatter_path = os.path.join(base_path, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
     
-    st.session_state['use_key'] = get_key()
-    key = st.session_state['use_key']
+    #st.session_state['use_key'] = get_key()
+    #key = st.session_state['use_key']
 
-    st.write("Your key is:", key)
+    #st.write("Your key is:", key)
 
     # -----------------------------
     # Access control & navigation
@@ -168,16 +168,16 @@ if st.session_state.page == 2:
     
     access_keys = ["pibble67", "3651881"]
     col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.button("Back", on_click=last_page)
     with col2:
+        st.button("Back", on_click=last_page)
+    with col3:
         st.button("Login")
         #if key in access_keys or key == "Scholar-EG-01":
             #st.button("Next", on_click=next_page)
         #elif key not in access_keys or key != "Scholar-EG-01" and key != "":
             #with col1:
                 #st.warning("Access denied: Invalid key.", icon="⚠️")
-    with col3:
+    with col4:
         st.button("Sign up")
 
 
@@ -986,6 +986,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
