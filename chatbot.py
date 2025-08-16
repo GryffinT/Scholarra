@@ -787,8 +787,8 @@ if st.session_state.page >= 3:
             st.write("Sources")
             
 # ---------------- PAGE 5 (info Database) ----------------
-info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A" }}
-plan_info = {"Admin": "As a site admin you have unrestricted access to all features of the app, free of cost.", "User": "As a user you have access to the entire site except for developer features."}
+info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A", "EMAIL": "N/A:" }}
+plan_info = {"Admin": "As a site admin you have unrestricted access to all features of the app, free of cost.", "User": "As a user you have free access to the entire site except for developer features."}
         
                                                               
 # ---------------- PAGE 5 (User Info) ----------------
@@ -811,8 +811,9 @@ if st.session_state.page == 5:
         
     plan_expandable = st.expander(label="Personal information")
     with plan_expandable:
-        st.write("Your name is ", info_dict[used_key]["NAME"])
-        st.write("Your age is ", info_dict[used_key]["AGE"])
+        st.write("Email:", info_dict[used_key]["EMAIL"])
+        st.write("Name: ", info_dict[used_key]["NAME"])
+        st.write("Age: ", info_dict[used_key]["AGE"])
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
@@ -874,6 +875,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
