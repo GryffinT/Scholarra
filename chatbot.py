@@ -113,7 +113,7 @@ base_path = "."
 # Initialize session_state variables
 # -----------------------------
 if "page" not in st.session_state:
-    st.session_state.page = 2  # starting on page 2 for this snippet
+    st.session_state.page = 2  
 if "user_key" not in st.session_state:
     st.session_state.user_key = ""  # initialize empty
 
@@ -171,11 +171,14 @@ if st.session_state.page == 2:
     with col1:
         st.button("Back", on_click=last_page)
     with col2:
-        if key in access_keys or key == "Scholar-EG-01":
-            st.button("Next", on_click=next_page)
-        elif key not in access_keys or key != "Scholar-EG-01" and key != "":
-            with col1:
-                st.warning("Access denied: Invalid key.", icon="⚠️")
+        st.button("Login")
+        #if key in access_keys or key == "Scholar-EG-01":
+            #st.button("Next", on_click=next_page)
+        #elif key not in access_keys or key != "Scholar-EG-01" and key != "":
+            #with col1:
+                #st.warning("Access denied: Invalid key.", icon="⚠️")
+    with col3:
+        st.button("Sign up")
 
 
 # ---------------- PAGE 3 (Student Chat) ----------------
@@ -983,6 +986,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
