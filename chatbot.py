@@ -333,7 +333,7 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
             
         def extract_sources(Intake_message):
-            generation_instructions = " DO THIS: Scan through this text and locate all sources within it, moreover note down each source used and write a little description on each source" + Intake_message.content
+            generation_instructions = " DO THIS: Scan through this text and locate all sources within it, moreover note down each source used and write a little description on each source" + Intake_message
             response = client.chat.completions.create(
                 model="gpt-5",
                 messages=[{"role":"user", "content":generation_instructions}]
@@ -936,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
