@@ -121,6 +121,7 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
+    st.button("Back", on_click=last_page)
     st.markdown(
         "<h3 style='text-align: center;'>Scholarra is an online, machine learning study supplement for students, by students..</h3>",
         unsafe_allow_html=True
@@ -169,15 +170,13 @@ if st.session_state.page == 2:
     access_keys = ["pibble67", "3651881"]
     col1, col2, col3, col4 = st.columns(4)
     with col2:
-        st.button("Back", on_click=last_page)
-    with col3:
         st.button("Login")
         #if key in access_keys or key == "Scholar-EG-01":
             #st.button("Next", on_click=next_page)
         #elif key not in access_keys or key != "Scholar-EG-01" and key != "":
             #with col1:
                 #st.warning("Access denied: Invalid key.", icon="⚠️")
-    with col4:
+    with col3:
         st.button("Sign up")
 
 
@@ -986,6 +985,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
