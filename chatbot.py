@@ -415,7 +415,7 @@ if st.session_state.page == 4:
         graph_label = st.text_input("Graph label:")
         x_label = st.text_input("X-axis label:", value="x")
         y_label = st.text_input("Y-axis label:", value="y")
-        func_input = None
+        func_input = ""
         graph_types = st.multiselect(
             "Select one or more graph types to display:",
             ["Line chart", "Bar chart", "Area chart", "Scatter plot"],
@@ -896,6 +896,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
