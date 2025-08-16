@@ -842,10 +842,10 @@ if st.session_state.page >= 3:
             )
         side_source_expander = st.expander("AI sources")
         with side_source_expander:
-            if AI_sources.len() > 1:
-                st.write(AI_sources)
-            else:
+            if AI_sources == "":
                 st.write("Here you can find the source output from the AI research assistant.")
+            else:
+                st.write(AI_sources)
             
 # ---------------- PAGE 5 (info Database) ----------------
 info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A", "EMAIL": "N/A:" }}
@@ -936,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
