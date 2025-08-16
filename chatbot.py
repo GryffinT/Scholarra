@@ -352,7 +352,19 @@ if st.session_state.page == 3:
         # Streamlit UI
         # -----------------------------
         st.title("Research Assistant")
-        st.info("Scholarra Research Assistant is a prompt engineering experiment using openai's API and extra filteres to produce prompted research through credible sources such as JSTOR, Britannica, WHO, and the Academy of Management Journal, for a full list of availible sources see the \"Accessible sources expander below"\")
+        st.info("Scholarra Research Assistant is a prompt engineering experiment using openai's API and extra filteres to produce prompted research through credible sources such as JSTOR, Britannica, WHO, and the Academy of Management Journal, for a full list of availible sources and more information on the agent, see the Accessible sources and agent info expander below")
+        availible_sources_expander = st.expander("Availible sources and agent info")
+        with availible_sources_expander:
+            st.write("The Scholarra research assistant allows users to interface with a combination of openai's GPT-5-mini and GPT-4o-mini agents loaded with instructions to first determine the prompted topic and then search through a varified source list to produce a factual and neutral desccription, citing sources along the way.")
+            st.write("The availible sources are as follows:")
+            source_rows = []
+            for category, items in SOURCES.items():
+                for name, link in items:
+                    source_rows.append({"Category": category, "Source": name, "Link": link})
+            sources_df = pd.DataFrame(source_rows)
+            st.dataframe(sources_df, use_container_width=True)
+            
+            
         user_input = st.text_input("Ask me about anything:")
         
         if st.button("Get Answer") and user_input.strip():
@@ -944,6 +956,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
