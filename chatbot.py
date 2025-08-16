@@ -339,6 +339,7 @@ if st.session_state.page == 3:
         # Streamlit UI
         # -----------------------------
         st.title("Research Assistant")
+        st.write("Scholarra Research Assistant is a prompt engineering experiment using openai's API and extra filteres to produce prompted research through credible sources such as JSTOR, Britannica, WHO, and the Academy of Management Journal")
         user_input = st.text_input("Ask me about anything:")
         
         if st.button("Get Answer") and user_input.strip():
@@ -923,6 +924,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
