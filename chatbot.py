@@ -765,6 +765,13 @@ if st.session_state.page == 4:
                 reg_rows.append(f"Slope: {stats_dict['regression_slope']:.4f}")
                 reg_rows.append(f"Y Intercept: {stats_dict['regression_intercept']:.4f}")
 
+            # T_TEST WIP
+            
+            t_test_rows = []
+            if "T-test: Compare means of Dataset 1 and Dataset 2" in stat_functions:
+                t_test_rows.append(f"T-statistic: {t_stat:.4f}")
+                t_test_rows.append(f"P-value: {p_val:.6f}")
+
             # T-test comparing means of y-values in Dataset 1 and Dataset 2
             if "T-test: Compare means of Dataset 1 and Dataset 2" in stat_functions:
                 t_test_expander = st.expander("T test calculations")
@@ -775,8 +782,8 @@ if st.session_state.page == 4:
                         st.warning("Unable to conduct T-test, did you forget to fill out data for dataset 2?")
                     else:
                         t_stat, p_val = stats.ttest_ind(df1['y'], df2['y'], equal_var=False)
-                        st.write(f"T-statistic: {t_stat:.4f}")
-                        st.write(f"P-value: {p_val:.6f}")
+                        for line in t_test_rows:
+                            st.write(f"- {line}")
     
                         alpha = 0.05
                         if p_val < alpha:
@@ -914,6 +921,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
