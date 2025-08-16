@@ -408,6 +408,7 @@ def calculate_stats(df):
 if st.session_state.page == 4:
     st.title("Scholistics")
     st.header("Next level graphing and statistics calculator.")
+    st.write("Fill out the desired fields below to plot data points, you can navigate the graph view the navigation tools located on the top right corner of the graph. To download the graph click the camera icon next to the navigation tools.")
 
     # Re=formatted overall graph info
     graph_details_expander = st.expander("Graph details")
@@ -898,6 +899,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
