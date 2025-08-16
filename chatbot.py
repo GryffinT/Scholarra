@@ -19,6 +19,8 @@ from rapidfuzz import process
 import asyncio
 import aiohttp
 from pdf2image import convert_from_path
+from streamlit_modal import Modal
+
 
 def progress_bar(loading_text, page):
     bar = st.progress(0, text=loading_text)
@@ -170,7 +172,12 @@ if st.session_state.page == 2:
     access_keys = ["pibble67", "3651881"]
     col1, col2, col3, col4 = st.columns(4)
     with col2:
-        st.button("Login")
+        login_modal = Modal(key="LOGIN", title="Login")
+        login_screen = st.button("Login")
+        if login_screen:
+            with login_modal.container():
+                st.markdown("Login")
+            
         #if key in access_keys or key == "Scholar-EG-01":
             #st.button("Next", on_click=next_page)
         #elif key not in access_keys or key != "Scholar-EG-01" and key != "":
@@ -985,6 +992,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
