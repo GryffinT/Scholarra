@@ -12,3 +12,4 @@ rapidfuzz
 aiohttp
 asyncio
 pdf2image
+streamlit-modal
