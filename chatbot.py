@@ -907,11 +907,11 @@ if st.session_state.page == 7:
     student_course_keys = {"KStudent": "Koziar's Excel Course"}
     accepted_courses = ["Koziar's Excel Course"]
 
-    entered_course_key = ""
+    entered_course_key = st.text_input("Enter course key")
+    
     if entered_course_key not in student_course_keys:
         st.title("Courses")
         st.write("Scholarra courses are free, self-paced, and easy to use. To activate your course enter your course key into the textbox below then type enter. Goodluck, and happy learning!")
-        entered_course_key = st.text_input("Enter course key")
     else:
         course_media = {
             "Koziar's Excel Course": 
