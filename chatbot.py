@@ -412,6 +412,7 @@ if st.session_state.page == 4:
     # Re=formatted overall graph info
     graph_details_expander = st.expander("Graph details")
     with graph_details_expander:
+        st.header("Graph details")
         graph_label = st.text_input("Graph label:")
         x_label = st.text_input("X-axis label:", value="x")
         y_label = st.text_input("Y-axis label:", value="y")
@@ -448,8 +449,9 @@ if st.session_state.page == 4:
 
     # Statistical options selection
 
-    statistical_expander = st.expander("Statistics options")
+    statistical_expander = st.expander("Statistical calculations")
     with statistical_expander:
+        st.header("Statistical calculations")
 
         # Which data sets to use for the calculations
         
@@ -896,6 +898,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
