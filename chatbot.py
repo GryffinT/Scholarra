@@ -182,6 +182,11 @@ if st.session_state.page == 2:
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
+# Initialize output_sources
+
+if output_sources not in st.session_state:
+    st.session_state["output_sources"] = ""
+
 if st.session_state.page == 3:
     AI_expander = st.expander("Control panel")
     with AI_expander:
@@ -350,8 +355,6 @@ if st.session_state.page == 3:
                     source_expander = st.expander(label="Sources")
                     with source_expander:
                         source_text = extract_sources(answer)
-                        if output_sources not in st.session_state:
-                            st.session_state["output_sources"] = ""
                         st.session_state["output_sources"] = source_text
                         st.write(source_text)
                 except Exception as e:
@@ -933,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
