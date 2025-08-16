@@ -488,7 +488,7 @@ if st.session_state.page == 4:
             default=[]
         )
 
-        num_points = None
+        num_points = math.random(10)
         
 
     def safe_eval_func(expr, x_vals):
@@ -896,6 +896,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
