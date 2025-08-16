@@ -350,6 +350,9 @@ if st.session_state.page == 3:
                     source_expander = st.expander(label="Sources")
                     with source_expander:
                         source_text = extract_sources(answer)
+                        if output_sources not in st.session_state:
+                            st.session_state["output_sources"] = ""
+                        st.session_state["output_sources"] = source_text
                         st.write(source_text)
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
@@ -833,7 +836,7 @@ if st.session_state.page >= 3:
             )
         side_source_expander = st.expander("AI sources")
         with side_source_expander:
-            st.write("Sources")
+            st.write(st.session_state["output_sources"])
             
 # ---------------- PAGE 5 (info Database) ----------------
 info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A", "EMAIL": "N/A:" }}
@@ -924,6 +927,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
