@@ -690,25 +690,25 @@ if st.session_state.page == 4:
 
         # Statistical calculations display
         if stat_functions:
-            st.subheader("Additional Statistical Calculations")
+            st.subheader("Statistical calculations")
 
             if calc_on_option == "Dataset 1":
                 df_stat = df1
-                st.write("Calculating stats on **Dataset 1**")
+                st.info("Statistics calculations performed on **Dataset 1**")
             elif calc_on_option == "Dataset 2":
                 if df2 is None:
-                    st.warning("Dataset 2 not provided. Showing Dataset 1 stats instead.")
+                    st.warning("Unable to perform selected calculations on Dataset 2 as it has not been provided. Performing calculations Dataset 1 stats instead.")
                     df_stat = df1
                 else:
                     df_stat = df2
-                    st.write("Calculating stats on **Dataset 2**")
+                    st.info("Statistics calculations performed on **Dataset 2**")
             else:
                 if df2 is None:
                     st.warning("Dataset 2 not provided. Showing Dataset 1 stats instead.")
                     df_stat = df1
                 else:
                     df_stat = pd.concat([df1, df2], ignore_index=True)
-                    st.write("Calculating stats on **Both Datasets Combined**")
+                    st.info("Statistics calculations performed on **Both Datasets Combined**")
 
             stats_dict = calculate_stats(df_stat)
 
@@ -741,7 +741,7 @@ if st.session_state.page == 4:
                 stats_df = pd.DataFrame(rows, columns=["Statistic", "X", "Y"])
                 st.table(stats_df)
             else:
-                st.write("No basic stats selected.")
+                st.info("No basic stats selected.")
 
             # Regression stats
             reg_rows = []
@@ -914,6 +914,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
