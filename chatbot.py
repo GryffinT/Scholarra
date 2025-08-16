@@ -236,7 +236,7 @@ if st.session_state.page == 3:
             with st.spinner("Thinking..."):
                 try:
                     response = client.chat.completions.create(
-                        model="o3-deep-research",
+                        model="gpt-4o-mini",
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
@@ -270,7 +270,7 @@ if st.session_state.page == 3:
                 "Example output: History, event"
             )
             response = client.chat.completions.create(
-                model="o3-deep-research",
+                model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
             )
             classification = response.choices[0].message.content.strip()
@@ -326,7 +326,7 @@ if st.session_state.page == 3:
             )
             
             response = client.chat.completions.create(
-                model="o3-deep-research",
+                model="gpt-4o-mini",
                 messages=[{"role": "user", "content": search_instruction}]
             )
             
@@ -335,7 +335,7 @@ if st.session_state.page == 3:
         def extract_sources(Intake_message):
             generation_instructions = " DO THIS: Scan through this text and locate all sources within it, moreover note down each source used and write a little description on each source" + Intake_message
             response = client.chat.completions.create(
-                model="gpt-5",
+                model="gpt-5-mini",
                 messages=[{"role":"user", "content":generation_instructions}]
             )
             return response
@@ -936,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
