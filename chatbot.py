@@ -186,7 +186,7 @@ if st.session_state.page == 3:
     AI_expander = st.expander("Control panel")
     with AI_expander:
         st.header("Scholarra control panel")
-        st.write("Scholarra is a LLM through openai's API utilizing GPT-5. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
+        st.info("Scholarra is a LLM through openai's API utilizing GPT-5. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
         selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)"])
         
     if selection == "Standard":
@@ -339,7 +339,7 @@ if st.session_state.page == 3:
         # Streamlit UI
         # -----------------------------
         st.title("Research Assistant")
-        st.write("Scholarra Research Assistant is a prompt engineering experiment using openai's API and extra filteres to produce prompted research through credible sources such as JSTOR, Britannica, WHO, and the Academy of Management Journal")
+        st.info("Scholarra Research Assistant is a prompt engineering experiment using openai's API and extra filteres to produce prompted research through credible sources such as JSTOR, Britannica, WHO, and the Academy of Management Journal")
         user_input = st.text_input("Ask me about anything:")
         
         if st.button("Get Answer") and user_input.strip():
@@ -924,6 +924,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
