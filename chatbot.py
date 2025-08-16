@@ -333,7 +333,7 @@ if st.session_state.page == 3:
             return response.choices[0].message.content
             
         def extract_sources(Intake_message):
-            generation_instructions = "
+            generation_instructions = 
             "Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
             "1. Source Name & Type (e.g., journal, news outlet, encyclopedia).\n"
             "2. Credibility/Certifications (e.g., peer-reviewed, government, reputable publisher).\n"
@@ -943,6 +943,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
