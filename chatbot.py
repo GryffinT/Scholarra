@@ -934,7 +934,7 @@ if st.session_state.page == 7:
             MO_excel_expander = st.expander("MO-200 Microsoft Excel (Office 2019)")
             with MO_excel_expander:
                 st.header("The MO-200 is a self paced course aimed towards giving participants the neccisary skills to operate Microsoft Excel proficiently enough to pass the Microsoft Excel certification exam.")
-                st.warning("This course does not guarantee you will pass subsequent certification exam, nor does it offer it through Scholarra. This course is entierly optional.", icon="⚠️")
+                st.warning("This course does not guarantee you will pass any subsequent certification exam, nor does it offer any such exams or exam opportunities through any mediums. The contents of this course are soley preperatory and should be treated as such.", icon="⚠️")
                 st.info("Course type: self paced")
                 st.info("Course difficulty: N/A")
                 st.info("Course cost: Free")
@@ -983,6 +983,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
