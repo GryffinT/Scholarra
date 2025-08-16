@@ -770,7 +770,7 @@ if st.session_state.page == 4:
                 t_test_expander = st.expander("T test calculations")
                 with t_test_expander:
                     st.header("T-test calculations")
-                    st.write("A T-test is a calculation to determine if there is a significant difference between two or more datasets.)
+                    st.write("A T-test is a calculation to determine if there is a significant difference between two or more datasets.")
                     if df2 is None:
                         st.warning("Unable to conduct T-test, did you forget to fill out data for dataset 2?")
                     else:
@@ -914,6 +914,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
