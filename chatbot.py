@@ -170,13 +170,22 @@ if st.session_state.page == 2:
     # -----------------------------
     
     access_keys = ["pibble67", "3651881"]
+
     col1, col2, col3, col4 = st.columns(4)
+    
     with col2:
         login_modal = Modal(key="LOGIN", title="Login")
-        login_screen = st.button("Login")
-        if login_screen:
-            with login_modal.container():
-                st.markdown("Login")
+    
+        if st.button("Login"):
+            login_modal.open()
+    
+    if login_modal.is_open():
+        with login_modal.container():
+            st.markdown("### Login")
+            st.text_input("Username")
+            st.text_input("Password", type="password")
+            st.button("Submit")
+
             
         #if key in access_keys or key == "Scholar-EG-01":
             #st.button("Next", on_click=next_page)
@@ -992,6 +1001,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
