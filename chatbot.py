@@ -360,7 +360,7 @@ if st.session_state.page == 3:
             source_rows = []
             for category, items in SOURCES.items():
                 for name, link in items:
-                    source_rows.append({"Category": category, "Source": name, "Link": st.link(link)})
+                    source_rows.append({"Category": category, "Source": name, "Link": link})
             sources_df = pd.DataFrame(source_rows)
             st.dataframe(sources_df, use_container_width=True)
             
@@ -956,6 +956,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
