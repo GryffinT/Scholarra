@@ -184,8 +184,8 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Initialize output_sources
 
-if output_sources not in st.session_state:
-    st.session_state["output_sources"] = ""
+#if output_sources not in st.session_state:
+st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
     AI_expander = st.expander("Control panel")
@@ -936,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
