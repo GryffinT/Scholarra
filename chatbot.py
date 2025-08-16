@@ -451,6 +451,7 @@ if st.session_state.page == 4:
         Example: `1:2, 2:3, 3:5, 4:8`
         """)
         data_input_selection = st.radio("Data format", ["Coordinate pairs", "Function"], key=2)
+        data_input_2 = None
         if data_input_selection == "Coordinate pairs":
             data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
         else:
@@ -907,6 +908,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
