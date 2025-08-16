@@ -795,11 +795,12 @@ if st.session_state.page == 4:
     else:
         st.info("Select at least one graph type to display.")
 
-# ---------------- PAGE 3-5 (Notes) ----------------
+# ---------------- PAGE 3-5 (Scholarra Terminal) ----------------
 
 if st.session_state.page >= 3:        
     
     with st.sidebar:
+        st.sidebar.image(logo[0], use_column_width=True)
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
@@ -841,7 +842,6 @@ plan_info = {"Admin": "As a site admin you have unrestricted access to all featu
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
-    st.sidebar.image(logo[0], use_column_width=True)
     st.title("Account Info")
     st.write("Find your account info below.")
     used_key = st.session_state['use_key']
@@ -923,6 +923,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
