@@ -888,7 +888,7 @@ if st.session_state.page == 5:
     plan_expandable = st.expander(label="Subscription")
     with plan_expandable:
         st.write("Your're subscribed to the ", info_dict[used_key]["PLAN"], " plan.")
-        st.write(plan_info[(info_dict[used_key]["PLAN"])])
+        st.info(plan_info[(info_dict[used_key]["PLAN"])])
         
     plan_expandable = st.expander(label="Personal information")
     with plan_expandable:
@@ -907,55 +907,61 @@ if st.session_state.page == 7:
     student_course_keys = {"KStudent": "Koziar's Excel Course"}
     accepted_courses = ["Koziar's Excel Course"]
 
-    entered_course_key = st.text_input("Enter course key")
-    course_media = {
-        "Koziar's Excel Course": 
-        [
-            os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"),
-            os.path.join(base_path, "Syllabus TTS.mp3"),
-            "We’re excited to have you here! In this course, you’ll explore the core skills of Excel—from organizing worksheets and managing data to using formulas, functions, and charts. Our goal is to help you become confident and efficient in Excel, whether for everyday tasks, professional projects, or preparing for the MO-200 certification. Let’s get started and make Excel work for you!"
-                                             ] }
-    # Check if the entered key exists and is accepted
-    if entered_course_key in student_course_keys:
-        course_name = student_course_keys[entered_course_key]
-        if course_name in accepted_courses:
-            st.image(os.path.join(base_path, "MOS-excel-Header-updated.png"))
-            st.title(course_name)
-            st.write(course_media[course_name][2])
-            syllabus_expander = st.expander(label="Syllabus")
-            with syllabus_expander:
-                st.header("Course syllabus")
-                st.write("Welcome! Here you can find the syllabus for the course, which you can either download in PDF format or listen to below.")
-                syllabus = course_media[course_name][0]  # file path
-                syllabus_tts = course_media[course_name][1]
-                st.audio(syllabus_tts)
-            
-                with open(syllabus, "rb") as f:  # read file contents
-                    st.download_button(
-                        label="Download Syllabus",
-                        data=f,  # pass the file contents, not the path
-                        file_name=os.path.basename(syllabus),  # name for the downloaded file
-                        mime="application/pdf"
-                        
-            
-                    )
-
-                segment_completion = st.checkbox("Completed")
-                if segment_completion:
-                    st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
-                    st.balloons()
-            lesson_one_expander = st.expander(label="Lesson one")
-            with lesson_one_expander:
-                st.write("XYZ")
+    entered_course_key = ""
+    if entered_course_key not in student_course_keys:
+        st.title("Courses")
+        st.write("Scholarra courses are free, self-paced, and easy to use. To activate your course enter your course key into the textbox below then type enter. Goodluck, and happy learning!")
+        entered_course_key = st.text_input("Enter course key")
+    else:
+        course_media = {
+            "Koziar's Excel Course": 
+            [
+                os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"),
+                os.path.join(base_path, "Syllabus TTS.mp3"),
+                "We’re excited to have you here! In this course, you’ll explore the core skills of Excel—from organizing worksheets and managing data to using formulas, functions, and charts. Our goal is to help you become confident and efficient in Excel, whether for everyday tasks, professional projects, or preparing for the MO-200 certification. Let’s get started and make Excel work for you!"
+                                                 ] }
+        # Check if the entered key exists and is accepted
+        if entered_course_key in student_course_keys:
+            course_name = student_course_keys[entered_course_key]
+            if course_name in accepted_courses:
+                st.image(os.path.join(base_path, "MOS-excel-Header-updated.png"))
+                st.title(course_name)
+                st.write(course_media[course_name][2])
+                syllabus_expander = st.expander(label="Syllabus")
+                with syllabus_expander:
+                    st.header("Course syllabus")
+                    st.write("Welcome! Here you can find the syllabus for the course, which you can either download in PDF format or listen to below.")
+                    syllabus = course_media[course_name][0]  # file path
+                    syllabus_tts = course_media[course_name][1]
+                    st.audio(syllabus_tts)
                 
-        else:
-            st.warning("This course key is not accepted.")
-    elif entered_course_key:
-        st.error("Invalid course key.")
+                    with open(syllabus, "rb") as f:  # read file contents
+                        st.download_button(
+                            label="Download Syllabus",
+                            data=f,  # pass the file contents, not the path
+                            file_name=os.path.basename(syllabus),  # name for the downloaded file
+                            mime="application/pdf"
+                            
+                
+                        )
+    
+                    segment_completion = st.checkbox("Completed")
+                    if segment_completion:
+                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
+                        st.balloons()
+                lesson_one_expander = st.expander(label="Lesson one")
+                with lesson_one_expander:
+                    st.write("XYZ")
+                    
+            else:
+                st.warning("This course key is not accepted.")
+        elif entered_course_key:
+            st.error("Invalid course key.")
 
 
 
         
+
 
 
 
