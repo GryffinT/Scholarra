@@ -841,7 +841,7 @@ plan_info = {"Admin": "As a site admin you have unrestricted access to all featu
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
-    st.image(logo[0])
+    st.sidebar.image(logo[0], use_column_width=True)
     st.title("Account Info")
     st.write("Find your account info below.")
     used_key = st.session_state['use_key']
@@ -923,6 +923,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
