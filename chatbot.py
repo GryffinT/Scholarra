@@ -454,7 +454,7 @@ if st.session_state.page == 4:
         if points_or_func_2 == "Coordinate pairs":
             data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
         else:
-            dataset_1_function = st.text_input("Dataset 2 function")
+            dataset_2_function = st.text_input("Dataset 2 function")
 
     # Statistical options selection
 
@@ -907,6 +907,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
