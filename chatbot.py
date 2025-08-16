@@ -409,21 +409,36 @@ if st.session_state.page == 4:
     st.title("Scholistics")
     st.header("Next level graphing and statistics calculator.")
 
-    st.write("""
-    Enter your data points as comma-separated pairs `x:y`.  
-    Example: `1:2, 2:3, 3:5, 4:8`
-    """)
-    graph_label = st.text_input("Graph label:")
-    data_input_1 = st.text_input("Data for Dataset 1 (x:y pairs):")
-    data_name_1 = st.text_input("Dataset 1 label:")
-    data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
-    data_name_2 = st.text_input("Dataset 2 label:")
+    # Re=formatted overall graph info
+    graph_details_expander = st.expander("Graph details")
+    with graph_details_expander:
+        graph_label = st.text_input("Graph label:")
+        x_label = st.text_input("X-axis label:", value="x")
+        y_label = st.text_input("Y-axis label:", value="y")
 
+    # Re-formatted dataset 1
+    
+    dataset_1_inputs = st.expander("Dataset 1")
+    with dataset_1_inputs:
+        st.header("Dataset 1")
+        data_name_1 = st.text_input("Dataset 1 label:")
+        st.write("""
+        Enter your data points as comma-separated pairs `x:y`.  
+        Example: `1:2, 2:3, 3:5, 4:8`
+        """)
+        data_input_1 = st.text_input("Data for Dataset 1 (x:y pairs):")
 
-    x_label = st.text_input("X-axis label:", value="x")
-    y_label = st.text_input("Y-axis label:", value="y")
+    # Re-formatted dataset 2
 
-    func_input = st.text_input("Enter a function of x to plot (optional):", value="")
+    dataset_2_inputs = st.expander("Dataset 2")
+    with dataset_2_inputs:
+        st.header("Dataset 2")
+        data_name_2 = st.text_input("Label")
+        st.write("""
+        Enter your data points as comma-separated pairs `x:y`.  
+        Example: `1:2, 2:3, 3:5, 4:8`
+        """)
+        data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
 
     def safe_eval_func(expr, x_vals):
         # Use numexpr if available for safer evaluation, else fallback
@@ -875,6 +890,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
