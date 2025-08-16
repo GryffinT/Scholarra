@@ -338,7 +338,7 @@ if st.session_state.page == 3:
                 model="gpt-5-mini",
                 messages=[{"role":"user", "content":generation_instructions}]
             )
-            return response
+            return response.choices[0].message.content
         
         # -----------------------------
         # Streamlit UI
@@ -936,6 +936,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
