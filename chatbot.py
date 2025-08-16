@@ -911,16 +911,26 @@ if st.session_state.page == 7:
     
     if entered_course_key not in student_course_keys:
         st.title("Courses")
-        st.write("Scholarra courses are free, self-paced, and easy to use. To activate your course enter your course key into the textbox below then type enter. Goodluck, and happy learning!")
+        st.info("Scholarra courses are free, self-paced, and easy to use, to see what courses are offered expand the Availible courses expander below. To activate your course enter your course key into the textbox above then type enter. Goodluck, and happy learning!")
+        course_expander = st.expander("Availible courses")
+        with course_expander:
+            st.write("Welcome prospective students, here you can find all the courses offered on Scholarra.")
+            MO-excel_expander = st.expander("MO-200 Microsoft Excel (Office 2019)")
+            with MO-excel_expander:
+                st.header("The MO-200 course is a self paced course aimed at giving participants the neccisary skills to operate Microsoft Excel proficiently enough to pass the Microsoft Excel certification exam.")
+                st.warn("This course does not guarantee you will pass subsequent certification exam, nor does it offer it through Scholarra. This course is entierly optional.)
+                st.info("Course type: self paced")
+                st.info("Course difficulty: N/A")
+                st.info("Course cost: Free")
+                st.info("Course duration: N/A")   
     else:
         course_media = {
-            "Koziar's Excel Course": 
+            "MO-200 Microsoft Excel (Office 2019)": 
             [
                 os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"),
                 os.path.join(base_path, "Syllabus TTS.mp3"),
                 "We’re excited to have you here! In this course, you’ll explore the core skills of Excel—from organizing worksheets and managing data to using formulas, functions, and charts. Our goal is to help you become confident and efficient in Excel, whether for everyday tasks, professional projects, or preparing for the MO-200 certification. Let’s get started and make Excel work for you!"
                                                  ] }
-        # Check if the entered key exists and is accepted
         if entered_course_key in student_course_keys:
             course_name = student_course_keys[entered_course_key]
             if course_name in accepted_courses:
@@ -957,155 +967,4 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
