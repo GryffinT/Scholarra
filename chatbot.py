@@ -356,6 +356,7 @@ if st.session_state.page == 3:
                         st.write(source_text)
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
+                    
 # ---------------- PAGE 4 (Grapher) ----------------
 
 def parse_xy_input(text):
@@ -801,7 +802,8 @@ if st.session_state.page == 4:
 
 # ---------------- PAGE 3-5 (Scholarra Terminal) ----------------
 
-if st.session_state.page >= 3:        
+if st.session_state.page >= 3:
+    AI_sources = st.session_state["output_sources"]
     
     with st.sidebar:
         st.sidebar.image(logo[0], use_container_width=True)
@@ -836,7 +838,7 @@ if st.session_state.page >= 3:
             )
         side_source_expander = st.expander("AI sources")
         with side_source_expander:
-            st.write(st.session_state["output_sources"])
+            st.write(AI_sources)
             
 # ---------------- PAGE 5 (info Database) ----------------
 info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A", "EMAIL": "N/A:" }}
@@ -927,6 +929,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
