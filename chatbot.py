@@ -434,6 +434,7 @@ if st.session_state.page == 4:
         Enter your data points as comma-separated pairs `x:y`.  
         Example: `1:2, 2:3, 3:5, 4:8`
         """)
+        dataI_input_1 = ""
         points_or_func_1 = st.radio("Data format", ["Coordinate pairs", "Function"])
         if points_or_func_1 == "Coordinate pairs":
             data_input_1 = st.text_input("Data for Dataset 1 (x:y pairs):")
@@ -908,6 +909,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
