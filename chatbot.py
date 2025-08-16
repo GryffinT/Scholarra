@@ -97,8 +97,7 @@ if st.session_state.page == 1:
 
 
 # ---------------- PAGE 2 ----------------
-import streamlit as st
-import os
+
 
 # Example navigation callbacks
 def last_page():
@@ -868,9 +867,27 @@ if st.session_state.page >= 3:
                 st.write(AI_sources)
             
 # ---------------- PAGE 5 (info Database) ----------------
-info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A", "EMAIL": "N/A:" }}
+info_dict = {
+    "Scholar-EG-01": {
+        "ID": "ADMIN_HKf23kaL",
+        "PLAN": "Admin",
+        "NAME": "Admin",
+        "EMAIL": "N/A:" },
+    "pibble67": {
+        "ID": "USER_isJ82Kl1",
+        "PLAN": "User",
+        "NAME": "N/A",
+        "EMAIL": "N/A"}, 
+    "3651881": {
+        "ID": "USER_hjaP293K",
+        "PLAN": "User",
+        "NAME": "N/A",
+        "EMAIL": "N/A"
+    }
+}
 plan_info = {"Admin": "As a site admin you have unrestricted access to all features of the app, free of cost.", "User": "As a user you have free access to the entire site except for developer features."}
-        
+access_keys = ["pibble67", "3651881"]
+
                                                               
 # ---------------- PAGE 5 (User Info) ----------------
 
@@ -894,7 +911,6 @@ if st.session_state.page == 5:
     with plan_expandable:
         st.write("Email:", info_dict[used_key]["EMAIL"])
         st.write("Name: ", info_dict[used_key]["NAME"])
-        st.write("Age: ", info_dict[used_key]["AGE"])
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
@@ -967,6 +983,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
