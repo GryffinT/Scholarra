@@ -804,6 +804,7 @@ if st.session_state.page == 4:
 
 if st.session_state.page >= 3:
     AI_sources = st.session_state["output_sources"]
+    print(AI_sources)
     
     with st.sidebar:
         st.sidebar.image(logo[0], use_container_width=True)
@@ -838,7 +839,10 @@ if st.session_state.page >= 3:
             )
         side_source_expander = st.expander("AI sources")
         with side_source_expander:
-            st.write(AI_sources)
+            if AI_sources.len() > 1:
+                st.write(AI_sources)
+            else:
+                st.write("Here you can find the source output from the AI research assistant.")
             
 # ---------------- PAGE 5 (info Database) ----------------
 info_dict = {"Scholar-EG-01": {"ID": "ADMIN_HKf23kaL","PLAN": "Admin", "NAME": "Admin", "AGE": "N/A", "EMAIL": "N/A:" }}
@@ -929,6 +933,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
