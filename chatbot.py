@@ -435,8 +435,10 @@ if st.session_state.page == 4:
         Example: `1:2, 2:3, 3:5, 4:8`
         """)
         points_or_func_1 = st.radio("Data format", ["Coordinate pairs", "Function"])
-        data_input_1 = st.text_input("Data for Dataset 1 (x:y pairs):")
-        dataset_1_function = st.text_input("Dataset 1 function")
+        if points_or_func_1 == "Coordinate pairs":
+            data_input_1 = st.text_input("Data for Dataset 1 (x:y pairs):")
+        else:
+            dataset_1_function = st.text_input("Dataset 1 function")
 
     # Re-formatted dataset 2
 
@@ -448,7 +450,11 @@ if st.session_state.page == 4:
         Enter your data points as comma-separated pairs `x:y`.  
         Example: `1:2, 2:3, 3:5, 4:8`
         """)
-        data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
+        points_or_func_2 = st.radio("Data format", ["Coordinate pairs", "Function"])
+        if points_or_func_2 == "Coordinate pairs":
+            data_input_2 = st.text_input("Data for Dataset 2 (optional, x:y pairs):")
+        else:
+            dataset_1_function = st.text_input("Dataset 2 function")
 
     # Statistical options selection
 
@@ -901,6 +907,7 @@ if st.session_state.page == 7:
 
 
         
+
 
 
 
