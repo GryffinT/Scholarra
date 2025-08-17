@@ -183,6 +183,7 @@ if st.session_state.page == 2:
         with login_modal.container():
             st.markdown("### Login")
             username = st.text_input("Username")
+            st.session_state['use_key'] = get_key()
             key = st.session_state['use_key']
             if key in access_keys or key == "Scholar-EG-01":
                 st.button("Next", on_click=next_page)
@@ -1004,6 +1005,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
