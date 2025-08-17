@@ -159,9 +159,6 @@ if st.session_state.page == 2:
     # Scatterplot image
     scatter_path = os.path.join(base_path, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
-    
-    st.session_state['use_key'] = get_key()
-    key = st.session_state['use_key']
 
     #st.write("Your key is:", key)
 
@@ -175,9 +172,8 @@ if st.session_state.page == 2:
     
     login_modal = Modal(key="LOGIN", title="Login")
     
-    with col2:
-        if st.button("Login"):
-            login_modal.open()
+    if st.button("Login"):
+        login_modal.open()
     
     if login_modal.is_open():
         with login_modal.container():
@@ -1005,6 +1001,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
