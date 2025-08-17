@@ -201,27 +201,6 @@ if st.session_state.page == 2:
     else:
         f"You voted for {st.session_state.vote['item']} because {st.session_state.vote['reason']}"
             
-    login_modal = Modal(
-        key="LOGIN",
-        title="Login",
-        max_width=900,   # default is 400px, so increase this
-        padding=20       # optional: increase spacing inside modal
-    )    
-    
-    if st.button("Login"):
-        login_modal.open()
-    
-    if login_modal.is_open():
-        with login_modal.container():
-            
-    
-
-            
-
-    with col3:
-        st.button("Sign up")
-
-
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -1027,6 +1006,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
