@@ -30,6 +30,7 @@ def progress_bar(loading_text, page):
     time.sleep(1)
     bar.empty()
     st.session_state.page = page
+    st.rerun()
 
 key = None
 def get_key():
@@ -856,22 +857,16 @@ if st.session_state.page >= 3:
             main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
             if main_switch == "Login":
                 progress_bar("Loading login page.", 2)
-                st.rerun()
             if main_switch == "Messager":
                 progress_bar("Loading AI interface.", 3)
-                st.rerun()
             if main_switch == "Grapher":
                 progress_bar("Loading Scolistics", 4)
-                st.rerun()
             if main_switch == "Account Info":
                 progress_bar("Loading account info", 5)
-                st.rerun()
             if main_switch == "Analytics":
                 progress_bar("Loading Scholarra analytics", 6)
-                st.rerun()
             if main_switch == "Courses":
                 progress_bar("Loading courses", 7)
-                st.rerun()
             
         notes_expander = st.expander("Notes")
         with notes_expander:
@@ -1008,6 +1003,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
