@@ -173,7 +173,7 @@ if st.session_state.page == 2:
     login_modal = Modal(
         key="LOGIN",
         title="Login",
-        max_width=600,   # default is 400px, so increase this
+        max_width=900,   # default is 400px, so increase this
         padding=20       # optional: increase spacing inside modal
     )    
     
@@ -1006,6 +1006,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
