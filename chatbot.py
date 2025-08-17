@@ -166,27 +166,25 @@ if st.session_state.page == 2:
     # Access control & navigation
     # -----------------------------
     
-    access_keys = ["pibble67", "3651881"]
-    confirmationEdit = Modal("Atención", key= "popUp_edit")
+    access_keys = ["pibble67", "3651881"]    
+    
+    @st.dialog("Cast your vote")
+    def vote(item):
+        st.write(f"Why is {item} your favorite?")
+        reason = st.text_input("Because...")
+        if st.button("Submit"):
+            st.session_state.vote = {"item": item, "reason": reason}
+            st.rerun()
+    
+    if "vote" not in st.session_state:
+        st.write("Vote for your favorite")
+        if st.button("A"):
+            vote("A")
+        if st.button("B"):
+            vote("B")
+    else:
+        f"You voted for {st.session_state.vote['item']} because {st.session_state.vote['reason']}"
         
-    submitted = st.button("Enviar")
-    
-    if submitted:
-        confirmationEdit.open()
-            
-        if confirmationEdit.is_open():
-                with confirmationEdit.container():
-                    st.markdown(""" ### ¿Deseas guardar los cambios? """)
-                    yes = st.button("Sí")
-                    no  = st.button("No")
-    
-                    if yes == True:
-                        (...) format data
-                        confirmationEdit.close()
-    
-                    if no == True:
-                        confirmationEdit.close()
-
     col1, col2, col3, col4 = st.columns(4)
     
     login_modal = Modal(
@@ -1025,6 +1023,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
