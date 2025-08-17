@@ -172,8 +172,10 @@ if st.session_state.page == 2:
     
     @st.dialog("Login or Signup")
     def vote(item):
-        st.write(f"Why is {item} your favorite?")
-        reason = st.text_input("Because...")
+        if item == "A":
+            st.header("Login")
+        if item == "B":
+            st.header("Signup")
         if st.button("Submit"):
             st.session_state.vote = {"item": item, "reason": reason}
             st.rerun()
@@ -181,10 +183,10 @@ if st.session_state.page == 2:
     if "vote" not in st.session_state:
         st.write("Vote for your favorite")
         with col1: 
-            if st.button("A"):
+            if st.button("Login"):
                 vote("A")
         with col2:
-            if st.button("B"):
+            if st.button("Signup"):
                 vote("B")
     else:
         f"You voted for {st.session_state.vote['item']} because {st.session_state.vote['reason']}"
@@ -1025,6 +1027,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
