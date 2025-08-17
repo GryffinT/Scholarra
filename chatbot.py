@@ -183,12 +183,12 @@ if st.session_state.page == 2:
                 with col1:
                     st.warning("Access denied: Invalid key.", icon="⚠️")
             if st.button("Submit"):
-                st.success(f"Welcome, {username}!")
+                st.session_state.vote(f"Welcome, {username}!")
+                st.session_state.page = 3
         if item == "B":
             st.header("Signup")
-        if st.button("Submit"):
-            st.session_state.vote = {"item": item, "reason": reason}
-            st.rerun()
+            if st.button("Submit"):
+                pass
     
     if "vote" not in st.session_state:
         st.write("Vote for your favorite")
@@ -1006,6 +1006,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
