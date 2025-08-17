@@ -171,21 +171,21 @@ if st.session_state.page == 2:
         
     submitted = st.button("Enviar")
     
-               if submitted:
-                     confirmationEdit.open()
+    if submitted:
+        confirmationEdit.open()
             
-               if confirmationEdit.is_open():
-                        with confirmationEdit.container():
-                            st.markdown(""" ### ¿Deseas guardar los cambios? """)
-                            yes = st.button("Sí")
-                            no  = st.button("No")
+        if confirmationEdit.is_open():
+                with confirmationEdit.container():
+                    st.markdown(""" ### ¿Deseas guardar los cambios? """)
+                    yes = st.button("Sí")
+                     no  = st.button("No")
     
-                            if yes == True:
-                               (...) format data
-                               confirmationEdit.close()
+                    if yes == True:
+                        (...) format data
+                        confirmationEdit.close()
     
-                            if no == True:
-                                confirmationEdit.close()
+                    if no == True:
+                        confirmationEdit.close()
 
     col1, col2, col3, col4 = st.columns(4)
     
@@ -1025,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
