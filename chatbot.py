@@ -178,7 +178,7 @@ if st.session_state.page == 2:
                 with confirmationEdit.container():
                     st.markdown(""" ### ¿Deseas guardar los cambios? """)
                     yes = st.button("Sí")
-                     no  = st.button("No")
+                    no  = st.button("No")
     
                     if yes == True:
                         (...) format data
@@ -1025,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
