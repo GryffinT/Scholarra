@@ -23,13 +23,19 @@ from streamlit_modal import Modal
 
 
 def progress_bar(loading_text, page):
+    # ✅ guard: if already ran for this page, skip
+    if st.session_state.get("_progress_lock") == page:
+        return
+    
     bar = st.progress(0, text=loading_text)
     for percent_complete in range(100):
         time.sleep(0.01)
         bar.progress(percent_complete + 1, text=loading_text)
     time.sleep(1)
     bar.empty()
+    
     st.session_state.page = page
+    st.session_state["_progress_lock"] = page  # mark as done for this page
     st.rerun()
 
 key = None
@@ -1003,6 +1009,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
