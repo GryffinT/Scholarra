@@ -167,7 +167,7 @@ if st.session_state.page == 2:
     # -----------------------------
     
     access_keys = ["pibble67", "3651881"]
-        confirmationEdit = Modal("Atención", key= "popUp_edit")
+    confirmationEdit = Modal("Atención", key= "popUp_edit")
         
     submitted = st.button("Enviar")
     
@@ -1025,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
