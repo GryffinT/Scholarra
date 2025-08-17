@@ -170,7 +170,7 @@ if st.session_state.page == 2:
 
     col1, col2, col3, col4 = st.columns(4)
     
-    @st.dialog("")
+    @st.dialog("Login or Signup")
     def vote(item):
         st.write(f"Why is {item} your favorite?")
         reason = st.text_input("Because...")
@@ -1025,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
