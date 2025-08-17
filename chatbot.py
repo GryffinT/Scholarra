@@ -167,8 +167,10 @@ if st.session_state.page == 2:
     # -----------------------------
     
     access_keys = ["pibble67", "3651881"]    
+
+    col1, col2, col3, col4 = st.columns(4)
     
-    @st.dialog("Cast your vote")
+    @st.dialog("")
     def vote(item):
         st.write(f"Why is {item} your favorite?")
         reason = st.text_input("Because...")
@@ -178,15 +180,15 @@ if st.session_state.page == 2:
     
     if "vote" not in st.session_state:
         st.write("Vote for your favorite")
-        if st.button("A"):
-            vote("A")
-        if st.button("B"):
-            vote("B")
+        with col1: 
+            if st.button("A"):
+                vote("A")
+        with col2:
+            if st.button("B"):
+                vote("B")
     else:
         f"You voted for {st.session_state.vote['item']} because {st.session_state.vote['reason']}"
-        
-    col1, col2, col3, col4 = st.columns(4)
-    
+            
     login_modal = Modal(
         key="LOGIN",
         title="Login",
@@ -1023,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
