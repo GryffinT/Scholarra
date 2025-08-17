@@ -179,7 +179,7 @@ if st.session_state.page == 2:
             key = st.session_state['use_key']
             if st.button("Submit") and key in access_keys or key == "Scholar-EG-01":
                 st.success(f"Welcome, {username}!")
-                st.session_state.page = 3
+                next_page()
         if item == "B":
             st.header("Signup")
             if st.button("Submit"):
@@ -1001,6 +1001,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
