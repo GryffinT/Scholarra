@@ -174,6 +174,16 @@ if st.session_state.page == 2:
     def vote(item):
         if item == "A":
             st.header("Login")
+            username = st.text_input("Username")
+            st.session_state['use_key'] = get_key()
+            key = st.session_state['use_key']
+            if key in access_keys or key == "Scholar-EG-01":
+                st.button("Next", on_click=next_page)
+            elif key not in access_keys or key != "Scholar-EG-01" and key != "":
+                with col1:
+                    st.warning("Access denied: Invalid key.", icon="⚠️")
+            if st.button("Submit"):
+                st.success(f"Welcome, {username}!")
         if item == "B":
             st.header("Signup")
         if st.button("Submit"):
@@ -203,17 +213,7 @@ if st.session_state.page == 2:
     
     if login_modal.is_open():
         with login_modal.container():
-            st.markdown("### Login")
-            username = st.text_input("Username")
-            st.session_state['use_key'] = get_key()
-            key = st.session_state['use_key']
-            if key in access_keys or key == "Scholar-EG-01":
-                st.button("Next", on_click=next_page)
-            elif key not in access_keys or key != "Scholar-EG-01" and key != "":
-                with col1:
-                    st.warning("Access denied: Invalid key.", icon="⚠️")
-            if st.button("Submit"):
-                st.success(f"Welcome, {username}!")
+            
     
 
             
@@ -1027,6 +1027,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
