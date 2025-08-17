@@ -189,7 +189,6 @@ if st.session_state.page == 2:
             elif key not in access_keys or key != "Scholar-EG-01" and key != "":
                 with col1:
                     st.warning("Access denied: Invalid key.", icon="⚠️")
-            if password in access_keys or password == 
             if st.button("Submit"):
                 st.success(f"Welcome, {username}!")
     
@@ -1005,6 +1004,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
