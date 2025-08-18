@@ -22,8 +22,7 @@ import aiohttp
 from pdf2image import convert_from_path
 from streamlit_modal import Modal
 
-page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
-
+st.session_state["page_counter"] = page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 
 def progress_bar(loading_text, page):
     # ✅ guard: if already ran for this page, skip
@@ -1020,6 +1019,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
