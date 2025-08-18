@@ -110,7 +110,7 @@ if st.session_state.page == 1:
         "<h1 class='batangas-font' style='text-align: center;'>Smarter study starts here.</h1>",
         unsafe_allow_html=True,
     )
-    st.button("Next", on_click=next_page)
+    st.button("Next", on_click=next_page(start_time, "Page1"))
 
 
 # ---------------- PAGE 2 ----------------
@@ -1025,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
