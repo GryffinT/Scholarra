@@ -90,6 +90,7 @@ def last_page():
 # ---------------- PAGE 1 ----------------
 if st.session_state.page == 1:
     start_time = datetime.now()
+    print(start_time)
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
         st.image(logo[0], use_container_width=True)  # Works with GIFs too
@@ -1019,6 +1020,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
