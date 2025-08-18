@@ -9,6 +9,7 @@ import numpy as np
 import httpx
 import plotly.express as px
 from urllib.parse import quote
+from datetime import datetime
 import io
 from scipy import stats
 import math
@@ -74,7 +75,11 @@ logo = [
 if "page" not in st.session_state:
     st.session_state.page = 1
 
-def next_page():
+def next_page(start, page_num):
+    end_time = datetime.now()
+    time_delta = start - end_time
+    page_counter[page_num] += time_delta
+    print page_counter[page_num]
     st.session_state.page += 1
 
 def last_page():
@@ -82,6 +87,7 @@ def last_page():
 
 # ---------------- PAGE 1 ----------------
 if st.session_state.page == 1:
+    start_time = datetime.now()
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
         st.image(logo[0], use_container_width=True)  # Works with GIFs too
@@ -1019,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
