@@ -131,9 +131,7 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
-    current_time_tuple = time.localtime()
-    current_time_string = time.strftime("%S", current_time_tuple)
-    print(current_time_string)
+    start_time2 = datetime.now()
         
         
     
@@ -189,10 +187,12 @@ if st.session_state.page == 2:
             username = st.text_input("Username")
             st.session_state['use_key'] = get_key()
             key = st.session_state['use_key']
-            if st.button("Submit") and key in access_keys or key == "Scholar-EG-01":
-                st.success(f"Welcome, {username}!")
-                next_page()
-                st.rerun()
+            submit_button = st.button("Submit")
+            if submit_button:
+                if key in access_keys or key == "Scholar-EG-01":
+                    st.success(f"Welcome, {username}!")
+                    next_page(start_time2, "Page2")
+                    st.rerun()
         if item == "B":
             st.warning("The signup function is not currently availible, if you are interested in registering feel free to contact us, you can find contacts on the Github.")
             st.header("Signup")
@@ -214,6 +214,7 @@ if st.session_state.page == 2:
             
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+st.title(page_counter["Page2"])
 
 # Initialize output_sources
 
@@ -1018,6 +1019,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
