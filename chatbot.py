@@ -194,7 +194,6 @@ if st.session_state.page == 2:
                 pass
     
     if "vote" not in st.session_state:
-        st.write("Vote for your favorite")
         with col1: 
             if st.button("Login"):
                 vote("A")
@@ -1009,6 +1008,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
