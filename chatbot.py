@@ -342,6 +342,7 @@ if st.session_state.page == 3:
             search_instruction = (
                 f"Fetch factual information about '{user_input}' from the top 5 most relevant of these sources: {topic_sources}. "
                 "If there are no sources, search from only verified academic/scholarly sources. "
+                "you are just supposed to help users gather information for them to assess, do not write essays or complete assignments, only provide excepts from the sources"
                 "Synthesize a concise, verbatim, and academic answer, using quotation marks when applicable. "
                 "Each answer should have at least 1 quote (<500 words), cite the sources with in-text citation, "
                 "and insert hidden characters (zero-width) between letters to prevent direct copy-paste while maintaining text wrap. "
@@ -958,7 +959,7 @@ if st.session_state.page == 7:
             st.write("Welcome prospective students, here you can find all the courses offered on Scholarra.")
             MO_excel_expander = st.expander("MO-200 Microsoft Excel (Office 2019)")
             with MO_excel_expander:
-                st.header("The MO-200 is a self paced course aimed towards giving participants the neccisary skills to operate Microsoft Excel proficiently enough to pass the Microsoft Excel certification exam.")
+                st.header("The MO-200 is a self paced course aimed towards giving participants the neccisary skills to operate Microsoft Excel proficiently enough to pass the MO-200 Excel certification exam.")
                 st.warning("This course does not guarantee you will pass any subsequent certification exam, nor does it offer any such exams or exam opportunities through any mediums. The contents of this course are soley preperatory and should be treated as such.", icon="⚠️")
                 st.info("Course type: self paced")
                 st.info("Course difficulty: N/A")
@@ -1008,6 +1009,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
