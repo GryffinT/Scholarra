@@ -181,6 +181,7 @@ if st.session_state.page == 2:
     def vote(item):
         if item == "A":
             st.header("Login")
+            st.warning("Currently the username field is purely for testing purposes, you can still login if the field is empty.")
             username = st.text_input("Username")
             st.session_state['use_key'] = get_key()
             key = st.session_state['use_key']
@@ -189,6 +190,7 @@ if st.session_state.page == 2:
                 next_page()
                 st.rerun()
         if item == "B":
+            st.warning("The signup function is not currently availible, if you are interested in registering feel free to contact us, you can find contacts on the Github.")
             st.header("Signup")
             st.text_input("Username")
             st.text_input("School")
@@ -1012,6 +1014,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
