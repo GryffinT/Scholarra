@@ -132,7 +132,9 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
+    current_time_tuple = time.localtime()
     current_time_string = time.strftime("%S", current_time_tuple)
+    print(current_time_string)
         
         
     
@@ -1017,6 +1019,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
