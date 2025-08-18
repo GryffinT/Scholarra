@@ -342,7 +342,7 @@ if st.session_state.page == 3:
             search_instruction = (
                 f"Fetch factual information about '{user_input}' from the top 5 most relevant of these sources: {topic_sources}. "
                 "If there are no sources, search from only verified academic/scholarly sources. "
-                "you are just supposed to help users gather information for them to assess, do not write essays or complete assignments, only provide excepts from the sources"
+                "you are just supposed to help users gather information for them to assess, do not write essays or complete assignments"
                 "Synthesize a concise, verbatim, and academic answer, using quotation marks when applicable. "
                 "Each answer should have at least 1 quote (<500 words), cite the sources with in-text citation, "
                 "and insert hidden characters (zero-width) between letters to prevent direct copy-paste while maintaining text wrap. "
@@ -1009,6 +1009,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
