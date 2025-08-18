@@ -390,7 +390,7 @@ if st.session_state.page == 3:
             st.dataframe(sources_df, use_container_width=True)
             
             
-        user_input = st.text_input("Ask me about anything:")
+        user_input = st.text_input("Ask me a research question:")
         
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
@@ -1009,6 +1009,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
