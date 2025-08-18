@@ -78,7 +78,7 @@ if "page" not in st.session_state:
 def next_page(start, page_num):
     end_time = datetime.now()
     time_delta = start - end_time
-    page_counter[page_num] += time_delta
+    page_counter[page_num] += int(time_delta)
     print (page_counter[page_num])
     st.session_state.page += 1
 
@@ -1025,6 +1025,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
