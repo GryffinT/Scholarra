@@ -132,10 +132,7 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
-    while st.session_state.page == 2:
-        page_counter["Page2"] += 1
-        print(page_counter["Page2"])
-        time.sleep(1)
+    current_time_string = time.strftime("%S", current_time_tuple)
         
         
     
@@ -1020,6 +1017,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
