@@ -130,38 +130,35 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
+
+    
     st.button("Back", on_click=last_page)
     st.markdown(
         "<h3 style='text-align: center;'>Scholarra is an online, machine learning study supplement for students, by students..</h3>",
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        "<h5 style='text-align: center;'>How do we help students?</h5>",
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        "<h6 style='text-align: center;'>Students can interface with course supplements and various study tools to gain better understanding of class material using adaptive machine learning without the intrusive AI-produced work, stunting their growth.</h6>",
-        unsafe_allow_html=True
-    )
 
-    st.markdown(
-        "<h5 style='text-align: center;'>Teachers, dont feel too left out!</h5>",
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        "<h6 style='text-align: center;'>By giving students an outlet for independent study, they may produce higher quality work with less teacher guidance, helping them to become more independent, alleviating teacher work load.</h6>",
-        unsafe_allow_html=True
-    )
+    expander_1 = st.expander("How do we help students?")
+    with expander_1:
+        st.markdown(
+            "<h6 style='text-align: center;'>Students can interface with course supplements and various study tools to gain better understanding of class material using adaptive machine learning without the intrusive AI-produced work, stunting their growth.</h6>",
+            unsafe_allow_html=True
+        )
 
-    st.markdown(
-        "<h5 style='text-align: center;'>What is Scholarra?</h5>",
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Scholarra, our machine learning tutor, powered by OpenAI, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate necessary statistics for courses such as AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
-        unsafe_allow_html=True
-    )
+    expander_2 = st.expander("Teachers, dont feel too left out!")
+    with expander_2:
+        st.markdown(
+            "<h6 style='text-align: center;'>By giving students an outlet for independent study, they may produce higher quality work with less teacher guidance, helping them to become more independent, alleviating teacher work load.</h6>",
+            unsafe_allow_html=True
+        )
+
+    expander_3 = st.expander("What is Scholarra?")
+    with expander_3:
+        st.markdown(
+            "<h6 style='text-align: center;'>Scholarra is a student made study tool, meaning it's built with student interests and needs in mind while enforcing academic integrity through its safeguards. Scholarra, our machine learning tutor, powered by OpenAI, is programmed to disallow essay rewriting, and cheating. Nexstats, our graphing and statistics calculator can graph and calculate necessary statistics for courses such as AP Biology, AP Psychology, and math courses up to Pre-Calculus!</h6>",
+            unsafe_allow_html=True
+        )
 
     # Scatterplot image
     scatter_path = os.path.join(base_path, "scatter_plot.png")
@@ -1014,6 +1011,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
