@@ -77,10 +77,12 @@ if "page" not in st.session_state:
 
 def next_page(start, page_num):
     end_time = datetime.now()
-    time_delta = start - end_time
+    time_delta = (end_time - start).total_seconds()
     page_counter[page_num] += int(time_delta)
-    print (page_counter[page_num])
+    print(page_counter[page_num])
     st.session_state.page += 1
+
+
 
 def last_page():
     st.session_state.page -= 1
@@ -110,18 +112,9 @@ if st.session_state.page == 1:
         "<h1 class='batangas-font' style='text-align: center;'>Smarter study starts here.</h1>",
         unsafe_allow_html=True,
     )
-    st.button("Next", on_click=next_page(start_time, "Page1"))
-
+    st.button("Next", on_click=lambda: next_page(start_time, "Page1"))
 
 # ---------------- PAGE 2 ----------------
-
-
-# Example navigation callbacks
-def last_page():
-    st.session_state.page = st.session_state.page - 1
-
-def next_page():
-    st.session_state.page = st.session_state.page + 1
 
 # Base path for images
 base_path = "."
@@ -1025,6 +1018,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
