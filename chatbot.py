@@ -79,7 +79,7 @@ def next_page(start, page_num):
     end_time = datetime.now()
     time_delta = (end_time - start).total_seconds()
     st.session_state["page_counter"][page_num] += int(time_delta)
-    print(st.session_state["page_counter"][page_num])
+    print("The Current Time is", st.session_state["page_counter"][page_num])
     st.session_state.page += 1
 
 
@@ -1020,6 +1020,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
