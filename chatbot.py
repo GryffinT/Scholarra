@@ -1095,7 +1095,7 @@ if st.session_state.page == 7:
 
                     # Checkbox
 
-                    video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink?.mp4", "Santhu Analytics", "How to Create & Remove Hyperlink?" )
+                    video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlink?" )
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
                     lesson_2_q1 = st.text_input("example question")
@@ -1129,6 +1129,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
