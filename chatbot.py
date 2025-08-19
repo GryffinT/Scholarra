@@ -1066,6 +1066,19 @@ if st.session_state.page == 7:
                         st.write("Video produced by Kay Rand Morgan on Youtube.")
                         st.write("URL: [https://www.youtube.com/watch?v=Z7RQnu3yrPk](https://www.youtube.com/watch?v=Z7RQnu3yrPk)")
 
+                    st.header("Insert and remove hyperlinks")
+
+                    # VIDEO
+                    
+                    lesson_2_video_3_path = os.path.join(base_dir, "Videos", "How to Create & Remove Hyperlink？.mp4")
+                    st.video(lesson_2_video_3_path)
+
+                    # VIDEO
+                    lesson_2_video_3_credit_expander = st.expander("Video credit")
+                    with lesson_2_video_3_credit_expander:
+                        st.write("Video produced by Santhu Analytics on Youtube.")
+                        st.write("URL: [https://www.youtube.com/shorts/NIg7m4nv5Fg](https://www.youtube.com/shorts/NIg7m4nv5Fg)")
+
                     # Checkbox
                     
                     lesson_2_segment_completion = st.checkbox("Completed", key=3)
@@ -1077,6 +1090,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
