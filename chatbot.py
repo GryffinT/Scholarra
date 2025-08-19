@@ -1085,20 +1085,14 @@ if st.session_state.page == 7:
                     st.header("Test your knowledge with a short quiz to complete this section")
                     lesson_2_quiz_answers = ["Find & Select", "Yes", "An entry's column and row.", "Ctrl + K"]
                     lesson_2_q1 = st.text_input("What do you click to open the search menu in workbook?")
+                    score_question(lesson_2_q1,lesson_2_quiz_answers, 0)
                     lesson_2_q2 = st.segmented_control("Can you type an entry's name to search for it in the name box?", ["Yes", "No"])
+                    score_question(lesson_2_q2, lesson_2_quiz_answers, 1)
                     lesson_2_q3 = st.radio("Which of the following can you type into the name box to find an entry.", ["An entry's column and row.", "An entry's column","An entry's row"])
+                    score_question(lesson_2_q3, lesson_2_quiz_answers, 2)
                     lesson_2_q4 = st.text_input("What do you press to open the hyperlink window?")
+                    score_question(lesson_2_q4, lesson_2_quiz_answers, 3)
 
-                                    
-                    if lesson_2_q1:
-                        score_question(lesson_2_q1,lesson_2_quiz_answers, 0)
-                        score_question(lesson_2_q2, lesson_2_quiz_answers, 1)
-                        score_question(lesson_2_q3, lesson_2_quiz_answers, 2)
-                        score_question(lesson_2_q4, lesson_2_quiz_answers, 3)
-
-                    
-                    
-                    
                     lesson_2_segment_completion = st.checkbox("Completed", key=3)
                     if lesson_2_segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
@@ -1108,6 +1102,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
