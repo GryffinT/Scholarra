@@ -1052,10 +1052,7 @@ if st.session_state.page == 7:
                     with lesson_2_credit_expander:
                         st.write("Video produced by Kay Rand Morgan on Youtube.")
                         st.write("URL: [https://www.youtube.com/watch?v=ovDpZD4BxQk](https://www.youtube.com/watch?v=ovDpZD4BxQk)")
-                    lesson_2_segment_completion = st.checkbox("Completed", key=3)
-                    if lesson_2_segment_completion:
-                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
-                        st.balloons()
+
                     st.header("Navigate to named cells, ranges, or workbook elements")
 
                     # VIDEO
@@ -1080,6 +1077,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
