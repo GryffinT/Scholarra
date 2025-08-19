@@ -1033,10 +1033,9 @@ if st.session_state.page == 7:
                     if segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                         st.balloons()
-                                lesson_one_expander = st.expander(label="Lesson one")
 
                 # Lesson Two
-                
+                lesson_two_expander = st.expander(label="Lesson two")
                 with lesson_two_expander:
                     st.title("Lesson two, navigating workbook")
                     st.write("In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.")
@@ -1062,6 +1061,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
