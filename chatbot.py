@@ -1067,24 +1067,25 @@ if st.session_state.page == 7:
                         st.write("Video produced by Kay Rand Morgan on Youtube.")
                         st.write("URL: [https://www.youtube.com/watch?v=ovDpZD4BxQk](https://www.youtube.com/watch?v=ovDpZD4BxQk)")
 
-                    st.header("Navigate to named cells, ranges, or workbook elements")
+                    #st.header("Navigate to named cells, ranges, or workbook elements")
 
                     # VIDEO
                     
-                    lesson_2_video_2_path = os.path.join(base_dir, "Videos", "Microsoft Excel - Navigate to named cells, ranges, or workbook elements CC.mp4")
-                    st.video(lesson_2_video_2_path)
+                    #lesson_2_video_2_path = os.path.join(base_dir, "Videos", "Microsoft Excel - Navigate to named cells, ranges, or workbook elements CC.mp4")
+                    #st.video(lesson_2_video_2_path)
+                    video_func("https://www.youtube.com/watch?v=Z7RQnu3yrPk","Microsoft Excel - Navigate to named cells, ranges, or workbook elements CC.mp4", "Kay Rand Morgan", "Navigating to named cells, ranges, or workbook elements" )
 
                     # VIDEO
-                    lesson_2_video_2_credit_expander = st.expander("Video credit")
-                    with lesson_2_video_2_credit_expander:
-                        st.write("Video produced by Kay Rand Morgan on Youtube.")
-                        st.write("URL: [https://www.youtube.com/watch?v=Z7RQnu3yrPk](https://www.youtube.com/watch?v=Z7RQnu3yrPk)")
+                    #lesson_2_video_2_credit_expander = st.expander("Video credit")
+                    #with lesson_2_video_2_credit_expander:
+                        #st.write("Video produced by Kay Rand Morgan on Youtube.")
+                        #st.write("URL: [https://www.youtube.com/watch?v=Z7RQnu3yrPk](https://www.youtube.com/watch?v=Z7RQnu3yrPk)")
 
                     # st.header("Insert and remove hyperlinks")
 
                     # VIDEO
 
-                    video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlink" )
+                    video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
                     
                     # lesson_2_video_3_path = os.path.join(base_dir, "Videos", "How to Create & Remove Hyperlink？.mp4")
                     # st.video(lesson_2_video_3_path)
@@ -1133,6 +1134,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
