@@ -218,7 +218,6 @@ if st.session_state.page == 2:
             
 # ---------------- PAGE 3 (Student Chat) ----------------
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-st.title(page_counter["Page2"])
 
 # Initialize output_sources
 
@@ -1116,6 +1115,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
