@@ -970,8 +970,8 @@ if st.session_state.page == 6:
 
 # ---------------- PAGE 7 (Courses) ----------------
 
-def score_question(answer, lesson_num, question_num):
-    active_quiz = f"lesson_{lesson_num}_quiz_answers"
+def score_question(answer, questions, question_num):
+    active_quiz = questions
     score = fuzz.ratio(answer, active_quiz[question_num])
     if score > 80:
         num = random.randint(0, 2)
@@ -1087,7 +1087,7 @@ if st.session_state.page == 7:
                     lesson_2_quiz_answers = ["answer"]
                                     
                     if lesson_2_q1:
-                        score_question(lesson_2_q1,2, 0)
+                        score_question(lesson_2_q1,lesson_2_quiz_answers, 0)
                         
                     
                     
@@ -1101,6 +1101,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
