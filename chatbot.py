@@ -970,7 +970,7 @@ if st.session_state.page == 6:
 
 # ---------------- PAGE 7 (Courses) ----------------
 def segment_completed():
-    segment_completion = st.checkbox("Completed")
+    segment_completion = st.checkbox("Completed", key=2)
     if segment_completion:
         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
         st.balloons()
@@ -1085,16 +1085,12 @@ if st.session_state.page == 7:
                     score_question(lesson_2_q3, lesson_2_quiz_answers, 2)
                     lesson_2_q4 = st.text_input("What do you press to open the hyperlink window?")
                     score_question(lesson_2_q4, lesson_2_quiz_answers, 3)
-
-                    lesson_2_segment_completion = st.checkbox("Completed", key=3)
-                    if lesson_2_segment_completion:
-                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
-                        st.balloons()
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
