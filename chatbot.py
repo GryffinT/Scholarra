@@ -970,7 +970,7 @@ if st.session_state.page == 6:
 
 # ---------------- PAGE 7 (Courses) ----------------
 def segment_completed():
-    segment_completion = st.checkbox("Completed"s)
+    segment_completion = st.checkbox("Completed")
     if segment_completion:
         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
         st.balloons()
@@ -1095,6 +1095,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
