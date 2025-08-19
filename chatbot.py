@@ -969,6 +969,12 @@ if st.session_state.page == 6:
     pass
 
 # ---------------- PAGE 7 (Courses) ----------------
+def segment_completed():
+    segment_completion = st.checkbox("Completed"s)
+    if segment_completion:
+        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
+        st.balloons()
+
 
 def score_question(answer, questions, question_num):
     active_quiz = questions
@@ -1046,23 +1052,10 @@ if st.session_state.page == 7:
                 with lesson_one_expander:
                     st.title("Lesson one, importing data")
                     st.write("In this lesson, you’ll learn how to bring data from outside sources into Excel. We’ll explore how to import information from both text files and CSV files, and see how Excel organizes that data so it’s ready for you to work with.")
-                    st.header("How to import PDF into Excel")
 
-                    # VIDEO
-                    
-                    base_dir = os.path.dirname(__file__)
-                    video_path = os.path.join(base_dir, "Videos", "How to Import PDF to Excel ⧸⧸ #shorts.mp4")
-                    st.video(video_path)
+                    video_func("https://www.youtube.com/shorts/_5nGeEwx9ZI","How to Import PDF to Excel ⧸⧸ #shorts.mp4", "Mike Tholfsen", "How to import PDF into Excel" )
 
-                    # VIDEO
-                    credit_expander = st.expander("Video credit")
-                    with credit_expander:
-                        st.write("Video produced by Mike Tholfsen on Youtube.")
-                        st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
-                    segment_completion = st.checkbox("Completed", key=2)
-                    if segment_completion:
-                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
-                        st.balloons()
+                    segment_completed()
 
                 # Lesson Two
                 lesson_two_expander = st.expander(label="Lesson two")
@@ -1102,6 +1095,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
