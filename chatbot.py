@@ -874,7 +874,7 @@ if st.session_state.page >= 3:
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
         if st.session_state.page >= 3:
-            main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Courses"])
+            main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
             if main_switch == "Login":
                 progress_bar("Loading login page.", 2)
             if main_switch == "Messager":
@@ -885,7 +885,7 @@ if st.session_state.page >= 3:
                 progress_bar("Loading account info", 5)
             if main_switch == "Analytics":
                 progress_bar("Loading Scholarra analytics", 6)
-            if main_switch == "Courses":
+            if main_switch == "Material Library":
                 progress_bar("Loading courses", 7)
             
         notes_expander = st.expander("Notes")
@@ -966,8 +966,8 @@ if st.session_state.page == 7:
     entered_course_key = st.text_input("Enter course key")
     
     if entered_course_key not in student_course_keys:
-        st.title("Courses")
-        st.info("Scholarra courses are free, self-paced, and easy to use, to see what courses are offered expand the Availible courses expander below. To activate your course enter your course key into the textbox above then type enter. Goodluck, and happy learning!")
+        st.title("Material library")
+        st.info("Here you can find courses, quizzes, syllabi, worksheets, and more.")
         course_expander = st.expander("Availible courses")
         with course_expander:
             st.write("Welcome prospective students, here you can find all the courses offered on Scholarra.")
@@ -1116,6 +1116,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
