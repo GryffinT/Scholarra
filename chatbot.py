@@ -1052,7 +1052,7 @@ if st.session_state.page == 7:
                     with lesson_2_credit_expander:
                         st.write("Video produced by Mike Tholfsen on Youtube.")
                         st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
-                    lesson_2_segment_completion = st.checkbox("Completed")
+                    lesson_2_segment_completion = st.checkbox("Completed", key=3)
                     if lesson_2_segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                         st.balloons()
@@ -1061,6 +1061,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
