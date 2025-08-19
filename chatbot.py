@@ -1068,7 +1068,7 @@ if st.session_state.page == 7:
 
                     # Checkbox
                     
-                    lesson_2_segment_completion = st.checkbox("Completed")
+                    lesson_2_segment_completion = st.checkbox("Completed", key=3)
                     if lesson_2_segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                         st.balloons()
@@ -1077,6 +1077,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
