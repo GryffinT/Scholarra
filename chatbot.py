@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import httpx
 import plotly.express as px
+import random
 from urllib.parse import quote
 from datetime import datetime
 import io
@@ -1080,6 +1081,29 @@ if st.session_state.page == 7:
                         st.write("URL: [https://www.youtube.com/shorts/NIg7m4nv5Fg](https://www.youtube.com/shorts/NIg7m4nv5Fg)")
 
                     # Checkbox
+                 
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    lesson_2_q1 = text_input("example question")
+                    lesson_2_quiz_answers = ["example answer"]
+                    def score_question(answer, q_num):
+                        score = fuzz.ratio(answer, lesson_2_quiz_answers[q_num])
+                        if score > 80:
+                            num = random.randint(0, 2)
+                            match num:
+                                case 0:
+                                    return st.success(f"Correct! You entered {answer} and the answer was {lesson_2_quiz_answers[q_num]}.")
+                                case 1:
+                                    return st.success(f"You got it! Your answer was {answer} and the correct answer was {lesson_2_quiz_answers[q_num]}.")
+                                case 2:
+                                    return st.success(f"Nice work! You answered {answer}, and the correct answer is {lesson_2_quiz_answers[q_num]}.")
+                        else:
+                            return st.warning(f"Not quite, you answered {answer}, but the correct answer was {lesson_2_quiz_answers[q_num]}.")
+                                    
+                    if lesson_2_q1:
+                        score_question(lesson_2_q1, 0)
+                        
+                    
+                    
                     
                     lesson_2_segment_completion = st.checkbox("Completed", key=3)
                     if lesson_2_segment_completion:
@@ -1090,6 +1114,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
