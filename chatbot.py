@@ -1021,7 +1021,7 @@ if st.session_state.page == 7:
                     # VIDEO
                     
                     base_dir = os.path.dirname(__file__)
-                    video_path = os.path.join(base_dir, "Videos", "Excel Video 1")
+                    video_path = os.path.join(base_dir, "Videos", "How to Import PDF to Excel ⧸⧸ #shorts.mp4")
                     st.video(video_path)
 
                     # VIDEO
@@ -1030,23 +1030,12 @@ if st.session_state.page == 7:
                         st.write("Video produced by Mike Tholfsen on Youtube.")
                         st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
                                         st.header("Importing .txt files into Excel")
-
-                    # VIDEO
-                    st.header("Importing .csv files into Excel")
-                    
-                    video_path2 = os.path.join(base_dir, "Videos", "How to Import PDF to Excel ⧸⧸ #shorts.mp4")
-                    st.video(video_path2)
-
-                    # VIDEO
-                    credit_expander = st.expander("Video credit")
-                    with credit_expander:
-                        st.write("Video produced by Mike Tholfsen on Youtube.")
-                        st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
