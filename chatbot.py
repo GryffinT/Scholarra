@@ -1014,8 +1014,8 @@ if st.session_state.page == 7:
                         st.balloons()
                 lesson_one_expander = st.expander(label="Lesson one")
                 with lesson_one_expander:
-                    st.header("Lesson one, importing data")
-                    st.write("This lesson will go over how to import data from both .txt files and .csv into Excel.")
+                    st.title("Lesson one, importing data")
+                    st.write("In this lesson, you’ll learn how to bring data from outside sources into Excel. We’ll explore how to import information from both text files and CSV files, and see how Excel organizes that data so it’s ready for you to work with.")
                     st.header("How to import PDF into Excel")
 
                     # VIDEO
@@ -1029,11 +1029,16 @@ if st.session_state.page == 7:
                     with credit_expander:
                         st.write("Video produced by Mike Tholfsen on Youtube.")
                         st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
+                    segment_completion = st.checkbox("Completed")
+                    if segment_completion:
+                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
+                        st.balloons()
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
