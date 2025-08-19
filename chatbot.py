@@ -1099,7 +1099,7 @@ if st.session_state.page == 7:
                                 case 2:
                                     return st.success(f"Nice work! You answered {answer}, and the correct answer is {lesson_2_quiz_answers[q_num]}.")
                         else:
-                            return st.warning(f"Not quite, you answered {answer}, but the correct answer was {lesson_2_quiz_answers[q_num]}.")
+                            return st.error(f"Not quite, you answered {answer}, but the correct answer was {lesson_2_quiz_answers[q_num]}.")
                                     
                     if lesson_2_q1:
                         score_question(lesson_2_q1, 0)
@@ -1116,6 +1116,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
