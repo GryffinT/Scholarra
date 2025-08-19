@@ -1083,7 +1083,7 @@ if st.session_state.page == 7:
                     # Checkbox
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
-                    lesson_2_q1 = text_input("example question")
+                    lesson_2_q1 = st.text_input("example question")
                     lesson_2_quiz_answers = ["example answer"]
                     def score_question(answer, q_num):
                         score = fuzz.ratio(answer, lesson_2_quiz_answers[q_num])
@@ -1114,6 +1114,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
