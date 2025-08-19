@@ -1082,17 +1082,20 @@ if st.session_state.page == 7:
 
                     video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
                  
-                    st.header("Test your knowledge with a short quiz to complete this section")
-                    lesson_2_quiz_answers = ["answer"]
-                    lesson_2_q1 = st.text_input("Question 1")
-                    lesson_2_q2 = st.text_input("Question 2")
-                    lesson_2_q3 = st.radio("Select the true statment.", ["1", "2","3"])
-                    lesson_2_q4 = st.text_input("Question 4")
+                    st.header("Test your knowledge with a short quiz to complete this section", "Yes", "An entry's column and row.", "Ctrl + K")
+                    lesson_2_quiz_answers = ["Find & Select", ]
+                    lesson_2_q1 = st.text_input("What do you click to open the search menu in workbook?")
+                    lesson_2_q2 = st.segmented_control("Can you type an entry's name to search for it in the name box?", ["Yes", "No"])
+                    lesson_2_q3 = st.radio("Which of the following can you type into the name box to find an entry.", ["An entry's column and row.", "An entry's column","An entry's row"])
+                    lesson_2_q4 = st.text_input("What do you press to open the hyperlink window?")
 
                                     
                     if lesson_2_q1:
                         score_question(lesson_2_q1,lesson_2_quiz_answers, 0)
-                        
+                        score_question(lesson_2_q2, lesson_2_quiz_answers, 1)
+                        score_question(lesson_2_q3, lesson_2_quiz_answers, 2)
+                        score_question(lesson_2_q4, lesson_2_quiz_answers, 3)
+
                     
                     
                     
@@ -1105,6 +1108,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
