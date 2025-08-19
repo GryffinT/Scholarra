@@ -1087,7 +1087,7 @@ if st.session_state.page == 7:
                     lesson_2_quiz_answers = ["example answer"]
                                     
                     if lesson_2_q1:
-                        score_question(lesson_2_q1, 0)
+                        score_question(lesson_2_q1,2, 0)
                         
                     
                     
@@ -1101,6 +1101,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
