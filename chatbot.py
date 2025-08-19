@@ -969,8 +969,8 @@ if st.session_state.page == 6:
     pass
 
 # ---------------- PAGE 7 (Courses) ----------------
-def segment_completed():
-    segment_completion = st.checkbox("Completed", key=2)
+def segment_completed(lesson_number):
+    segment_completion = st.checkbox("Completed", key=lesson_number)
     if segment_completion:
         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
         st.balloons()
@@ -1055,7 +1055,7 @@ if st.session_state.page == 7:
 
                     video_func("https://www.youtube.com/shorts/_5nGeEwx9ZI","How to Import PDF to Excel ⧸⧸ #shorts.mp4", "Mike Tholfsen", "How to import PDF into Excel" )
 
-                    segment_completed()
+                    segment_completed(1)
 
                 # Lesson Two
                 lesson_two_expander = st.expander(label="Lesson two")
@@ -1086,12 +1086,13 @@ if st.session_state.page == 7:
                     lesson_2_q4 = st.text_input("What do you press to open the hyperlink window?")
                     score_question(lesson_2_q4, lesson_2_quiz_answers, 3)
 
-                    segment_completed()
+                    segment_completed(2)
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
