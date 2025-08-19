@@ -1016,7 +1016,7 @@ if st.session_state.page == 7:
                 with lesson_one_expander:
                     st.header("Lesson one, importing data")
                     st.write("This lesson will go over how to import data from both .txt files and .csv into Excel.")
-                    st.header("Importing .txt files into Excel")
+                    st.header("How to import PDF into Excel")
 
                     # VIDEO
                     
@@ -1029,12 +1029,12 @@ if st.session_state.page == 7:
                     with credit_expander:
                         st.write("Video produced by Mike Tholfsen on Youtube.")
                         st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
-                                        st.header("Importing .txt files into Excel")
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
