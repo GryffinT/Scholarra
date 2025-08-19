@@ -1050,9 +1050,28 @@ if st.session_state.page == 7:
                     # VIDEO
                     lesson_2_credit_expander = st.expander("Video credit")
                     with lesson_2_credit_expander:
-                        st.write("Video produced by Mike Tholfsen on Youtube.")
-                        st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
+                        st.write("Video produced by Kay Rand Morgan on Youtube.")
+                        st.write("URL: [https://www.youtube.com/watch?v=ovDpZD4BxQk](https://www.youtube.com/watch?v=ovDpZD4BxQk)")
                     lesson_2_segment_completion = st.checkbox("Completed", key=3)
+                    if lesson_2_segment_completion:
+                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
+                        st.balloons()
+                    st.header("Navigate to named cells, ranges, or workbook elements")
+
+                    # VIDEO
+                    
+                    lesson_2_video_2_path = os.path.join(base_dir, "Videos", "Microsoft Excel - Navigate to named cells, ranges, or workbook elements CC.mp4")
+                    st.video(lesson_2_video_2_path)
+
+                    # VIDEO
+                    lesson_2_video_2_credit_expander = st.expander("Video credit")
+                    with lesson_2_video_2_credit_expander:
+                        st.write("Video produced by Kay Rand Morgan on Youtube.")
+                        st.write("URL: [https://www.youtube.com/watch?v=Z7RQnu3yrPk](https://www.youtube.com/watch?v=Z7RQnu3yrPk)")
+
+                    # Checkbox
+                    
+                    lesson_2_segment_completion = st.checkbox("Completed")
                     if lesson_2_segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                         st.balloons()
@@ -1061,6 +1080,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
