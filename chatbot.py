@@ -1033,11 +1033,36 @@ if st.session_state.page == 7:
                     if segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                         st.balloons()
+                                lesson_one_expander = st.expander(label="Lesson one")
+
+                # Lesson Two
+                
+                with lesson_two_expander:
+                    st.title("Lesson two, navigating workbook")
+                    st.write("In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.")
+                    st.header("Search for data within a workbook")
+
+                    # VIDEO
+                    
+                    base_dir = os.path.dirname(__file__)
+                    video_path = os.path.join(base_dir, "Videos", "Microsoft Excel - Search for data within a workbook CC.mp4")
+                    st.video(video_path)
+
+                    # VIDEO
+                    credit_expander = st.expander("Video credit")
+                    with credit_expander:
+                        st.write("Video produced by Mike Tholfsen on Youtube.")
+                        st.write("URL: [https://www.youtube.com/shorts/_5nGeEwx9ZI](https://www.youtube.com/shorts/_5nGeEwx9ZI)")
+                    segment_completion = st.checkbox("Completed", key=2)
+                    if segment_completion:
+                        st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
+                        st.balloons()
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
