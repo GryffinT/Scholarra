@@ -22,6 +22,8 @@ import asyncio
 import aiohttp
 from pdf2image import convert_from_path
 from streamlit_modal import Modal
+from rapidfuzz import fuzz
+
 
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
@@ -1114,6 +1116,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
