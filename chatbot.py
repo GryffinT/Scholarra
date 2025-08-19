@@ -1082,8 +1082,8 @@ if st.session_state.page == 7:
 
                     video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
                  
-                    st.header("Test your knowledge with a short quiz to complete this section", "Yes", "An entry's column and row.", "Ctrl + K")
-                    lesson_2_quiz_answers = ["Find & Select", ]
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    lesson_2_quiz_answers = ["Find & Select", "Yes", "An entry's column and row.", "Ctrl + K"]
                     lesson_2_q1 = st.text_input("What do you click to open the search menu in workbook?")
                     lesson_2_q2 = st.segmented_control("Can you type an entry's name to search for it in the name box?", ["Yes", "No"])
                     lesson_2_q3 = st.radio("Which of the following can you type into the name box to find an entry.", ["An entry's column and row.", "An entry's column","An entry's row"])
