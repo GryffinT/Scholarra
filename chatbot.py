@@ -1083,8 +1083,12 @@ if st.session_state.page == 7:
                     video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
-                    lesson_2_q1 = st.text_input("example question")
                     lesson_2_quiz_answers = ["answer"]
+                    lesson_2_q1 = st.text_input("Question 1")
+                    lesson_2_q2 = st.text_input("Question 2")
+                    lesson_2_q3 = st.radio("Select the true statment.", ["1", "2","3"])
+                    lesson_2_q4 = st.text_input("Question 4)
+
                                     
                     if lesson_2_q1:
                         score_question(lesson_2_q1,lesson_2_quiz_answers, 0)
@@ -1101,6 +1105,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
