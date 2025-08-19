@@ -970,6 +970,22 @@ if st.session_state.page == 6:
 
 # ---------------- PAGE 7 (Courses) ----------------
 
+def score_question(answer, lesson_num, question_num):
+    active_quiz = f"lesson_{lesson_num}_quiz_answers"
+    score = fuzz.ratio(answer, active_quiz[question_num])
+    if score > 80:
+        num = random.randint(0, 2)
+        match num:
+            case 0:
+                return st.success(f"Correct! You entered {answer} and the answer was {active_quiz[question_num]}.")
+            case 1:
+                return st.success(f"You got it! Your answer was {answer} and the correct answer was {active_quiz[question_num]}.")
+            case 2:
+                return st.success(f"Nice work! You answered {answer}, and the correct answer is {active_quiz[question_num]}.")
+    else:
+        return st.error(f"Not quite, you answered {answer}, but the correct answer was {active_quiz[question_num]}.")
+
+
 if st.session_state.page == 7:
     student_course_keys = {"KStudent": "MO-200 Microsoft Excel (Office 2019)"}
     accepted_courses = ["MO-200 Microsoft Excel (Office 2019)"]
@@ -1054,59 +1070,21 @@ if st.session_state.page == 7:
                     st.title("Lesson two, navigating workbook")
                     st.write("In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.")
 
+                    # Video 1
+                    
                     video_func("https://www.youtube.com/watch?v=ovDpZD4BxQk","Microsoft Excel - Search for data within a workbook CC.mp4", "Kay Rand Morgan", "Search for data within a workbook" )
 
-                    #st.header("Navigate to named cells, ranges, or workbook elements")
-
-                    # VIDEO
+                    # Video 2
                     
-                    #lesson_2_video_2_path = os.path.join(base_dir, "Videos", "Microsoft Excel - Navigate to named cells, ranges, or workbook elements CC.mp4")
-                    #st.video(lesson_2_video_2_path)
                     video_func("https://www.youtube.com/watch?v=Z7RQnu3yrPk","Microsoft Excel - Navigate to named cells, ranges, or workbook elements CC.mp4", "Kay Rand Morgan", "Navigating to named cells, ranges, or workbook elements" )
 
-                    # VIDEO
-                    #lesson_2_video_2_credit_expander = st.expander("Video credit")
-                    #with lesson_2_video_2_credit_expander:
-                        #st.write("Video produced by Kay Rand Morgan on Youtube.")
-                        #st.write("URL: [https://www.youtube.com/watch?v=Z7RQnu3yrPk](https://www.youtube.com/watch?v=Z7RQnu3yrPk)")
-
-                    # st.header("Insert and remove hyperlinks")
-
-                    # VIDEO
+                    # Video 3
 
                     video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
-                    
-                    # lesson_2_video_3_path = os.path.join(base_dir, "Videos", "How to Create & Remove Hyperlink？.mp4")
-                    # st.video(lesson_2_video_3_path)
-
-                    # VIDEO
-                    # lesson_2_video_3_credit_expander = st.expander("Video credit")
-                    # with lesson_2_video_3_credit_expander:
-                        # st.write("Video produced by Santhu Analytics on Youtube.")
-                        # st.write("URL: [https://www.youtube.com/shorts/NIg7m4nv5Fg](https://www.youtube.com/shorts/NIg7m4nv5Fg)")
-
-                    # Checkbox
-
-                    #USE THIS FORMAT FOR VIDEOS NOW
-
-                    #video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg","How to Create & Remove Hyperlink？.mp4", "Santhu Analytics", "How to Create & Remove Hyperlink" )
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
                     lesson_2_q1 = st.text_input("example question")
                     lesson_2_quiz_answers = ["example answer"]
-                    def score_question(answer, q_num):
-                        score = fuzz.ratio(answer, lesson_2_quiz_answers[q_num])
-                        if score > 80:
-                            num = random.randint(0, 2)
-                            match num:
-                                case 0:
-                                    return st.success(f"Correct! You entered {answer} and the answer was {lesson_2_quiz_answers[q_num]}.")
-                                case 1:
-                                    return st.success(f"You got it! Your answer was {answer} and the correct answer was {lesson_2_quiz_answers[q_num]}.")
-                                case 2:
-                                    return st.success(f"Nice work! You answered {answer}, and the correct answer is {lesson_2_quiz_answers[q_num]}.")
-                        else:
-                            return st.error(f"Not quite, you answered {answer}, but the correct answer was {lesson_2_quiz_answers[q_num]}.")
                                     
                     if lesson_2_q1:
                         score_question(lesson_2_q1, 0)
@@ -1123,6 +1101,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
