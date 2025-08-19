@@ -24,6 +24,16 @@ from pdf2image import convert_from_path
 from streamlit_modal import Modal
 from rapidfuzz import fuzz
 
+def video_func(url, path, name, video_title):
+    video_path = os.path.join(base_dir, "Videos", f"{video_title}")
+    st.video(f"{path}")
+    video_credit_expander = st.expander("Video credit")
+    with video_credit_expander:
+        st.write(f"Video produced by {name} on Youtube.")
+        st.write(f"URL: [{url}]({url})")
+        
+        
+
 
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
@@ -1082,6 +1092,8 @@ if st.session_state.page == 7:
                         st.write("URL: [https://www.youtube.com/shorts/NIg7m4nv5Fg](https://www.youtube.com/shorts/NIg7m4nv5Fg)")
 
                     # Checkbox
+
+                    video_func(https://www.youtube.com/shorts/NIg7m4nv5Fg,How to Create & Remove Hyperlink？.mp4, Santhu Analytics, How to Create & Remove Hyperlink? )
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
                     lesson_2_q1 = st.text_input("example question")
@@ -1115,6 +1127,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
