@@ -1015,13 +1015,14 @@ if st.session_state.page == 7:
                 lesson_one_expander = st.expander(label="Lesson one")
                 with lesson_one_expander:
                     st.header("Lesson one, importing data")
-                    st.video(https://www.youtube.com/shorts/_5nGeEwx9ZI, subtitles="subtitles.vtt")
+                    st.video(video_path = os.path.join(base_dir, "Videos", "myvideo.mp4"), subtitles="subtitles.vtt")
                     st.write("Video from Microsoft, listed on Youtube")
                     
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
