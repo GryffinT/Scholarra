@@ -25,7 +25,8 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 
 def video_func(url, path, name, video_title):
-    video_path = os.path.join(base_dir, "Videos", f"{video_title}")
+    st.header(video_title)
+    video_path = os.path.join(base_dir, "Videos", f"{path}")
     st.video(video_path)
     video_credit_expander = st.expander("Video credit")
     with video_credit_expander:
@@ -1127,6 +1128,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
