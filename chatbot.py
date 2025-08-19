@@ -1020,7 +1020,7 @@ if st.session_state.page == 7:
                     
                     base_dir = os.path.dirname(__file__)
                     video_path = os.path.join(base_dir, "Videos", "Excel Video 1")
-                    st.video(video_path, subtitles="subtitles.vtt")
+                    st.video(video_path)
 
                     # VIDEO
                     
@@ -1030,4 +1030,5 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
