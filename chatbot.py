@@ -344,11 +344,13 @@ if st.session_state.page == 3:
         if user_input:
             # Append user message
             st.session_state.chat_history.append({"role": "user", "content": filter_prompt(user_input)})
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=st.session_state.chat_history
-            )
-            ai_message = response.choices[0].message.content
+            with st.spinner("Generating response..."):
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=st.session_state.chat_history
+                    )
+                    ai_message = response.choices[0].message.content
             st.session_state.chat_history.append({"role": "assistant", "content": filter_response(ai_message, user_input)})
     
             # Display chat messages except the system prompt
@@ -1151,6 +1153,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
