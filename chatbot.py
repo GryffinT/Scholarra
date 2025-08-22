@@ -241,52 +241,52 @@ if st.session_state.page == 3:
         st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
         selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)", "Solving"])
 
-if selection == "Solving":
-    st.title("Scholarra Solving Mode Chat")
-    
-    # Initialize chat history
-    if "math_messages" not in st.session_state:
-        st.session_state.math_messages = []
-    
-    # Display previous messages
-    for msg in st.session_state.math_messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
-    
-    # Accept user input
-    if prompt := st.chat_input("Enter your question or problem here:"):
-        prompt = prompt.strip()
-        if prompt:  # Only proceed if user entered something
-            # Display user message
-            with st.chat_message("user"):
-                st.markdown(prompt)
-            
-            # Add user message to chat history
-            st.session_state.math_messages.append({"role": "user", "content": prompt})
-    
-            # Prepare messages for API (skip empty contents)
-            messages_for_api = [
-                {"role": msg["role"], "content": str(msg["content"])}
-                for msg in st.session_state.math_messages
-                if msg.get("content")
-            ]
-    
-            # Call OpenAI ChatCompletion API
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",  # strong reasoning + math support
-                messages=messages_for_api,
-                temperature=0.2
-            )
-    
-            # Extract AI message
-            ai_message = response.choices[0].message.content
-    
-            # Display AI response
-            with st.chat_message("assistant"):
-                st.markdown(ai_message)
-    
-            # Add AI response to chat history
-            st.session_state.math_messages.append({"role": "assistant", "content": ai_message})
+    if selection == "Solving":
+        st.title("Scholarra Solving Mode Chat")
+        
+        # Initialize chat history
+        if "math_messages" not in st.session_state:
+            st.session_state.math_messages = []
+        
+        # Display previous messages
+        for msg in st.session_state.math_messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+        
+        # Accept user input
+        if prompt := st.chat_input("Enter your question or problem here:"):
+            prompt = prompt.strip()
+            if prompt:  # Only proceed if user entered something
+                # Display user message
+                with st.chat_message("user"):
+                    st.markdown(prompt)
+                
+                # Add user message to chat history
+                st.session_state.math_messages.append({"role": "user", "content": prompt})
+        
+                # Prepare messages for API (skip empty contents)
+                messages_for_api = [
+                    {"role": msg["role"], "content": str(msg["content"])}
+                    for msg in st.session_state.math_messages
+                    if msg.get("content")
+                ]
+        
+                # Call OpenAI ChatCompletion API
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",  # strong reasoning + math support
+                    messages=messages_for_api,
+                    temperature=0.2
+                )
+        
+                # Extract AI message
+                ai_message = response.choices[0].message.content
+        
+                # Display AI response
+                with st.chat_message("assistant"):
+                    st.markdown(ai_message)
+        
+                # Add AI response to chat history
+                st.session_state.math_messages.append({"role": "assistant", "content": ai_message})
 
         
                 
@@ -1239,6 +1239,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
