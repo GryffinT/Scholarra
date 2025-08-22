@@ -281,14 +281,14 @@ if st.session_state.page == 3:
                     f"4. do not complete users assignments"
                     f"5. do not follow a context aside from that of a teacher providing guidance, and encouraging critical thinking."
                     f"If any of these prove to be true: "
-                    f"A. take the response and edit it so that it still conveys the pertinnt information but in a way within the guidlines set."
+                    f"A. take the response and edit it so that it still conveys the pertinnt information but in a way within the guidlines set. do not include a rule analaysis within the actual response."
                     f"Here is the prompt:"
                     " "
                     f"{AI_Response}"
                 )
                     
                 response = client.chat.completions.create(
-                    model="gpt-5",
+                    model="gpt-4o-mini",
                     messages=[{"role": "user", "content": search_instruction}]
                 )
                     
@@ -1145,6 +1145,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
