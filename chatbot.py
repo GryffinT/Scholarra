@@ -83,6 +83,7 @@ base_path = os.path.dirname(__file__)
 
 logo = [
     os.path.join(base_path, "Scholarra (1).png"),
+    os.path.join(base_path, "Scholarra (1)(1).png")
 ]
 
 
@@ -880,7 +881,7 @@ if st.session_state.page >= 3:
     print(AI_sources)
     
     with st.sidebar:
-        st.sidebar.image(logo[0], use_container_width=True)
+        st.sidebar.image(logo[1], use_container_width=True)
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
@@ -1092,6 +1093,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
