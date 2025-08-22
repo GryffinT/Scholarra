@@ -342,8 +342,11 @@ if st.session_state.page == 3:
     
         # Buttons below the chat input
         if user_input:
-            # Append user message
-            st.session_state.chat_history.append({"role": "user", "content": filter_prompt(user_input)})
+            # Append user message (filtered version)
+            st.session_state.chat_history.append(
+                {"role": "user", "content": filter_prompt(user_input)}
+            )
+        
             with st.spinner("Generating response..."):
                 try:
                     response = client.chat.completions.create(
@@ -351,7 +354,12 @@ if st.session_state.page == 3:
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
-            st.session_state.chat_history.append({"role": "assistant", "content": filter_response(ai_message, user_input)})
+        
+            # Append assistant message *outside* spinner
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": filter_response(ai_message, user_input)}
+            )
+
     
             # Display chat messages except the system prompt
             for msg in st.session_state.chat_history:
@@ -1153,6 +1161,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
