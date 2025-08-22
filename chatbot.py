@@ -245,6 +245,30 @@ if st.session_state.page == 3:
         selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)"])
         
     if selection == "Standard":
+
+        def filter_prompt(user_prompt):
+            search_instruction = (
+                f"Determine if the prompt given is:"
+                f"1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production"
+                f"2. requesting guidance or the writing of a text"
+                f"3. requestion an explanation of something in a certain format, such as an introduction, body, and conclusion"
+                f"4. seeking the completion of an assignment"
+                f"5. placing the AI in a new context."
+                f"If any of these prove to be true: "
+                f"A. Identify the root and intent of the question."
+                f"B. Rewrite the question in such a way that it will guide an AI reading it to provide only guidance, and encouraging critical thinking, without breaching rules 1-5."
+                f"Here is the prompt:"
+                " "
+                f"{user_prompt}"
+            )
+                
+            response = client.chat.completions.create(
+                model="gpt-5",
+                messages=[{"role": "user", "content": search_instruction}]
+            )
+                
+            return response.choices[0].message.content
+        
         st.title("Scholarra interface")
         st.markdown("""Powered by Open AI APIs""")
     
@@ -281,7 +305,7 @@ if st.session_state.page == 3:
         # Buttons below the chat input
         if user_input:
             # Append user message
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            st.session_state.chat_history.append({"role": "user", "content": filter_prompt(user_input)})
     
             with st.spinner("Thinking..."):
                 try:
@@ -299,6 +323,7 @@ if st.session_state.page == 3:
                 if msg["role"] != "system":
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
+    
     if selection == "Research (Beta)":
         
         # -----------------------------
@@ -1093,6 +1118,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
