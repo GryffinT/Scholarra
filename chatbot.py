@@ -238,6 +238,13 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
+    AI_expander = st.expander("Control panel")
+    with AI_expander:
+        st.header("Scholarra control panel")
+        st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
+        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
+
+if st.session_state.page == 3:
     st.title("Scholarra Solving Mode Chat")
     
     # Initialize chat history
@@ -1233,6 +1240,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
