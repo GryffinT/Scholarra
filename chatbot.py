@@ -332,7 +332,7 @@ if st.session_state.page == 3:
         # Buttons below the chat input
         if user_input:
             # Append user message
-            st.session_state.chat_history.append({"role": "user", "content": filter_prompt(user_input)})
+            st.session_state.chat_history.append({"role": "user", "content": filter_response(user_input)})
     
             with st.spinner("Generating response..."):
                 try:
@@ -1145,6 +1145,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
