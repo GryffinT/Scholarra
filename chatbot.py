@@ -83,7 +83,7 @@ base_path = os.path.dirname(__file__)
 
 logo = [
     os.path.join(base_path, "Scholarra (1).png"),
-    os.path.join(base_path, "Scholarra (1)(2).png")
+    os.path.join(base_path, "Scholarra (1) (2).png")
 ]
 
 
@@ -1093,6 +1093,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
