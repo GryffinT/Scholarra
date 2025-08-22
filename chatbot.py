@@ -238,48 +238,52 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
-    AI_expander = st.expander("Control panel")
-    with AI_expander:
-        st.header("Scholarra control panel")
-        st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
-        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
-
-    if selection == "Solving":
-        if "math_messages" not in st.session_state:
-            st.session_state.math_messages = []
-        
-        st.title("Scholarra Solving Mode")
-        
-        # display chat history
-        for msg in st.session_state.math_messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-        
-        # accept user input
-        if prompt := st.chat_input("Enter your math/physics/chemistry problem here:"):
-            # display user message
+    st.title("Scholarra Solving Mode Chat")
+    
+    # Initialize chat history
+    if "math_messages" not in st.session_state:
+        st.session_state.math_messages = []
+    
+    # Display previous messages
+    for msg in st.session_state.math_messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+    
+    # Accept user input
+    if prompt := st.chat_input("Enter your question or problem here:"):
+        prompt = prompt.strip()
+        if prompt:  # Only proceed if user entered something
+            # Display user message
             with st.chat_message("user"):
                 st.markdown(prompt)
-        
-            # add user message to chat history
+            
+            # Add user message to chat history
             st.session_state.math_messages.append({"role": "user", "content": prompt})
-        
-            # call the new client.chat.completions.create
+    
+            # Prepare messages for API (skip empty contents)
+            messages_for_api = [
+                {"role": msg["role"], "content": str(msg["content"])}
+                for msg in st.session_state.math_messages
+                if msg.get("content")
+            ]
+    
+            # Call OpenAI ChatCompletion API
             response = client.chat.completions.create(
-                model="gpt-4o-mini",  # strong reasoning + math abilities
-                messages=st.session_state.math_messages,
+                model="gpt-4o-mini",  # strong reasoning + math support
+                messages=messages_for_api,
                 temperature=0.2
             )
-        
-            # extract AI message
+    
+            # Extract AI message
             ai_message = response.choices[0].message.content
-        
-            # display AI response
+    
+            # Display AI response
             with st.chat_message("assistant"):
                 st.markdown(ai_message)
-        
-            # add AI message to chat history
+    
+            # Add AI response to chat history
             st.session_state.math_messages.append({"role": "assistant", "content": ai_message})
+
         
                 
     if selection == "Writing and Analysis":
@@ -1229,6 +1233,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
