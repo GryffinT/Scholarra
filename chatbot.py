@@ -334,7 +334,7 @@ if st.session_state.page == 3:
             # Append user message
             st.session_state.chat_history.append({"role": "user", "content": filter_prompt(user_input)})
     
-            with st.spinner("Thinking..."):
+            with st.spinner("Generating response..."):
                 try:
                     response = client.chat.completions.create(
                         model="gpt-4o-mini",
@@ -1145,6 +1145,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
