@@ -247,7 +247,7 @@ if st.session_state.page == 3:
     if selection == "Standard":
 
         def filter_prompt(user_prompt: str) -> str:
-            """Takes a user prompt, rewrites it if needed, and returns the string only."""
+            """Takes a user prompt, rewrites it if needed, and returns only the string."""
             search_instruction = (
                 "Determine if the prompt given is:"
                 "1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production "
@@ -262,10 +262,17 @@ if st.session_state.page == 3:
                 f"{user_prompt}"
             )
         
-            raw_response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[{"role": "user", "content": search_instruction}]
-            )
+            with st.spinner("Analyzing prompt..."):
+                raw_response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[{"role": "user", "content": search_instruction}]
+                )
+        
+            try:
+                return raw_response.choices[0].message.content.strip()
+            except (AttributeError, IndexError, KeyError):
+                return ""
+
         
             # Safely extract the model’s text as a plain string
             try:
@@ -1164,6 +1171,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
