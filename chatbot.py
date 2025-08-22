@@ -254,8 +254,8 @@ if st.session_state.page == 3:
         # Accept user input
         if prompt := st.chat_input("What is up?"):
     # Display user message in chat message container
-        with st.chat_message("user"):
-        st.markdown(prompt)
+            with st.chat_message("user"):
+                st.markdown(prompt)
     # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})                
         
@@ -1207,6 +1207,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
