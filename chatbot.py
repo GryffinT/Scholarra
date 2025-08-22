@@ -239,7 +239,7 @@ if st.session_state.page == 3:
     with AI_expander:
         st.header("Scholarra control panel")
         st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
-        selection = st.selectbox("AI Mode", ["Standard", "Research (Beta)", "Solving"])
+        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
 
     if selection == "Solving":
         st.title("Scholarra Solving Mode Chat")
@@ -291,7 +291,6 @@ if st.session_state.page == 3:
         
                 
     if selection == "Writing and Analysis":
-        st.rerun()
 
         def filter_prompt(user_prompt):
             with st.spinner("Analyzing prompt..."):
@@ -445,7 +444,6 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     
     if selection == "Research (Beta)":
-        st.rerun()
         
         # -----------------------------
         # Hidden character injection
@@ -1239,6 +1237,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
