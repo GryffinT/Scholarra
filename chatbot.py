@@ -245,20 +245,41 @@ if st.session_state.page == 3:
         selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
 
     if selection == "Solving":
-        st.title("Scholarra solving mode")
         if "math_messages" not in st.session_state:
             st.session_state.math_messages = []
-        for math_message in st.session_state.math_messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+        
+        st.title("Scholarra Solving Mode")
+        
+        # Display previous messages
+        for msg in st.session_state.math_messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+        
         # Accept user input
-        if prompt := st.chat_input("What is up?"):
-    # Display user message in chat message container
+        if prompt := st.chat_input("Enter your math/physics/chemistry problem here:"):
+            # Display user message
             with st.chat_message("user"):
                 st.markdown(prompt)
-    # Add user message to chat history
-        st.session_state.math_messages.append({"role": "user", "content": prompt})                
         
+            # Add user message to chat history
+            st.session_state.math_messages.append({"role": "user", "content": prompt})
+        
+            # Call OpenAI ChatCompletion with a model good at math
+            response = openai.ChatCompletion.create(
+                model="gpt-4-turbo",  # or "gpt-4-turbo-16k" if you want more context
+                messages=st.session_state.math_messages,
+                temperature=0.2  # low temperature for precise math answers
+            )
+        
+            # Extract AI message
+            ai_message = response["choices"][0]["message"]["content"]
+        
+            # Display AI response
+            with st.chat_message("assistant"):
+                st.markdown(ai_message)
+        
+            # Add AI message to chat history
+            st.session_state.math_messages.append({"role": "assistant", "content": ai_message})
         
     if selection == "Writing and Analysis":
 
@@ -1207,6 +1228,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
