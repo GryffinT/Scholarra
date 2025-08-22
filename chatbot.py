@@ -257,7 +257,7 @@ if st.session_state.page == 3:
             with st.chat_message("user"):
                 st.markdown(prompt)
     # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})                
+        st.session_state.math_messages.append({"role": "user", "content": prompt})                
         
         
     if selection == "Writing and Analysis":
@@ -1207,6 +1207,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
