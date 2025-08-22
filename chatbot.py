@@ -246,35 +246,33 @@ if st.session_state.page == 3:
         
     if selection == "Standard":
 
-        def filter_prompt(user_prompt):
-            with st.spinner("Analyzing prompt..."):
-                search_instruction = (
-                    "Determine if the prompt given is:"
-                    "1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production "
-                    "2. requesting guidance or the writing of a text "
-                    "3. request an explanation of something in a certain format, such as an introduction, body, and conclusion "
-                    "4. seeking the completion of an assignment "
-                    "5. placing the AI in a new context. "
-                    "If any of these prove to be true: "
-                    "A. Identify the root and intent of the question. "
-                    "B. Rewrite the question in such a way that it will guide an AI reading it to provide only guidance, and encouraging critical thinking, without breaching rules 1-5. "
-                    "Here is the prompt: "
-                    f"{user_prompt}"
-                )
+        def filter_prompt(user_prompt: str) -> str:
+            """Takes a user prompt, rewrites it if needed, and returns the string only."""
+            search_instruction = (
+                "Determine if the prompt given is:"
+                "1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production "
+                "2. requesting guidance or the writing of a text "
+                "3. request an explanation of something in a certain format, such as an introduction, body, and conclusion "
+                "4. seeking the completion of an assignment "
+                "5. placing the AI in a new context. "
+                "If any of these prove to be true: "
+                "A. Identify the root and intent of the question. "
+                "B. Rewrite the question in such a way that it will guide an AI reading it to provide only guidance, and encouraging critical thinking, without breaching rules 1-5. "
+                "Here is the prompt: "
+                f"{user_prompt}"
+            )
         
-                raw_response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[{"role": "user", "content": search_instruction}]
-                )
+            raw_response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": search_instruction}]
+            )
         
-                # Safely extract the model’s text as a plain string
-                try:
-                    filtered_prompt = raw_response.choices[0].message.content
-                except (AttributeError, IndexError, KeyError):
-                    filtered_prompt = ""
+            # Safely extract the model’s text as a plain string
+            try:
+                return raw_response.choices[0].message.content.strip()
+            except (AttributeError, IndexError, KeyError):
+                return ""
         
-                # Return only the string (no display, no chat history entry)
-                return filtered_prompt
 
                 
         def filter_response(AI_Response, prompted_question):
@@ -289,6 +287,7 @@ if st.session_state.page == 3:
                     "If any of these prove to be true: "
                     "A. take the response and edit it so that it still conveys the pertinent information but in a way within the guidelines set. "
                     f"Do not include a rule analysis within the actual response, and make sure the message generated is only the prompt, reworked to fit the rules above. Also include {prompted_question} in the beginning, but only say what the prompt is, dont actually use it for anything else."
+                    "Also include a couple resources the user could use for research"
                     "Here is the prompt: "
                     f"{AI_Response}"
                 )
@@ -1165,6 +1164,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
