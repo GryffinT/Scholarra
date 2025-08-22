@@ -265,7 +265,7 @@ if st.session_state.page == 3:
             st.session_state.math_messages.append({"role": "user", "content": prompt})
         
             # Call OpenAI ChatCompletion with a model good at math
-            response = openai.ChatCompletion.create(
+            response = OpenAI.ChatCompletion.create(
                 model="gpt-4-turbo",  # or "gpt-4-turbo-16k" if you want more context
                 messages=st.session_state.math_messages,
                 temperature=0.2  # low temperature for precise math answers
@@ -1228,6 +1228,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
