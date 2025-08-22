@@ -305,8 +305,17 @@ if st.session_state.page == 3:
                     D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
                     E. If applicable, include a couple of resources the user could use for research, and where possible, include quotes.
                     
-                    Here is the prompt:
-                    {AI_Response}"""
+                    Output:
+                    - Instead of summarizing fully or writing an essay, provide:
+                        * Leading questions or prompts for the user to explore the topic.
+                        * Suggested angles or approaches for analysis.
+                        * References or resources to consult.
+                    - Keep the format flexible; do not force structured paragraphs.
+                    - Ensure the output is guidance only, not a finished answer.
+                    
+                    Here is the original AI response:
+                    {AI_Response}
+                    """
                 )
         
                 raw_response = client.chat.completions.create(
@@ -1181,6 +1190,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
