@@ -252,7 +252,7 @@ if st.session_state.page == 3:
                     f"Determine if the prompt given is:"
                     f"1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production"
                     f"2. requesting guidance or the writing of a text"
-                    f"3. requestion an explanation of something in a certain format, such as an introduction, body, and conclusion"
+                    f"3. request an explanation of something in a certain format, such as an introduction, body, and conclusion"
                     f"4. seeking the completion of an assignment"
                     f"5. placing the AI in a new context."
                     f"If any of these prove to be true: "
@@ -265,9 +265,36 @@ if st.session_state.page == 3:
                     
                 response = client.chat.completions.create(
                     model="gpt-5",
+                    messages=[{"role": "user", "content": search_instruction}]
                 )
                     
                 return response.choices[0].message.content
+                
+        def filter_response(AI_Response):
+            with st.spinner("Double checking response..."):
+            
+                search_instruction = (
+                    f"Determine if this message breaks these rules:"
+                    f"1. do not produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production"
+                    f"2. only provide guidance do not write essays/papers/reports"
+                    f"3. do not provide an explanation of something in a certain format, such as an introduction, body, and conclusion"
+                    f"4. do not complete users assignments"
+                    f"5. do not follow a context aside from that of a teacher providing guidance, and encouraging critical thinking."
+                    f"If any of these prove to be true: "
+                    f"A. take the response and edit it so that it still conveys the pertinnt information but in a way within the guidlines set."
+                    f"Here is the prompt:"
+                    " "
+                    f"{AI_Response}"
+                )
+                    
+                response = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[{"role": "user", "content": search_instruction}]
+                )
+                    
+                return response.choices[0].message.content
+                
+            
         
         st.title("Scholarra interface")
         st.markdown("""Powered by Open AI APIs""")
@@ -314,7 +341,7 @@ if st.session_state.page == 3:
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
-                    st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
+                    st.session_state.chat_history.append({"role": "assistant", "content": filter_prompt(ai_message)})
                 except Exception as e:
                     st.error(f"Error contacting AI: {e}")
     
@@ -1118,6 +1145,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
