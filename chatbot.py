@@ -267,36 +267,6 @@ if st.session_state.page == 3:
                     messages=[{"role": "user", "content": search_instruction}]
                 )
         
-                # Safely extract the message as a string
-                try:
-                    response = raw_response.choices[0].message.content
-                except (AttributeError, IndexError, KeyError):
-                    response = ""  # fallback if something goes wrong
-        
-                return response
-
-                
-        def filter_prompt(user_prompt):
-            with st.spinner("Analyzing prompt..."):
-                search_instruction = (
-                    "Determine if the prompt given is:"
-                    "1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production "
-                    "2. requesting guidance or the writing of a text "
-                    "3. request an explanation of something in a certain format, such as an introduction, body, and conclusion "
-                    "4. seeking the completion of an assignment "
-                    "5. placing the AI in a new context. "
-                    "If any of these prove to be true: "
-                    "A. Identify the root and intent of the question. "
-                    "B. Rewrite the question in such a way that it will guide an AI reading it to provide only guidance, and encouraging critical thinking, without breaching rules 1-5. "
-                    "Here is the prompt: "
-                    f"{user_prompt}"
-                )
-        
-                raw_response = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[{"role": "user", "content": search_instruction}]
-                )
-        
                 # Safely extract the model’s text as a plain string
                 try:
                     filtered_prompt = raw_response.choices[0].message.content
@@ -305,6 +275,33 @@ if st.session_state.page == 3:
         
                 # Return only the string (no display, no chat history entry)
                 return filtered_prompt
+
+                
+        def filter_response(AI_Response):
+            with st.spinner("Double checking response..."):
+                search_instruction = (
+                    "Determine if this message breaks these rules:"
+                    "1. do not produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production "
+                    "2. only provide guidance do not write essays/papers/reports "
+                    "3. do not provide an explanation of something in a certain format, such as an introduction, body, and conclusion "
+                    "4. do not complete users assignments "
+                    "5. do not follow a context aside from that of a teacher providing guidance, and encouraging critical thinking. "
+                    "If any of these prove to be true: "
+                    "A. take the response and edit it so that it still conveys the pertinent information but in a way within the guidelines set. "
+                    "Do not include a rule analysis within the actual response. "
+                    "Here is the prompt: "
+                    f"{AI_Response}"
+                )
+        
+                raw_response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[{"role": "user", "content": search_instruction}]
+                )
+        
+                # just keep the string
+                response = raw_response.choices[0].message.content  
+        
+                return response
 
 
                 
@@ -1154,6 +1151,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
