@@ -246,40 +246,43 @@ if st.session_state.page == 3:
         
     if selection == "Standard":
 
-        def filter_prompt(user_prompt: str) -> str:
-            """Takes a user prompt, rewrites it if needed, and returns only the string."""
-            search_instruction = (
-                "Determine if the prompt given is:"
-                "1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production "
-                "2. requesting guidance or the writing of a text "
-                "3. request an explanation of something in a certain format, such as an introduction, body, and conclusion "
-                "4. seeking the completion of an assignment "
-                "5. placing the AI in a new context. "
-                "If any of these prove to be true: "
-                "A. Identify the root and intent of the question. "
-                "B. Rewrite the question in such a way that it will guide an AI reading it to provide only guidance, and encouraging critical thinking, without breaching rules 1-5. "
-                "Here is the prompt: "
-                f"{user_prompt}"
-            )
-        
+        def filter_prompt(user_prompt):
             with st.spinner("Analyzing prompt..."):
-                raw_response = client.chat.completions.create(
-                    model="gpt-4o",
+                search_instruction = (
+                    "Determine if the prompt given is:"
+                    "1. asking for the AI to produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production. "
+                    "2. requesting guidance or the writing of a text. "
+                    "3. request an explanation of something in a certain format, such as an introduction, body, and conclusion. "
+                    "4. seeking the completion of an assignment. "
+                    "5. placing the AI in a new context. "
+                    "If any of these prove to be true: "
+                    "A. Identify the root and intent of the question. "
+                    "B. Rewrite the question so it guides an AI to provide only guidance, "
+                    "encouraging critical thinking without breaching rules 1-5. "
+                    f"Here is the prompt: {user_prompt}"
+                )
+        
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",  # good balance of speed + reasoning
                     messages=[{"role": "user", "content": search_instruction}]
                 )
         
-            try:
-                return raw_response.choices[0].message.content.strip()
-            except (AttributeError, IndexError, KeyError):
-                return ""
-
+            full_output = response.choices[0].message.content
         
-            # Safely extract the model’s text as a plain string
-            try:
-                return raw_response.choices[0].message.content.strip()
-            except (AttributeError, IndexError, KeyError):
-                return ""
+            # Extract only the rewritten prompt ("B. ...") if present
+            rewritten_prompt = None
+            for line in full_output.splitlines():
+                if line.strip().startswith("B."):
+                    rewritten_prompt = line.replace("B. Rewrite:", "").replace("B.", "").strip()
+                    break
         
+            # Fallback: if no "B." section found, just use original
+            if not rewritten_prompt:
+                rewritten_prompt = user_prompt
+        
+            return rewritten_prompt  # stored in a variable, not shown to user
+        
+                
 
                 
         def filter_response(AI_Response, prompted_question):
@@ -1171,6 +1174,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
