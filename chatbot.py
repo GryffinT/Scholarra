@@ -263,7 +263,7 @@ if st.session_state.page == 3:
                 )
         
                 raw_response = client.chat.completions.create(
-                    model="gpt-4.1-mini",
+                    model="gpt-4o",
                     messages=[{"role": "user", "content": search_instruction}]
                 )
         
@@ -294,7 +294,7 @@ if st.session_state.page == 3:
                 )
         
                 raw_response = client.chat.completions.create(
-                    model="gpt-4.1-mini",
+                    model="gpt-4o",
                     messages=[{"role": "user", "content": search_instruction}]
                 )
         
@@ -1151,6 +1151,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
