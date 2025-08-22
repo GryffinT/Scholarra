@@ -304,6 +304,7 @@ if st.session_state.page == 3:
                     C. Make sure the generated message only includes the reworked prompt.
                     D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
                     E. If applicable, include a couple of resources with links the user could use for research, and where possible, include quotes.
+                    F. If the topic involves a mathematical, physics, or chemistry equation/problem, suggest switching the AI mode to “Solving mode” to provide guided step-by-step assistance.
                     
                     Output:
                     - Instead of summarizing fully or writing an essay, provide:
@@ -1190,6 +1191,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
