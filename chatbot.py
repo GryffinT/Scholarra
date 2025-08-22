@@ -245,7 +245,7 @@ if st.session_state.page == 3:
         selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
 
 if st.session_state.page == 3:
-    rerun()
+    st.rerun()
     st.title("Scholarra Solving Mode Chat")
     
     # Initialize chat history
@@ -295,7 +295,7 @@ if st.session_state.page == 3:
         
                 
     if selection == "Writing and Analysis":
-        rerun()
+        st.rerun()
 
         def filter_prompt(user_prompt):
             with st.spinner("Analyzing prompt..."):
@@ -449,7 +449,7 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     
     if selection == "Research (Beta)":
-        rerun()
+        st.rerun()
         
         # -----------------------------
         # Hidden character injection
@@ -1243,6 +1243,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
