@@ -277,7 +277,7 @@ if st.session_state.page == 3:
                 return filtered_prompt
 
                 
-        def filter_response(AI_Response):
+        def filter_response(AI_Response, prompted_question):
             with st.spinner("Double checking response..."):
                 search_instruction = (
                     "Determine if this message breaks these rules:"
@@ -288,7 +288,7 @@ if st.session_state.page == 3:
                     "5. do not follow a context aside from that of a teacher providing guidance, and encouraging critical thinking. "
                     "If any of these prove to be true: "
                     "A. take the response and edit it so that it still conveys the pertinent information but in a way within the guidelines set. "
-                    "Do not include a rule analysis within the actual response. "
+                    f"Do not include a rule analysis within the actual response, and make sure the message generated is only the prompt, reworked to fit the rules above. Also include {prompted_question} in the beginning, but only say what the prompt is, dont actually use it for anything else."
                     "Here is the prompt: "
                     f"{AI_Response}"
                 )
@@ -349,7 +349,7 @@ if st.session_state.page == 3:
                 messages=st.session_state.chat_history
             )
             ai_message = response.choices[0].message.content
-            st.session_state.chat_history.append({"role": "assistant", "content": filter_response(ai_message)})
+            st.session_state.chat_history.append({"role": "assistant", "content": filter_response(ai_message, user_input)})
     
             # Display chat messages except the system prompt
             for msg in st.session_state.chat_history:
@@ -1151,6 +1151,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
