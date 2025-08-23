@@ -256,7 +256,7 @@ if st.session_state.page == 3:
             st.session_state["user_equation"] = None
             st.session_state["final_answer"] = None
             st.session_state["generating"] = False
-            st.experimental_rerun()
+            st.rerun()
         
         # Input for starting a new equation
         user_input = st.text_input(
@@ -1300,6 +1300,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
