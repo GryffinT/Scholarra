@@ -237,69 +237,125 @@ if st.session_state.page == 3:
     ### SOLVING MODE BEGINS HERE ###
 
     if selection == "Solving":
+
+        st.title("Interactive Math Chat Solver")
         
-        st.title("🤖 Math Tutor Chat")
-        
+        # Initialize math-solving session state
         if "math_chat_history" not in st.session_state:
-            st.session_state.math_chat_history = [
-                {"role": "system", "content": (
-                    "You are a math tutor AI. "
-                    "Rules:\n"
-                    "1. Only help with math problems (solve, simplify, factor, equations, etc.).\n"
-                    "2. If user asks something unrelated to math, reply: "
-                    "'Sorry, but I am programmed to help solve equations, for other inquiries I suggest changing agents through the control panel and agent selection.'\n"
-                    "3. Always guide step by step.\n"
-                    "4. Present your own example (same formula, different numbers).\n"
-                    "5. After each step, wait for the user to solve their version before continuing.\n"
-                    "6. Format all equations in LaTeX inside [latex]...[/latex] tags.\n"
-                    "7. At the very end, restate the **full final answer** to the user’s original question."
-                )}
-            ]
+            st.session_state.math_chat_history = []
+        if "math_step" not in st.session_state:
+            st.session_state.math_step = 0
+        if "math_user_input" not in st.session_state:
+            st.session_state.math_user_input = None
+        if "math_template_equation" not in st.session_state:
+            st.session_state.math_template_equation = None
         
-        # --- Renderer for LaTeX ---
-        def render_message(msg, role="assistant"):
-            if "[latex]" in msg and "[/latex]" in msg:
-                parts = msg.split("[latex]")
-                for part in parts:
-                    if "[/latex]" in part:
-                        latex_expr, rest = part.split("[/latex]", 1)
-                        st.latex(latex_expr.strip())
-                        if rest.strip():
-                            st.markdown(rest.strip())
+        # Display math chat history
+        for msg in st.session_state.math_chat_history:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+        
+        # Accept user input
+        if user_input := st.chat_input("Enter an equation, simplify/factor request, or command:"):
+            user_input = user_input.strip()
+            if user_input:
+                # Display user message
+                st.session_state.math_chat_history.append({"role": "user", "content": user_input})
+                with st.chat_message("user"):
+                    st.markdown(user_input)
+        
+                # Step 0: First input = check if it's an equation or math command
+                if st.session_state.math_step == 0:
+                    st.session_state.math_user_input = user_input
+        
+                    # Determine type
+                    if re.match(r"^\s*[a-zA-Z]+\s*=\s*.*$", user_input):
+                        # Linear equation example parsing
+                        try:
+                            parts = user_input.replace(" ", "").split("=")[1]
+                            if "x" in parts:
+                                m = float(parts.split("x")[0])
+                                b = float(parts.split("+")[1])
+                                # Create template with different numbers
+                                st.session_state.math_template_equation = f"y = {m+5}x + {b+2}"
+                                ai_message = (
+                                    f"Great! Let's solve your equation step by step.\n\n"
+                                    f"Template equation solved by AI: `{st.session_state.math_template_equation}`\n\n"
+                                    "Step 1: Solve for slope (m) in your equation and type the result here."
+                                )
+                                st.session_state.math_step = 1
+                            else:
+                                ai_message = (
+                                    "Currently, I handle linear equations of the form y = mx + b, "
+                                    "or you can enter other math commands like simplify, factor, or solve."
+                                )
+                        except:
+                            ai_message = "Couldn't parse your equation. Use y = mx + b or math commands."
                     else:
-                        if part.strip():
-                            st.markdown(part.strip())
-            else:
-                st.markdown(msg)
+                        # Treat as math command
+                        ai_message = (
+                            f"You entered a math command or expression: `{user_input}`\n"
+                            "The AI will guide you step by step.\n"
+                            "Example: 'simplify 2x/3', 'factor 5x^2+2x+3', 'solve for y in 3x+2y=5'"
+                        )
+                        st.session_state.math_step = 10  # new path for commands
         
-        # --- Display chat history ---
-        for step in st.session_state.math_chat_history:
-            if step["role"] == "assistant":
-                render_message(step["content"], "assistant")
-            elif step["role"] == "user":
-                st.markdown(f"**You:** {step['content']}")
+                # Steps 1-4: User solving alongside AI template
+                elif 1 <= st.session_state.math_step <= 4:
+                    # Parse template and user equation
+                    template_parts = st.session_state.math_template_equation.replace(" ", "").split("=")[1]
+                    template_m = float(template_parts.split("x")[0])
+                    template_b = float(template_parts.split("+")[1])
         
-        # --- Input ---
-        user_input = st.chat_input("Enter your math step or problem here...")
+                    try:
+                        user_parts = st.session_state.math_user_input.replace(" ", "").split("=")[1]
+                        user_m = float(user_parts.split("x")[0])
+                        user_b = float(user_parts.split("+")[1])
         
-        if user_input:
-            # Add user message
-            st.session_state.math_chat_history.append({"role": "user", "content": user_input})
+                        step = st.session_state.math_step
+                        if step == 1:
+                            if float(user_input) == user_m:
+                                ai_message = f"Correct! Template solved: slope m = {template_m}\nStep 2: Solve for y-intercept in your equation."
+                                st.session_state.math_step = 2
+                            else:
+                                ai_message = "Incorrect. Hint: Coefficient of x in your equation is the slope (m)."
         
-            # Get AI response
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=st.session_state.math_chat_history,
-                temperature=0.3
-            )
+                        elif step == 2:
+                            if float(user_input) == user_b:
+                                ai_message = f"Correct! Template solved: y-intercept b = {template_b}\nStep 3: Solve for y at x=1 in your equation."
+                                st.session_state.math_step = 3
+                            else:
+                                ai_message = "Incorrect. Hint: constant term in your equation is the y-intercept (b)."
         
-            ai_message = response.choices[0].message.content
+                        elif step == 3:
+                            expected_y = user_m * 1 + user_b
+                            if float(user_input) == expected_y:
+                                ai_message = f"Correct! Template y at x=1 = {template_m*1 + template_b}\nStep 4: Solve for y at x=2 in your equation."
+                                st.session_state.math_step = 4
+                            else:
+                                ai_message = "Incorrect. Use y = mx + b and substitute x=1 for your equation."
         
-            # Add AI response
-            st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
+                        elif step == 4:
+                            expected_y = user_m * 2 + user_b
+                            if float(user_input) == expected_y:
+                                ai_message = f"Correct! Template y at x=2 = {template_m*2 + template_b}\nYou've completed your equation alongside the AI template!"
+                                st.session_state.math_step = 5
+                            else:
+                                ai_message = "Incorrect. Use y = mx + b and substitute x=2 for your equation."
         
-            # Re-render everything
-            st.rerun()
+                    except Exception:
+                        ai_message = "Error parsing input. Ensure numeric answers for each step."
+        
+                # Step 10+: Other math commands (simplify, factor, solve)
+                elif st.session_state.math_step >= 10:
+                    # Here we just echo what the AI would do; later can integrate OpenAI for dynamic guidance
+                    ai_message = f"AI would now process the command: `{user_input}` step by step."
+                    st.session_state.math_step += 1
+        
+                # Display AI message
+                st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
+                with st.chat_message("assistant"):
+                    st.markdown(ai_message)
 
     if selection == "Writing and Analysis":
 
@@ -1248,6 +1304,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
