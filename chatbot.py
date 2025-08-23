@@ -237,95 +237,92 @@ if st.session_state.page == 3:
     ### SOLVING MODE BEGINS HERE ###
 
     if selection == "Solving":
-import streamlit as st
-from openai import OpenAI
-import re
-
-st.title("Dynamic Math Chat Solver")
-
-# Initialize OpenAI client
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-# Initialize session state
-if "math_chat_history" not in st.session_state:
-    st.session_state.math_chat_history = []
-if "math_step" not in st.session_state:
-    st.session_state.math_step = 0
-if "math_user_input" not in st.session_state:
-    st.session_state.math_user_input = None
-if "math_template" not in st.session_state:
-    st.session_state.math_template = None
-if "math_completed" not in st.session_state:
-    st.session_state.math_completed = False
-
-# Display chat history
-for msg in st.session_state.math_chat_history:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# Accept user input
-if user_input := st.chat_input("Enter an equation or math command (simplify, factor, solve, etc.):"):
-    user_input = user_input.strip()
-    st.session_state.math_user_input = user_input
-
-    # Display user message
-    st.session_state.math_chat_history.append({"role": "user", "content": user_input})
-    with st.chat_message("user"):
-        st.markdown(user_input)
-
-    if not st.session_state.math_completed:
-        # Construct prompt for the AI
-        system_prompt = (f"""
-            You are a step-by-step math tutor AI. 
-            - If the user provides an equation or math expression, generate a template problem of the same type with different numbers. 
-            - Solve the template problem step by step. 
-            - At each step, ask the user to solve the corresponding step in their problem.
-            - Validate the user's input numerically if possible, and provide hints if incorrect.
-            - Only progress to the next step when the user's answer is correct.
-            - At the end, restate the full solution to the user's original problem.
-            - Support linear, quadratic, multi-variable equations, simplification, factoring, and solving for a variable.
-            - Keep conversation chat-friendly and interactive.
-            - Use the math_ namespaced session for all state tracking.
-            """)
-
-        user_prompt = (f"""
-            User input: {user_input}
-            
-            Current step: {st.session_state.math_step}
-            Math chat history: {st.session_state.math_chat_history}
-            
-            Instructions:
-            - If this is the first step, parse the user input and generate a template problem.
-            - Solve the template problem step by step.
-            - Prompt the user to solve their own problem for each step.
-            - Validate the user's answers numerically.
-            - Provide hints if incorrect.
-            - At the end, restate the full solution for the user's original problem.
-            """)
         
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.2
-        )
-
-        ai_message = response.choices[0].message.content
-
-        # If AI indicates completion, set flag
-        if "full solution" in ai_message.lower() or "completed" in ai_message.lower():
-            st.session_state.math_completed = True
-
-        # Display AI message
-        st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
-        with st.chat_message("assistant"):
-            st.markdown(ai_message)
-
-        # Increment step for next user input
-        st.session_state.math_step += 1
+        st.title("Dynamic Math Chat Solver")
+        
+        # Initialize OpenAI client
+        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+        
+        # Initialize session state
+        if "math_chat_history" not in st.session_state:
+            st.session_state.math_chat_history = []
+        if "math_step" not in st.session_state:
+            st.session_state.math_step = 0
+        if "math_user_input" not in st.session_state:
+            st.session_state.math_user_input = None
+        if "math_template" not in st.session_state:
+            st.session_state.math_template = None
+        if "math_completed" not in st.session_state:
+            st.session_state.math_completed = False
+        
+        # Display chat history
+        for msg in st.session_state.math_chat_history:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+        
+        # Accept user input
+        if user_input := st.chat_input("Enter an equation or math command (simplify, factor, solve, etc.):"):
+            user_input = user_input.strip()
+            st.session_state.math_user_input = user_input
+        
+            # Display user message
+            st.session_state.math_chat_history.append({"role": "user", "content": user_input})
+            with st.chat_message("user"):
+                st.markdown(user_input)
+        
+            if not st.session_state.math_completed:
+                # Construct prompt for the AI
+                system_prompt = (f"""
+                    You are a step-by-step math tutor AI. 
+                    - If the user provides an equation or math expression, generate a template problem of the same type with different numbers. 
+                    - Solve the template problem step by step. 
+                    - At each step, ask the user to solve the corresponding step in their problem.
+                    - Validate the user's input numerically if possible, and provide hints if incorrect.
+                    - Only progress to the next step when the user's answer is correct.
+                    - At the end, restate the full solution to the user's original problem.
+                    - Support linear, quadratic, multi-variable equations, simplification, factoring, and solving for a variable.
+                    - Keep conversation chat-friendly and interactive.
+                    - Use the math_ namespaced session for all state tracking.
+                    """)
+        
+                user_prompt = (f"""
+                    User input: {user_input}
+                    
+                    Current step: {st.session_state.math_step}
+                    Math chat history: {st.session_state.math_chat_history}
+                    
+                    Instructions:
+                    - If this is the first step, parse the user input and generate a template problem.
+                    - Solve the template problem step by step.
+                    - Prompt the user to solve their own problem for each step.
+                    - Validate the user's answers numerically.
+                    - Provide hints if incorrect.
+                    - At the end, restate the full solution for the user's original problem.
+                    """)
+                
+                # Call OpenAI API
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.2
+                )
+        
+                ai_message = response.choices[0].message.content
+        
+                # If AI indicates completion, set flag
+                if "full solution" in ai_message.lower() or "completed" in ai_message.lower():
+                    st.session_state.math_completed = True
+        
+                # Display AI message
+                st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
+                with st.chat_message("assistant"):
+                    st.markdown(ai_message)
+        
+                # Increment step for next user input
+                st.session_state.math_step += 1
 
 
     if selection == "Writing and Analysis":
@@ -1275,6 +1272,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
