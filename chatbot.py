@@ -238,72 +238,97 @@ if st.session_state.page == 3:
 
     if selection == "Solving":
         
-        # Initialize OpenAI client
-        client = OpenAI()
-        
-        # Initialize session state for math chat
+        # Session state
         if "math_chat_history" not in st.session_state:
             st.session_state["math_chat_history"] = []
         if "user_equation" not in st.session_state:
             st.session_state["user_equation"] = None
-        if "answers" not in st.session_state:
-            st.session_state["answers"] = {}
+        if "final_answer" not in st.session_state:
+            st.session_state["final_answer"] = None
+        if "generating" not in st.session_state:
+            st.session_state["generating"] = False
         
         st.title("📘 Step-by-Step Equation Solver")
         
-        # User inputs their equation
-        user_input = st.text_input("Enter any equation (Math, Chemistry, or Physics):", "")
+        # Input for starting a new equation
+        user_input = st.text_input("Enter any equation (Math, Chemistry, or Physics):", "", disabled=st.session_state["user_equation"] is not None)
         
         if st.button("Start Solving") and user_input:
             st.session_state["user_equation"] = user_input
             st.session_state["math_chat_history"] = []
-            st.session_state["answers"] = {}
+            st.session_state["final_answer"] = None
         
             system_prompt = f"""
             You are a step-by-step tutor AI inside a Streamlit app.
-            - The user has given you the equation: {user_input}
+            The user has given you the equation: {user_input}.
+            Instructions:
             - First, generate a similar template equation with different numbers.
             - Solve your template equation step by step.
             - At each step, show your solution and ask the user to solve the same step in THEIR equation.
             - If the user’s answer is wrong, give them a hint and let them retry.
             - If correct, continue.
-            - At the end, restate the original equation and present ALL the answers in a clean table.
-            - After finishing, reset so the conversation can be reused for another equation.
+            - At the end, restate the original equation and present ALL the answers in a JSON format like:
+              {{
+                 "Equation": "original eqn",
+                 "Variable1": value,
+                 "Variable2": value,
+                 ...
+              }}
+            - Do not output the table yourself. Only output valid JSON when final answers are complete.
             """
         
-            # Start the chat
-            response = client.chat.completions.create(
-                model="gpt-5",
-                messages=[
-                    {"role": "system", "content": system_prompt}
-                ]
-            )
+            with st.spinner("Thinking..."):
+                st.session_state["generating"] = True
+                response = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[{"role": "system", "content": system_prompt}]
+                )
+                st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
+                st.session_state["generating"] = False
         
-            st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
-        
-        # Display chat history
+        # Show conversation
         for msg in st.session_state["math_chat_history"]:
             if msg["role"] == "assistant":
                 st.chat_message("assistant").write(msg["content"])
             else:
                 st.chat_message("user").write(msg["content"])
         
-        # User replies to AI’s step
-        if st.session_state["math_chat_history"] and st.session_state["user_equation"]:
+        # Handle user replies (only if not generating and not finished)
+        if st.session_state["user_equation"] and not st.session_state["generating"] and st.session_state["final_answer"] is None:
             user_reply = st.chat_input("Enter your step answer:")
             if user_reply:
                 st.session_state["math_chat_history"].append({"role": "user", "content": user_reply})
         
-                response = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[
-                        {"role": "system", "content": "You are a step-by-step tutor. Continue where you left off."},
-                        *st.session_state["math_chat_history"]
-                    ]
-                )
+                with st.spinner("Checking..."):
+                    st.session_state["generating"] = True
+                    response = client.chat.completions.create(
+                        model="gpt-5",
+                        messages=[
+                            {"role": "system", "content": "You are a step-by-step tutor. Continue where you left off."},
+                            *st.session_state["math_chat_history"]
+                        ]
+                    )
+                    ai_reply = response.choices[0].message.content
         
-                st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
-                st.rerun()
+                    # Detect JSON final output
+                    if ai_reply.strip().startswith("{") and ai_reply.strip().endswith("}"):
+                        try:
+                            result_dict = eval(ai_reply)  # safe-ish for structured JSON
+                            st.session_state["final_answer"] = pd.DataFrame([result_dict])
+                        except Exception:
+                            st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
+                    else:
+                        st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
+        
+                    st.session_state["generating"] = False
+                    st.rerun()
+        
+        # Show final answer if available
+        if st.session_state["final_answer"] is not None:
+            st.success("✅ Final Answer")
+            st.dataframe(st.session_state["final_answer"])
+            st.info("You can start a new problem by entering a new equation above.")
+
         
 
     if selection == "Writing and Analysis":
@@ -1249,6 +1274,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
