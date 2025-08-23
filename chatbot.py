@@ -236,104 +236,104 @@ if st.session_state.page == 3:
 
     if selection == "Solving":
     
-    st.title("Interactive Chat Solver")
-    
-    # Example template problem
-    template_problem = {"y": "y = 8x + 3", "m": 8, "b": 3}
-    
-    # Initialize session state
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-    if "step" not in st.session_state:
-        st.session_state.step = 0
-    if "user_equation" not in st.session_state:
-        st.session_state.user_equation = None
-    
-    # Display chat history
-    for msg in st.session_state.chat_history:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
-    
-    # Accept user input
-    if user_input := st.chat_input("Type your message or answer here:"):
-        user_input = user_input.strip()
-        if user_input:
-            # Display user message
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-            with st.chat_message("user"):
-                st.markdown(user_input)
-    
-            # Step logic
-            assistant_message = ""
-            if st.session_state.step == 0:
-                st.session_state.user_equation = user_input
-                assistant_message = (
-                    f"Your equation: `{st.session_state.user_equation}`\n"
-                    f"This is in the form y = mx + b.\n"
-                    f"Let's solve a template: `{template_problem['y']}` step by step.\n"
-                    f"Step 1: Identify the slope (m) of the template equation."
-                )
-                st.session_state.step = 1
-    
-            elif st.session_state.step == 1:
-                # Check slope of template
-                try:
-                    if float(user_input) == template_problem["m"]:
-                        assistant_message = "Correct! The slope m = 8.\nStep 2: Identify the y-intercept (b) of the template equation."
-                        st.session_state.step = 2
-                    else:
-                        assistant_message = "Incorrect. Hint: Look at the coefficient of x in the template equation."
-                except ValueError:
-                    assistant_message = "Please enter a number for the slope."
-    
-            elif st.session_state.step == 2:
-                # Check y-intercept of template
-                try:
-                    if float(user_input) == template_problem["b"]:
-                        assistant_message = (
-                            "Correct! The y-intercept b = 3.\n"
-                            "Now apply the same steps to your own equation.\n"
-                            "Step 3: Identify the slope (m) of your equation."
-                        )
-                        st.session_state.step = 3
-                    else:
-                        assistant_message = "Incorrect. Hint: Look at the constant term in the template equation."
-                except ValueError:
-                    assistant_message = "Please enter a number for the y-intercept."
-    
-            elif st.session_state.step == 3:
-                # Check slope of user's equation
-                try:
-                    parts = st.session_state.user_equation.replace(" ", "").split("=")[1]
-                    m = float(parts.split("x")[0])
-                    if float(user_input) == m:
-                        assistant_message = "Correct! Step 4: Identify the y-intercept (b) of your equation."
-                        st.session_state.step = 4
-                    else:
-                        assistant_message = "Check your value. What is the coefficient of x in your equation?"
-                except Exception:
-                    assistant_message = "Error parsing your equation. Use the format y = mx + b."
-    
-            elif st.session_state.step == 4:
-                # Check y-intercept of user's equation
-                try:
-                    parts = st.session_state.user_equation.replace(" ", "").split("=")[1]
-                    b = float(parts.split("x")[1].replace("+", ""))
-                    if float(user_input) == b:
-                        assistant_message = "Perfect! You have correctly identified both the slope and y-intercept of your equation."
-                        st.session_state.step = 5
-                    else:
-                        assistant_message = "Check your value. What is the constant term in your equation?"
-                except Exception:
-                    assistant_message = "Error parsing your equation. Use the format y = mx + b."
-    
-            else:
-                assistant_message = "We've completed the interactive steps for this equation!"
-    
-            # Display assistant message
-            st.session_state.chat_history.append({"role": "assistant", "content": assistant_message})
-            with st.chat_message("assistant"):
-                st.markdown(assistant_message)
+        st.title("Interactive numerical Solver")
+        
+        # Example template problem
+        template_problem = {"y": "y = 8x + 3", "m": 8, "b": 3}
+        
+        # Initialize session state
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+        if "step" not in st.session_state:
+            st.session_state.step = 0
+        if "user_equation" not in st.session_state:
+            st.session_state.user_equation = None
+        
+        # Display chat history
+        for msg in st.session_state.chat_history:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+        
+        # Accept user input
+        if user_input := st.chat_input("Type your message or answer here:"):
+            user_input = user_input.strip()
+            if user_input:
+                # Display user message
+                st.session_state.chat_history.append({"role": "user", "content": user_input})
+                with st.chat_message("user"):
+                    st.markdown(user_input)
+        
+                # Step logic
+                assistant_message = ""
+                if st.session_state.step == 0:
+                    st.session_state.user_equation = user_input
+                    assistant_message = (
+                        f"Your equation: `{st.session_state.user_equation}`\n"
+                        f"This is in the form y = mx + b.\n"
+                        f"Let's solve a template: `{template_problem['y']}` step by step.\n"
+                        f"Step 1: Identify the slope (m) of the template equation."
+                    )
+                    st.session_state.step = 1
+        
+                elif st.session_state.step == 1:
+                    # Check slope of template
+                    try:
+                        if float(user_input) == template_problem["m"]:
+                            assistant_message = "Correct! The slope m = 8.\nStep 2: Identify the y-intercept (b) of the template equation."
+                            st.session_state.step = 2
+                        else:
+                            assistant_message = "Incorrect. Hint: Look at the coefficient of x in the template equation."
+                    except ValueError:
+                        assistant_message = "Please enter a number for the slope."
+        
+                elif st.session_state.step == 2:
+                    # Check y-intercept of template
+                    try:
+                        if float(user_input) == template_problem["b"]:
+                            assistant_message = (
+                                "Correct! The y-intercept b = 3.\n"
+                                "Now apply the same steps to your own equation.\n"
+                                "Step 3: Identify the slope (m) of your equation."
+                            )
+                            st.session_state.step = 3
+                        else:
+                            assistant_message = "Incorrect. Hint: Look at the constant term in the template equation."
+                    except ValueError:
+                        assistant_message = "Please enter a number for the y-intercept."
+        
+                elif st.session_state.step == 3:
+                    # Check slope of user's equation
+                    try:
+                        parts = st.session_state.user_equation.replace(" ", "").split("=")[1]
+                        m = float(parts.split("x")[0])
+                        if float(user_input) == m:
+                            assistant_message = "Correct! Step 4: Identify the y-intercept (b) of your equation."
+                            st.session_state.step = 4
+                        else:
+                            assistant_message = "Check your value. What is the coefficient of x in your equation?"
+                    except Exception:
+                        assistant_message = "Error parsing your equation. Use the format y = mx + b."
+        
+                elif st.session_state.step == 4:
+                    # Check y-intercept of user's equation
+                    try:
+                        parts = st.session_state.user_equation.replace(" ", "").split("=")[1]
+                        b = float(parts.split("x")[1].replace("+", ""))
+                        if float(user_input) == b:
+                            assistant_message = "Perfect! You have correctly identified both the slope and y-intercept of your equation."
+                            st.session_state.step = 5
+                        else:
+                            assistant_message = "Check your value. What is the constant term in your equation?"
+                    except Exception:
+                        assistant_message = "Error parsing your equation. Use the format y = mx + b."
+        
+                else:
+                    assistant_message = "We've completed the interactive steps for this equation!"
+        
+                # Display assistant message
+                st.session_state.chat_history.append({"role": "assistant", "content": assistant_message})
+                with st.chat_message("assistant"):
+                    st.markdown(assistant_message)
 
         
                 
@@ -1284,4 +1284,5 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
