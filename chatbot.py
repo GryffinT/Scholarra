@@ -349,7 +349,7 @@ if st.session_state.page == 3:
                         st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
         
                 st.session_state["generating"] = False
-                st.experimental_rerun()
+                st.rerun()
         
         # Show final answer table
         if st.session_state["final_answer"] is not None:
@@ -1300,6 +1300,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
