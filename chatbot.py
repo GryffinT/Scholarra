@@ -237,152 +237,96 @@ if st.session_state.page == 3:
     ### SOLVING MODE BEGINS HERE ###
 
     if selection == "Solving":
+import streamlit as st
+from openai import OpenAI
+import re
+
+st.title("Dynamic Math Chat Solver")
+
+# Initialize OpenAI client
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+# Initialize session state
+if "math_chat_history" not in st.session_state:
+    st.session_state.math_chat_history = []
+if "math_step" not in st.session_state:
+    st.session_state.math_step = 0
+if "math_user_input" not in st.session_state:
+    st.session_state.math_user_input = None
+if "math_template" not in st.session_state:
+    st.session_state.math_template = None
+if "math_completed" not in st.session_state:
+    st.session_state.math_completed = False
+
+# Display chat history
+for msg in st.session_state.math_chat_history:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# Accept user input
+if user_input := st.chat_input("Enter an equation or math command (simplify, factor, solve, etc.):"):
+    user_input = user_input.strip()
+    st.session_state.math_user_input = user_input
+
+    # Display user message
+    st.session_state.math_chat_history.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.markdown(user_input)
+
+    if not st.session_state.math_completed:
+        # Construct prompt for the AI
+        system_prompt = (f"""
+            You are a step-by-step math tutor AI. 
+            - If the user provides an equation or math expression, generate a template problem of the same type with different numbers. 
+            - Solve the template problem step by step. 
+            - At each step, ask the user to solve the corresponding step in their problem.
+            - Validate the user's input numerically if possible, and provide hints if incorrect.
+            - Only progress to the next step when the user's answer is correct.
+            - At the end, restate the full solution to the user's original problem.
+            - Support linear, quadratic, multi-variable equations, simplification, factoring, and solving for a variable.
+            - Keep conversation chat-friendly and interactive.
+            - Use the math_ namespaced session for all state tracking.
+            """)
+
+        user_prompt = (f"""
+            User input: {user_input}
+            
+            Current step: {st.session_state.math_step}
+            Math chat history: {st.session_state.math_chat_history}
+            
+            Instructions:
+            - If this is the first step, parse the user input and generate a template problem.
+            - Solve the template problem step by step.
+            - Prompt the user to solve their own problem for each step.
+            - Validate the user's answers numerically.
+            - Provide hints if incorrect.
+            - At the end, restate the full solution for the user's original problem.
+            """)
         
-        st.title("Dynamic AI Math Tutor")
-        
-        # Initialize OpenAI client
-        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-        
-        # Namespaced session state
-        for key, default in [
-            ("math_chat_history", []),
-            ("math_step", 0),
-            ("math_user_input", None),
-            ("math_template_problem", None),
-            ("math_template_solution_steps", []),
-            ("math_hints", []),
-            ("math_completed", False),
-            ("math_problem_type", None),
-            ("math_hints_shown", 0)
-        ]:
-            if key not in st.session_state:
-                st.session_state[key] = default
-        
-        # Display chat history
-        for msg in st.session_state.math_chat_history:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-        
-        # Accept user input
-        if user_input := st.chat_input("Enter an equation, factor, simplify, or solve command:"):
-            user_input = user_input.strip()
-            st.session_state.math_user_input = user_input
-            st.session_state.math_chat_history.append({"role": "user", "content": user_input})
-            with st.chat_message("user"):
-                st.markdown(user_input)
-        
-            # Step 0: generate template problem from AI
-            if st.session_state.math_step == 0:
-                system_prompt = """
-        You are an AI math tutor. Your tasks:
-        1. Detect the type of math problem (linear, quadratic, factor, simplify, multi-variable, etc.).
-        2. Generate a template problem of the same type but with different numbers.
-        3. Solve the template step-by-step with numbered steps.
-        4. Provide optional hints per step.
-        5. Respond ONLY in valid JSON with keys:
-        {
-          "problem_type": "<problem type>",
-          "template_problem": "<template problem string>",
-          "solution_steps": ["Step 1: ...", "Step 2: ...", ...],
-          "hints": ["Hint 1", "Hint 2", ...]
-        }
-        6. Do not include explanations outside the JSON.
-        """
-                user_prompt = f"User input: {user_input}"
-        
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    temperature=0.2
-                )
-        
-                # Robust JSON parsing
-                ai_raw = response.choices[0].message.content
-                ai_clean = re.sub(r"```json|```", "", ai_raw, flags=re.IGNORECASE).strip()
-                try:
-                    ai_data = json.loads(ai_clean)
-                    st.session_state.math_template_problem = ai_data["template_problem"]
-                    st.session_state.math_template_solution_steps = ai_data["solution_steps"]
-                    st.session_state.math_problem_type = ai_data.get("problem_type", "unknown")
-                    st.session_state.math_hints = ai_data.get("hints", ["No hints provided"])
-                    ai_message = (
-                        f"Detected problem type: `{st.session_state.math_problem_type}`\n"
-                        f"Template problem: `{st.session_state.math_template_problem}`\n"
-                        "Let's solve it step-by-step alongside your problem!"
-                    )
-                except Exception:
-                    st.session_state.math_template_problem = "Template problem generated"
-                    st.session_state.math_template_solution_steps = []
-                    st.session_state.math_problem_type = "unknown"
-                    st.session_state.math_hints = ["No hints available"]
-                    ai_message = f"AI generated template problem (could not parse steps):\n{ai_raw}"
-        
-                st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
-                with st.chat_message("assistant"):
-                    st.markdown(ai_message)
-        
-            else:
-                # Step validation
-                step_index = st.session_state.math_step
-                try:
-                    template_step = st.session_state.math_template_solution_steps[step_index]
-        
-                    # Evaluate numeric expressions safely
-                    def try_eval(x):
-                        try:
-                            return float(eval(x))
-                        except:
-                            return x.strip()
-        
-                    user_val = try_eval(user_input)
-                    template_val = try_eval(template_step)
-        
-                    if user_val == template_val:
-                        ai_message = f"✅ Correct! Template step: `{template_step}`"
-                        st.session_state.math_step += 1
-                        st.session_state.math_hints_shown = 0
-        
-                        if st.session_state.math_step >= len(st.session_state.math_template_solution_steps):
-                            ai_message += (
-                                "\n\n🎉 You've completed your problem alongside the template!"
-                                f"\nFull solution to your original problem: `{user_input}`"
-                            )
-                            st.session_state.math_completed = True
-        
-                    else:
-                        hint_index = st.session_state.math_hints_shown
-                        hint_text = (
-                            st.session_state.math_hints[hint_index]
-                            if hint_index < len(st.session_state.math_hints)
-                            else "Try again carefully."
-                        )
-                        ai_message = f"❌ Incorrect. Hint: {hint_text}"
-        
-                except IndexError:
-                    ai_message = "All steps completed or template steps missing."
-                    st.session_state.math_completed = True
-        
-                st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
-                with st.chat_message("assistant"):
-                    st.markdown(ai_message)
-        
-                # Hint / Skip controls
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("Show Hint"):
-                        if st.session_state.math_hints_shown < len(st.session_state.math_hints):
-                            st.session_state.math_hints_shown += 1
-                            hint_msg = st.session_state.math_hints[st.session_state.math_hints_shown - 1]
-                            st.session_state.math_chat_history.append({"role": "assistant", "content": f"💡 Hint: {hint_msg}"})
-                            st.experimental_rerun()
-                with col2:
-                    if st.button("Skip Step"):
-                        st.session_state.math_step += 1
-                        st.session_state.math_chat_history.append({"role": "assistant", "content": f"⏭ Step skipped. Template answer was: `{template_step}`"})
-                        st.experimental_rerun()
+        # Call OpenAI API
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.2
+        )
+
+        ai_message = response.choices[0].message.content
+
+        # If AI indicates completion, set flag
+        if "full solution" in ai_message.lower() or "completed" in ai_message.lower():
+            st.session_state.math_completed = True
+
+        # Display AI message
+        st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
+        with st.chat_message("assistant"):
+            st.markdown(ai_message)
+
+        # Increment step for next user input
+        st.session_state.math_step += 1
+
 
     if selection == "Writing and Analysis":
 
@@ -1331,6 +1275,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
