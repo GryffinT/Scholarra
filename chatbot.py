@@ -250,10 +250,19 @@ if st.session_state.page == 3:
         
         st.title("📘 Step-by-Step Equation Solver")
         
-        # Input for starting a new equation
-        user_input = st.text_input("Enter any equation (Math, Chemistry, or Physics):", "", disabled=st.session_state["user_equation"] is not None)
+        # Reset button
+        if st.button("🔄 Reset"):
+            st.session_state.clear()
+            st.rerun()
         
-        if st.button("Start Solving") and user_input:
+        # Input for starting a new equation
+        user_input = st.text_input(
+            "Enter any equation (Math, Chemistry, or Physics):", 
+            "", 
+            disabled=st.session_state["user_equation"] is not None or st.session_state["generating"]
+        )
+        
+        if st.button("Start Solving", disabled=st.session_state["generating"]) and user_input:
             st.session_state["user_equation"] = user_input
             st.session_state["math_chat_history"] = []
             st.session_state["final_answer"] = None
@@ -283,7 +292,9 @@ if st.session_state.page == 3:
                     model="gpt-5",
                     messages=[{"role": "system", "content": system_prompt}]
                 )
-                st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
+                st.session_state["math_chat_history"].append(
+                    {"role": "assistant", "content": response.choices[0].message.content}
+                )
                 st.session_state["generating"] = False
         
         # Show conversation
@@ -294,8 +305,15 @@ if st.session_state.page == 3:
                 st.chat_message("user").write(msg["content"])
         
         # Handle user replies (only if not generating and not finished)
-        if st.session_state["user_equation"] and not st.session_state["generating"] and st.session_state["final_answer"] is None:
-            user_reply = st.chat_input("Enter your step answer:")
+        if (
+            st.session_state["user_equation"] 
+            and not st.session_state["generating"] 
+            and st.session_state["final_answer"] is None
+        ):
+            user_reply = st.chat_input(
+                "Enter your step answer:", 
+                disabled=st.session_state["generating"]
+            )
             if user_reply:
                 st.session_state["math_chat_history"].append({"role": "user", "content": user_reply})
         
@@ -313,7 +331,7 @@ if st.session_state.page == 3:
                     # Detect JSON final output
                     if ai_reply.strip().startswith("{") and ai_reply.strip().endswith("}"):
                         try:
-                            result_dict = eval(ai_reply)  # safe-ish for structured JSON
+                            result_dict = json.loads(ai_reply)
                             st.session_state["final_answer"] = pd.DataFrame([result_dict])
                         except Exception:
                             st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
@@ -327,9 +345,8 @@ if st.session_state.page == 3:
         if st.session_state["final_answer"] is not None:
             st.success("✅ Final Answer")
             st.dataframe(st.session_state["final_answer"])
-            st.info("You can start a new problem by entering a new equation above.")
+            st.info("You can start a new problem by clicking Reset.")
 
-        
 
     if selection == "Writing and Analysis":
 
@@ -1274,6 +1291,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
