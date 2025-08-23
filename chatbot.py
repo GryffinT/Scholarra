@@ -34,9 +34,6 @@ def video_func(url, path, name, video_title):
         st.write(f"Video produced by {name} on Youtube.")
         st.write(f"URL: [{url}]({url})")
         
-        
-
-
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
 
@@ -61,8 +58,6 @@ def get_key():
     user_key = st.text_input("Enter password")
     print (user_key)
     return user_key
-
-
 
 st.markdown(
     """
@@ -149,10 +144,6 @@ if "user_key" not in st.session_state:
 # -----------------------------
 if st.session_state.page == 2:
     start_time2 = datetime.now()
-        
-        
-    
-
     
     st.button("Back", on_click=last_page)
     st.markdown(
@@ -241,53 +232,83 @@ if st.session_state.page == 3:
         st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
         selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
 
-    if selection == "Solving":
-        st.title("Scholarra Solving Mode Chat")
-        
-        # Initialize chat history
-        if "math_messages" not in st.session_state:
-            st.session_state.math_messages = []
-        
-        # Display previous messages
-        for msg in st.session_state.math_messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-        
-        # Accept user input
-        if prompt := st.chat_input("Enter your question or problem here:"):
-            prompt = prompt.strip()
-            if prompt:  # Only proceed if user entered something
-                # Display user message
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-                
-                # Add user message to chat history
-                st.session_state.math_messages.append({"role": "user", "content": prompt})
-        
-                # Prepare messages for API (skip empty contents)
-                messages_for_api = [
-                    {"role": msg["role"], "content": str(msg["content"])}
-                    for msg in st.session_state.math_messages
-                    if msg.get("content")
-                ]
-        
-                # Call OpenAI ChatCompletion API
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",  # strong reasoning + math support
-                    messages=messages_for_api,
-                    temperature=0.2
-                )
-        
-                # Extract AI message
-                ai_message = response.choices[0].message.content
-        
-                # Display AI response
-                with st.chat_message("assistant"):
-                    st.markdown(ai_message)
-        
-                # Add AI response to chat history
-                st.session_state.math_messages.append({"role": "assistant", "content": ai_message})
+    ### SOLVING MODE BEGINS HERE ###
 
+    if selection == "Solving":
+        st.title("Interactive Linear Equation Solver")
+
+        # Example template problem for guidance
+        template_problem = {"y": "y = 8x + 3", "m": 8, "b": 3}
+        
+        # Initialize session state
+        if "user_step" not in st.session_state:
+            st.session_state.user_step = 0
+        if "current_equation" not in st.session_state:
+            st.session_state.current_equation = None
+        if "steps_correct" not in st.session_state:
+            st.session_state.steps_correct = []
+        
+        # Step 0: Ask for equation input
+        if st.session_state.user_step == 0:
+            user_eq = st.text_input("Enter your linear equation (e.g., y = 3x + 2):")
+            if user_eq:
+                st.session_state.current_equation = user_eq
+                st.session_state.user_step = 1
+        
+        # Step 1: Show template and first guidance
+        if st.session_state.user_step == 1:
+            st.markdown(f"Your equation: `{st.session_state.current_equation}`")
+            st.markdown(f"Notice this is in the form `y = mx + b`.\nLet's solve a template: `{template_problem['y']}` step by step.")
+            
+            step1_input = st.text_input("Step 1: Identify the slope (m) of the template equation:")
+            if step1_input:
+                try:
+                    if float(step1_input) == template_problem["m"]:
+                        st.success("Correct! The slope m = 8")
+                        st.session_state.steps_correct.append(True)
+                        st.session_state.user_step = 2
+                    else:
+                        st.error("Incorrect, try again. What is the slope (coefficient of x)?")
+                except ValueError:
+                    st.error("Please enter a number.")
+        
+        # Step 2: Identify y-intercept
+        if st.session_state.user_step == 2:
+            step2_input = st.text_input("Step 2: Identify the y-intercept (b) of the template equation:")
+            if step2_input:
+                try:
+                    if float(step2_input) == template_problem["b"]:
+                        st.success("Correct! The y-intercept b = 3")
+                        st.session_state.steps_correct.append(True)
+                        st.session_state.user_step = 3
+                    else:
+                        st.error("Incorrect, try again. What is the y-intercept (constant term)?")
+                except ValueError:
+                    st.error("Please enter a number.")
+        
+        # Step 3: Apply template logic to user's equation
+        if st.session_state.user_step == 3:
+            st.markdown("Now apply the same steps to your equation:")
+            st.markdown(f"Your equation: `{st.session_state.current_equation}`")
+            
+            user_m = st.text_input("Step 3: Identify the slope (m) of your equation:")
+            user_b = st.text_input("Step 4: Identify the y-intercept (b) of your equation:")
+            
+            if user_m and user_b:
+                try:
+                    # Extract numbers from user's equation (simplified parsing)
+                    # For demonstration, assume input like y = 3x + 2
+                    parts = st.session_state.current_equation.replace(" ", "").split("=")[1]
+                    m = float(parts.split("x")[0])
+                    b = float(parts.split("+")[1])
+                    
+                    if float(user_m) == m and float(user_b) == b:
+                        st.success("Perfect! You identified the slope and y-intercept correctly.")
+                        st.session_state.user_step = 4
+                    else:
+                        st.error("Check your values. Make sure you correctly identify m and b.")
+                except Exception as e:
+                    st.error("Error parsing your equation. Please use the format y = mx + b.")
         
                 
     if selection == "Writing and Analysis":
@@ -1237,96 +1258,3 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
