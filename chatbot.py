@@ -237,122 +237,74 @@ if st.session_state.page == 3:
     ### SOLVING MODE BEGINS HERE ###
 
     if selection == "Solving":
-
-        st.title("Step-by-Step Equation Solver")
         
-        # Initialize math-solving session state
+        # Initialize OpenAI client
+        client = OpenAI()
+        
+        # Initialize session state for math chat
         if "math_chat_history" not in st.session_state:
-            st.session_state.math_chat_history = []
-        if "math_step" not in st.session_state:
-            st.session_state.math_step = 0
-        if "math_user_equation" not in st.session_state:
-            st.session_state.math_user_equation = None
-        if "math_template_equation" not in st.session_state:
-            st.session_state.math_template_equation = None
-        if "math_template_m" not in st.session_state:
-            st.session_state.math_template_m = None
-        if "math_template_b" not in st.session_state:
-            st.session_state.math_template_b = None
-        if "math_user_m" not in st.session_state:
-            st.session_state.math_user_m = None
-        if "math_user_b" not in st.session_state:
-            st.session_state.math_user_b = None
+            st.session_state["math_chat_history"] = []
+        if "user_equation" not in st.session_state:
+            st.session_state["user_equation"] = None
+        if "answers" not in st.session_state:
+            st.session_state["answers"] = {}
         
-        # Display math chat history
-        for msg in st.session_state.math_chat_history:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+        st.title("📘 Step-by-Step Equation Solver")
         
-        # Accept user input
-        if user_input := st.chat_input("Enter your equation or step answer here:"):
-            user_input = user_input.strip()
-            if user_input:
-                # Display user message
-                st.session_state.math_chat_history.append({"role": "user", "content": user_input})
-                with st.chat_message("user"):
-                    st.markdown(user_input)
+        # User inputs their equation
+        user_input = st.text_input("Enter any equation (Math, Chemistry, or Physics):", "")
         
-                eq_pattern = r"^\s*[a-zA-Z]+\s*=\s*.*$"
+        if st.button("Start Solving") and user_input:
+            st.session_state["user_equation"] = user_input
+            st.session_state["math_chat_history"] = []
+            st.session_state["answers"] = {}
         
-                # Step 0: First input = user equation
-                if st.session_state.math_step == 0:
-                    if not re.match(eq_pattern, user_input):
-                        ai_message = (
-                            "Sorry, I am programmed to help solve equations. "
-                            "For other inquiries, please change agents through the control panel and agent selection."
-                        )
-                    else:
-                        st.session_state.math_user_equation = user_input
-                        # Parse user equation y = mx + b
-                        try:
-                            parts = user_input.replace(" ", "").split("=")[1]
-                            st.session_state.math_user_m = float(parts.split("x")[0])
-                            st.session_state.math_user_b = float(parts.split("+")[1])
-                            # Create template equation with different numbers
-                            st.session_state.math_template_m = st.session_state.math_user_m + 5
-                            st.session_state.math_template_b = st.session_state.math_user_b + 2
-                            st.session_state.math_template_equation = f"y = {st.session_state.math_template_m}x + {st.session_state.math_template_b}"
-                            ai_message = (
-                                f"Great! Let's solve your equation step by step.\n\n"
-                                f"Template equation: `{st.session_state.math_template_equation}`\n\n"
-                                "Step 1: Identify the slope (m) of the template equation.\n"
-                                "Enter the slope of your equation for Step 1."
-                            )
-                            st.session_state.math_step = 1
-                        except:
-                            ai_message = "I couldn't parse your equation. Please use the format y = mx + b."
+            system_prompt = f"""
+            You are a step-by-step tutor AI inside a Streamlit app.
+            - The user has given you the equation: {user_input}
+            - First, generate a similar template equation with different numbers.
+            - Solve your template equation step by step.
+            - At each step, show your solution and ask the user to solve the same step in THEIR equation.
+            - If the user’s answer is wrong, give them a hint and let them retry.
+            - If correct, continue.
+            - At the end, restate the original equation and present ALL the answers in a clean table.
+            - After finishing, reset so the conversation can be reused for another equation.
+            """
         
-                # Steps 1-4: Parallel step-by-step solving
-                elif st.session_state.math_step >= 1:
-                    try:
-                        step = st.session_state.math_step
-                        template_m = st.session_state.math_template_m
-                        template_b = st.session_state.math_template_b
-                        user_m = st.session_state.math_user_m
-                        user_b = st.session_state.math_user_b
+            # Start the chat
+            response = client.chat.completions.create(
+                model="gpt-5",
+                messages=[
+                    {"role": "system", "content": system_prompt}
+                ]
+            )
         
-                        if step == 1:
-                            if float(user_input) == user_m:
-                                ai_message = f"Correct! Template step: slope m = {template_m}.\nStep 2: Identify the y-intercept (b) of the template equation.\nEnter the y-intercept of your equation for Step 2."
-                                st.session_state.math_step = 2
-                            else:
-                                ai_message = "Incorrect. Hint: What is the coefficient of x in your equation?"
+            st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
         
-                        elif step == 2:
-                            if float(user_input) == user_b:
-                                ai_message = f"Correct! Template step: y-intercept b = {template_b}.\nStep 3: Solve for y given x=1 in the template equation.\nEnter y for your equation when x=1."
-                                st.session_state.math_step = 3
-                            else:
-                                ai_message = "Incorrect. Hint: What is the constant term in your equation?"
+        # Display chat history
+        for msg in st.session_state["math_chat_history"]:
+            if msg["role"] == "assistant":
+                st.chat_message("assistant").write(msg["content"])
+            else:
+                st.chat_message("user").write(msg["content"])
         
-                        elif step == 3:
-                            user_y = float(user_input)
-                            template_y = template_m * 1 + template_b
-                            if user_y == st.session_state.math_user_m * 1 + st.session_state.math_user_b:
-                                ai_message = f"Correct! Template y at x=1 = {template_y}.\nStep 4: Solve for y given x=2 in the template equation.\nEnter y for your equation when x=2."
-                                st.session_state.math_step = 4
-                            else:
-                                ai_message = "Incorrect. Hint: Use y = mx + b and substitute x=1 for your equation."
+        # User replies to AI’s step
+        if st.session_state["math_chat_history"] and st.session_state["user_equation"]:
+            user_reply = st.chat_input("Enter your step answer:")
+            if user_reply:
+                st.session_state["math_chat_history"].append({"role": "user", "content": user_reply})
         
-                        elif step == 4:
-                            user_y = float(user_input)
-                            template_y = template_m * 2 + template_b
-                            if user_y == st.session_state.math_user_m * 2 + st.session_state.math_user_b:
-                                ai_message = f"Correct! Template y at x=2 = {template_y}.\nYou've completed solving your equation alongside the template!"
-                                st.session_state.math_step = 5
-                            else:
-                                ai_message = "Incorrect. Hint: Use y = mx + b and substitute x=2 for your equation."
+                response = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[
+                        {"role": "system", "content": "You are a step-by-step tutor. Continue where you left off."},
+                        *st.session_state["math_chat_history"]
+                    ]
+                )
         
-                        else:
-                            ai_message = "We've finished all steps for this equation!"
-                    except Exception:
-                        ai_message = "Error parsing your input. Ensure you provide a numeric answer for each step."
+                st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
+                st.rerun()
         
-                # Display AI message
-                st.session_state.math_chat_history.append({"role": "assistant", "content": ai_message})
-                with st.chat_message("assistant"):
-                    st.markdown(ai_message)
-
 
     if selection == "Writing and Analysis":
 
@@ -438,10 +390,6 @@ if st.session_state.page == 3:
                 response = raw_response.choices[0].message.content  
         
                 return response
-
-
-                
-            
         
         st.title("Scholarra interface")
         st.markdown("""Powered by Open AI APIs""")
@@ -1301,6 +1249,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
