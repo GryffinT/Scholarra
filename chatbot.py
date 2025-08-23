@@ -23,6 +23,8 @@ import aiohttp
 from pdf2image import convert_from_path
 from streamlit_modal import Modal
 from rapidfuzz import fuzz
+import json
+
 
 def video_func(url, path, name, video_title):
     st.header(video_title)
@@ -1315,6 +1317,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
