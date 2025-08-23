@@ -250,32 +250,32 @@ if st.session_state.page == 3:
         
         st.title("📘 Step-by-Step Math Solver")
         
-        # Reset solver button (only math bot state)
+        # Reset solver button
         if st.button("🔄 Reset Solver"):
             st.session_state["math_chat_history"] = []
             st.session_state["user_equation"] = None
             st.session_state["final_answer"] = None
             st.session_state["generating"] = False
-            st.rerun()
+            st.experimental_rerun()
         
-        # Input for starting a new equation
+        # Input for new equation
         user_input = st.text_input(
-            "Enter a math equation:", 
+            "Enter a math equation (e.g., 2x + 3 = 7):", 
             "", 
             disabled=st.session_state["user_equation"] is not None or st.session_state["generating"]
         )
         
-        # Step 1: Classify input as math or not
+        # Step 1: classify input
         if st.button("Start Solving", disabled=st.session_state["generating"]) and user_input:
             st.session_state["generating"] = True
         
             classification_prompt = f"""
-            You are a classification assistant. Determine if this input is a math problem that can be solved step-by-step.
+            You are a classifier. Determine if this input is a math problem that can be solved step-by-step.
             Input: {user_input}
             Respond only with "MATH" if it is a math problem, otherwise respond "OTHER".
             """
             classification = client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-5",
                 messages=[{"role": "system", "content": classification_prompt}]
             )
             classification_result = classification.choices[0].message.content.strip().upper()
@@ -288,24 +288,24 @@ if st.session_state.page == 3:
                 st.session_state["math_chat_history"] = []
                 st.session_state["final_answer"] = None
         
-                # Start step-by-step solver
-                system_prompt = f"""
+                # Step 2: start step-by-step solver
+                solver_prompt = f"""
                 You are a step-by-step math tutor AI.
-                The user has given the equation: {user_input}.
+                The user equation is: {user_input}.
                 Instructions:
-                - Generate a similar template equation and solve it step-by-step.
-                - At each step, ask the user to solve the corresponding step in their equation.
-                - Give hints if they are incorrect.
-                - At the end, restate the original equation and present all answers in JSON format like:
+                - Solve the equation step by step.
+                - After each step, provide a hint if the user might get it wrong.
+                - At the end, produce a JSON object with all variable values like:
                   {{
-                     "Equation": "original eqn",
-                     "Variable1": value,
-                     "Variable2": value
+                    "Equation": "{user_input}",
+                    "x": value,
+                    "y": value
                   }}
+                - Only produce numeric solutions in JSON at the end.
                 """
                 response = client.chat.completions.create(
                     model="gpt-5",
-                    messages=[{"role": "system", "content": system_prompt}]
+                    messages=[{"role": "system", "content": solver_prompt}]
                 )
                 st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
                 st.session_state["generating"] = False
@@ -317,31 +317,29 @@ if st.session_state.page == 3:
             else:
                 st.chat_message("user").write(msg["content"])
         
-        # User replies (only if not generating and solver not finished)
-        if (
-            st.session_state["user_equation"] 
-            and not st.session_state["generating"] 
-            and st.session_state["final_answer"] is None
-        ):
+        # User replies (step answers)
+        if st.session_state["user_equation"] and not st.session_state["generating"] and st.session_state["final_answer"] is None:
             user_reply = st.chat_input("Enter your step answer:")
             if user_reply:
                 st.session_state["math_chat_history"].append({"role": "user", "content": user_reply})
                 st.session_state["generating"] = True
         
-                with st.spinner("Checking..."):
+                with st.spinner("Checking your step..."):
                     response = client.chat.completions.create(
                         model="gpt-5",
                         messages=[
-                            {"role": "system", "content": "You are a step-by-step tutor. Continue where you left off."},
+                            {"role": "system", "content": "You are a step-by-step math tutor. Continue solving."},
                             *st.session_state["math_chat_history"]
                         ]
                     )
                     ai_reply = response.choices[0].message.content
         
-                    # Detect final JSON output
-                    if ai_reply.strip().startswith("{") and ai_reply.strip().endswith("}"):
+                    # Try to extract JSON for final answers
+                    json_start = ai_reply.find("{")
+                    json_end = ai_reply.rfind("}") + 1
+                    if json_start != -1 and json_end != -1:
                         try:
-                            result_dict = json.loads(ai_reply)
+                            result_dict = json.loads(ai_reply[json_start:json_end])
                             st.session_state["final_answer"] = pd.DataFrame([result_dict])
                         except Exception:
                             st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
@@ -349,13 +347,13 @@ if st.session_state.page == 3:
                         st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
         
                 st.session_state["generating"] = False
-                st.rerun()
+                st.experimental_rerun()
         
         # Show final answer table
         if st.session_state["final_answer"] is not None:
-            st.success("✅ Final Answer")
+            st.success("✅ Final Answer Table")
             st.dataframe(st.session_state["final_answer"])
-            st.info("You can start a new problem by clicking Reset Solver above.")
+            st.info("Click 'Reset Solver' to try a new equation.")
 
     if selection == "Writing and Analysis":
 
@@ -1300,6 +1298,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
