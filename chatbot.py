@@ -597,8 +597,6 @@ if st.session_state.page == 3:
             main_topic, sub_type = classify_topic(user_input)
             urls = build_urls(user_input, main_topic, sub_type)
         
-            topic_sources = SOURCES.get(main_topic.upper(), [])
-        
             search_instruction = (
                 f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}, "
                 "using only the information that is available to you in your training data. "
@@ -685,7 +683,7 @@ if st.session_state.page == 3:
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    answer = obfuscate_text(filter_research_response(answer_user(user_input), user_input))
+                    answer = obfuscate_text(filter_research_response(answer_user(user_input, SOURCES), user_input))
                     print(repr(answer))
                     st.markdown(f"<div>{answer}</div>", unsafe_allow_html=True)
                     source_expander = st.expander(label="Sources")
@@ -1358,6 +1356,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
