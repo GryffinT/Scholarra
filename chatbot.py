@@ -236,22 +236,29 @@ if st.session_state.page == 3:
     if selection == "Writing and Analysis":
         st.title("TEST")
         initial_prompt = st.chat_input("Ask me anything!")
-        def categorize_prompt(prompt):
-            with st.spinner("Categorizing prompt..."):
-                context = (
-                    f""" You are a categorizer, categorize {prompt}.
-                    Determine the root of the provided prompt, if it is a general question, or if it is a equation, its alright if it contains variables, or is a chemistry problem.
-                    IF IT IS An EQUATION, return ONLY, MATH, fully capitalized, otherwise, if is not, return OTHER, fully capitalized."""
-                )
+        
+    def categorize_prompt(prompt):
+        with st.spinner("Categorizing prompt..."):
+            context = f"""You are a prompt categorizer. 
+    
+    Classify the following input: {prompt}
+    
+    Return **only one word** as output:
+    - "MATH" if the prompt is a mathematical equation, even if it contains variables.
+    - "OTHER" for any other type of prompt (general question, chemistry, text, etc.).
+    
+    Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
+    
+            category = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": context}]
+            )
+    
+            response = category.choices[0].message['content'].strip().upper()
+            if response != "MATH" or response != "OTHER":
+                response = "OTHER"
+            return response
 
-                category = client.chat.completions.create(
-                    model="gpt-4o"
-                    messages=[{"role": "user", "content": context}]
-                )
-
-                response = category.choices[0].message.content
-
-                return response
 
         def filter_prompt(user_prompt):
             with st.spinner("Analyzing prompt..."):
@@ -1249,6 +1256,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
