@@ -493,9 +493,10 @@ if st.session_state.page == 3:
                     "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
         
-         def answer_user(user_input, topic_sources):
-
-             sources = topic_sources[classify_topic(topic_sources)]
+        def answer_user(user_input, topic_sources):
+            
+            
+            sources = topic_sources[classify_topic(topic_sources)]
         
             search_instruction = (
                 f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {sources}, "
@@ -1257,6 +1258,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
