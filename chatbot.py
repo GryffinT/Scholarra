@@ -662,7 +662,7 @@ if st.session_state.page == 3:
                     with source_expander:
                         source_text = extract_sources(answer)
                         st.session_state["output_sources"] = source_text
-                        st.write(filter_research_response(source_text))
+                        st.write(source_text)
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
                     
@@ -1328,6 +1328,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
