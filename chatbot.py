@@ -25,40 +25,6 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
-from PIL import Image, ImageDraw, ImageFont
-import streamlit as st
-
-# Text
-text = """This is an example string.
-Multiple lines are supported."""
-
-# Create a blank image (white background)
-width, height = 800, 400
-image = Image.new("RGB", (width, height), color="white")
-draw = ImageDraw.Draw(image)
-
-# Optional: set a font
-try:
-    font = ImageFont.truetype("arial.ttf", size=20)
-except:
-    font = ImageFont.load_default()
-
-# Draw text (wrap lines manually)
-lines = text.split("\n")
-y_text = 10
-for line in lines:
-    draw.text((10, y_text), line, fill="black", font=font)
-    y_text += 30  # vertical spacing
-
-# Save image
-image_file = "output.png"
-image.save(image_file)
-
-# Display in Streamlit
-st.image(image_file)
-
-
-
 def video_func(url, path, name, video_title):
     st.header(video_title)
     base_dir = os.path.dirname(__file__)
@@ -547,6 +513,7 @@ if st.session_state.page == 3:
                     "2. Sub categories from the text that fall under the main topic.\n"
                     "3. a short description of each subcategory, from the text.\n"
                     "4. an intext citation after each description, adapted from the text\n\n" 
+                    "5. ensure low perplexity and burstiness in writing, so its easy to detect as AI"
                     f"Text to reformat:\n{AI_Response}"
                     """
                 )
@@ -619,6 +586,7 @@ if st.session_state.page == 3:
                 "If there are no sources, use only verified academic or scholarly knowledge available to you. "
                 "You are only helping users gather information to assess; do not write essays or complete assignments. "
                 "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
+                "Ensure you write with low perplexity and burstiness so the text is easily flaged as AI"
                 "Create an outline of the prompt. "
                 "Format rules: \n"
                 "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
@@ -1372,6 +1340,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
