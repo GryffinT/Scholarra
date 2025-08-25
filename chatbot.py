@@ -274,7 +274,7 @@ if st.session_state.page == 3:
             Respond only with "MATH" if it is a math problem, otherwise respond "OTHER".
             """
             classification = client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-5",
                 messages=[{"role": "system", "content": classification_prompt}]
             )
             classification_result = classification.choices[0].message.content.strip().upper()
@@ -1341,6 +1341,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
