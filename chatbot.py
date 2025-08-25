@@ -642,11 +642,11 @@ if st.session_state.page == 3:
             
             
         user_input = st.text_input("Ask me a research question:")
+        st.warning("The Research Assistant can get information wrong, it is advised to use this as a basis for information but not as a researcher.", icon="⚠️")
         
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    st.warning("The Research Assistant can get information wrong, it is advised to use this as a basis for information but not as a researcher.")
                     answer = answer_user(user_input)
                     st.markdown(answer)
                     source_expander = st.expander(label="Sources")
@@ -1319,6 +1319,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
