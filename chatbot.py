@@ -408,6 +408,7 @@ if st.session_state.page == 3:
         
         if user_input:
             category = categorize_prompt(user_input)
+            print(category)
             if category == "OTHER":
                 general_ask(user_input)
             elif category == "MATH":
@@ -1256,6 +1257,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
