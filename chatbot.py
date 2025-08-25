@@ -233,22 +233,19 @@ if st.session_state.page == 3:
         st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
         selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])  
 
-    if selection == "Writing and Analysis":
-        st.title("TEST")
-        initial_prompt = st.chat_input("Ask me anything!")
-        
+
     def categorize_prompt(prompt):
         with st.spinner("Categorizing prompt..."):
             context = f"""You are a prompt categorizer. 
     
-    Classify the following input: {prompt}
-    
-    Return **only one word** as output:
-    - "MATH" if the prompt is a mathematical equation, even if it contains variables.
-    - "OTHER" for any other type of prompt (general question, chemistry, text, etc.).
-    
-    Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
-    
+                Classify the following input: {prompt}
+                
+                Return **only one word** as output:
+                - "MATH" if the prompt is a mathematical equation, even if it contains variables.
+                - "OTHER" for any other type of prompt (general question, chemistry, text, etc.).
+                
+                Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
+                
             category = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": context}]
@@ -258,6 +255,10 @@ if st.session_state.page == 3:
             if response != "MATH" or response != "OTHER":
                 response = "OTHER"
             return response
+
+    if selection == "Writing and Analysis":
+        st.title("TEST")
+        initial_prompt = st.chat_input("Ask me anything!")
 
 
         def filter_prompt(user_prompt):
@@ -421,6 +422,7 @@ if st.session_state.page == 3:
 # RESEARCH MODE BEINGS HERE
     
     if selection == "Research (Beta)":
+        
         def filter_research_response(AI_Response, user_input):
             with st.spinner("Double checking response..."):
                 search_instruction = (
@@ -448,6 +450,7 @@ if st.session_state.page == 3:
         # -----------------------------
         # Hidden character injection
         # -----------------------------
+        
         def obfuscate_text(text):
             zwsp = "\u200b"
             result = []
@@ -463,6 +466,7 @@ if st.session_state.page == 3:
         # -----------------------------
         # Topic + type classification
         # -----------------------------
+        
         def classify_topic(user_input):
             
             prompt = (
@@ -480,7 +484,8 @@ if st.session_state.page == 3:
          # -----------------------------
          # Sources dictionary
          # -----------------------------
-        SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
+    
+      SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
                     "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
                     "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
                     "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
@@ -492,10 +497,7 @@ if st.session_state.page == 3:
                     "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
                     "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
-        
         def answer_user(user_input, topic_sources):
-            
-            
             sources = topic_sources[classify_topic(topic_sources)]
         
             search_instruction = (
@@ -515,7 +517,7 @@ if st.session_state.page == 3:
                 "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
                 "⚠️ Final reminder: Output must ONLY be in numbered-topic outline format with bulleted subpoints. Do not write any paragraphs."
             )
-
+            
         
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -1258,6 +1260,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
