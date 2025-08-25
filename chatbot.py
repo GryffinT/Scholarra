@@ -420,7 +420,7 @@ if st.session_state.page == 3:
 
     
 # RESEARCH MODE BEINGS HERE
-    
+
     if selection == "Research (Beta)":
         
         def filter_research_response(AI_Response, user_input):
@@ -497,6 +497,7 @@ if st.session_state.page == 3:
                     "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
                     "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
+        
         def answer_user(user_input, topic_sources):
             sources = topic_sources[classify_topic(topic_sources)]
         
@@ -1260,6 +1261,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
