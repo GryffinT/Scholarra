@@ -526,6 +526,8 @@ if st.session_state.page == 3:
                     G. Re-write it in bullet point format for each main point with descriptions under.
                     H. this is not a paper, do not write it like one, make it highly informative, and descriptive.
                     I. Do not include an introduction and/or conclusion.
+                    J. Do not write in the format requested from the user.
+                    K. seperate each clause, point, topic, event, subject, etc into a seperate bullet point with its description underneath, make the description monotone and informative with academic language.
                     
                     Output:
                     - Instead of summarizing fully or writing an essay, provide:
@@ -1343,6 +1345,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
