@@ -258,8 +258,7 @@ if st.session_state.page == 3:
 
     if selection == "Writing and Analysis":
         st.title("TEST")
-        initial_prompt = st.chat_input("Ask me anything!")
-
+        st.markdown("""Powered by Open AI APIs""")
 
         def filter_prompt(user_prompt):
             with st.spinner("Analyzing prompt..."):
@@ -343,10 +342,7 @@ if st.session_state.page == 3:
                 response = raw_response.choices[0].message.content  
         
                 return response
-        
-        st.title("Scholarra interface")
-        st.markdown("""Powered by Open AI APIs""")
-    
+            
         # Initialize chat history with system prompt if not exists
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = [
@@ -1261,6 +1257,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
