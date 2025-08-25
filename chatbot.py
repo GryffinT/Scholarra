@@ -509,14 +509,11 @@ if st.session_state.page == 3:
             with st.spinner("Double checking response..."):
                 search_instruction = (
                     f"""
-                    f"Reformat the following text about '{user_input}' into a **hierarchical outline** ONLY. \n"
-                    "Rules: \n"
-                    "1. Use numbered topic headers (1., 2., 3.) with short descriptive titles (e.g., 'Causes', 'Major Figures'). \n"
-                    "2. Under each header, use '-' for 2–4 concise sub-bullets. \n"
-                    "3. Keep all quotes and citations intact. \n"
-                    "4. Do not add new information, only reorganize. \n"
-                    "5. Do not write paragraphs. Only use outline format. \n\n"
-                    "6. Remove any text about how the prompt is unable to fetch information directly from external sources."
+                    "Task: Review the provided text into a list/bulleted structure:"
+                    "1. Topic idea from the text.\n"
+                    "2. Sub categories from the text that fall under the main topic.\n"
+                    "3. a short description of each subcategory, from the text.\n"
+                    "4. an intext citation after each description, adapted from the text\n\n" 
                     f"Text to reformat:\n{AI_Response}"
                     """
                 )
@@ -1360,6 +1357,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
