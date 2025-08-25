@@ -609,8 +609,8 @@ if st.session_state.page == 3:
                 "Format rules: \n"
                 "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
                 "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
-                "3. Each sub-bullet must contain at least one direct quote in quotation marks with correct in-text citation, using only the sources available to you. \n"
-                "4. Include at least 5 quotes total across the response. \n"
+                "3. Each sub-bullet may contain one quote in quotation marks with correct in-text citation, using only the sources available to you, if possible. \n"
+                "4. if possible include, at least 5 quotes total across the response. \n"
                 "5. Do not use paragraphs or prose. Only use the outline format. \n"
                 "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
                 "⚠️ Final reminder: Output must ONLY be in numbered-topic outline format with bulleted subpoints. Do not write any paragraphs."
@@ -1358,6 +1358,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
