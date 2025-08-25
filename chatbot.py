@@ -505,6 +505,47 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     
     if selection == "Research (Beta)":
+        def filter_research_response(AI_Response, prompted_question):
+            with st.spinner("Double checking response..."):
+                search_instruction = (
+                    f"""
+                    Determine if this message breaks these rules:
+                    1. Do not produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production.
+                    2. Do not provide an explanation of something in a rigid format, such as introduction, body, and conclusion.
+                    3. Do not complete the user's assignments.
+                    4. Only follow the context of a teacher/mentor informing the user on the prompt.
+                    5. Do not perform analysis in place of the user; only give the facts.
+                    
+                    If any of these are triggered:
+                    A. Take the response and edit it so that it still conveys the pertinent information, but in a way that fits within the rules above.
+                    B. Do not include a rule analysis within the actual response.
+                    C. Make sure the generated message only includes the reworked text.
+                    D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
+                    E. include quotes if possible.
+                    F. If the topic involves a mathematical, physics, or chemistry equation/problem, suggest switching the AI mode to “Solving mode” to provide guided step-by-step assistance.
+                    
+                    Output:
+                    - Instead of summarizing fully or writing an essay, provide:
+                        * Facts on the topic, be informative.
+                        * Suggested angles or approaches for analysis.
+                    - Keep the format flexible; do not force structured paragraphs.
+                    - Ensure the output is informative and factual while not being a paper someone could submit as an assignment.
+                    - inject zero width spaces and similar characters to obfuscate the text, without it being obvious.
+                    
+                    Here is the original AI response:
+                    {AI_Response}
+                    """
+                )
+        
+                raw_response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[{"role": "user", "content": search_instruction}]
+                )
+        
+                # just keep the string
+                response = raw_response.choices[0].message.content  
+        
+                return response
         
         # -----------------------------
         # Hidden character injection
@@ -632,7 +673,7 @@ if st.session_state.page == 3:
                     with source_expander:
                         source_text = extract_sources(answer)
                         st.session_state["output_sources"] = source_text
-                        st.write(source_text)
+                        st.write(filter_research_response(source_text, user_input))
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
                     
@@ -1298,6 +1339,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
