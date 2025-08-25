@@ -259,7 +259,7 @@ if st.session_state.page == 3:
         
         # Input for new equation
         user_input = st.text_input(
-            "Enter a math equation (e.g., 2x + 3 = 7):", 
+            "Enter an equation:", 
             "", 
             disabled=st.session_state["user_equation"] is not None or st.session_state["generating"]
         )
@@ -274,7 +274,7 @@ if st.session_state.page == 3:
             Respond only with "MATH" if it is a math problem, otherwise respond "OTHER".
             """
             classification = client.chat.completions.create(
-                model="gpt-5",
+                model="gpt-4o",
                 messages=[{"role": "system", "content": classification_prompt}]
             )
             classification_result = classification.choices[0].message.content.strip().upper()
@@ -295,6 +295,7 @@ if st.session_state.page == 3:
                 - Solve the equation step by step.
                 - After each step, provide a hint if the user might get it wrong.
                 - At the end, produce a JSON object with all variable values like:
+                - Each message is one step.                
                   {{
                     "Equation": "{user_input}",
                     "x": value,
@@ -303,7 +304,7 @@ if st.session_state.page == 3:
                 - Only produce numeric solutions in JSON at the end.
                 """
                 response = client.chat.completions.create(
-                    model="gpt-5",
+                    model="gpt-4o",
                     messages=[{"role": "system", "content": solver_prompt}]
                 )
                 st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
@@ -1340,6 +1341,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
