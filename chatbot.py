@@ -398,9 +398,14 @@ if st.session_state.page == 3:
                 if msg["role"] != "system":
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
-
+        
         if user_input:
-            general_ask(user_input)
+            category = categorize_prompt(user_input)
+            if category == "OTHER":
+                general_ask(user_input)
+            elif category == "MATH":
+                st.info("Mathematics")
+            
 
 
 
@@ -1244,6 +1249,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
