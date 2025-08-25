@@ -647,7 +647,8 @@ if st.session_state.page == 3:
             with st.spinner("Fetching answer..."):
                 try:
                     answer = answer_user(user_input)
-                    st.markdown(filter_research_response(answer))
+                    st.warning("The Research Assistant can get information wrong, it is advised to use this as a basis for information but not as a researcher.")
+                    st.markdown(answer)
                     source_expander = st.expander(label="Sources")
                     with source_expander:
                         source_text = extract_sources(answer)
@@ -1318,6 +1319,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
