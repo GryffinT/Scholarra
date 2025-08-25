@@ -584,30 +584,55 @@ if st.session_state.page == 3:
                     "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
         
-        def answer_user(user_input):
+         def answer_user(user_input):
             main_topic, sub_type = classify_topic(user_input)
             urls = build_urls(user_input, main_topic, sub_type)
-            
+        
             topic_sources = SOURCES.get(main_topic.upper(), [])
-            
+        
             search_instruction = (
                 f"Fetch factual information about '{user_input}' from the top 5 most relevant of these sources: {topic_sources}. "
                 "If there are no sources, search from only verified academic/scholarly sources. "
-                "you are just supposed to help users gather information for them to assess, do not write essays or complete assignments"
-                "Synthesize a concise, descriptive, and academic answer, using quotation marks when applicable, in bulleted structure, seperated by subject/clause/point. "
-                "Each answer should have at least 1 quote (<500 words), cite the sources with in-text citation, "
-                "and insert hidden characters (zero-width spaces) between letters to prevent direct copy-paste while maintaining text wrap. "
-                "It is important that every statement is politically neutral, 100% factually based, cited correctly, "
-                "and that each response contains at least 5 quotes from the aforementioned sources, with quotation marks and citation."
+                "You are just supposed to help users gather information for them to assess, do not write essays or complete assignments. "
+                "Organize the answer in a **hierarchical bullet point outline**. "
+                "Format rules: "
+                "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Key Figures'). "
+                "2. Under each numbered header, include 2–4 sub-bullets starting with '-' that present distinct factual statements or quotes. "
+                "3. Each sub-bullet must include at least one direct quote in quotation marks with correct in-text citation. "
+                "4. Include at least 5 quotes total across the entire response. "
+                "5. Ensure all statements are politically neutral, factually accurate, and concise. "
+                "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste."
             )
-            
+        
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": search_instruction}]
             )
-            
-            return response.choices[0].message.content
-            
+        
+            response_text = response.choices[0].message.content.strip()
+        
+            # --- Fallback: restructure if no numbered sections are detected ---
+            if not any(line.strip().startswith("1.") for line in response_text.splitlines()):
+                restructure_instruction = (
+                    f"Restructure the following text into a **hierarchical outline** for '{user_input}'. "
+                    "Rules: "
+                    "1. Create numbered topic headers (1., 2., 3.) with short descriptive titles (e.g., 'Causes', 'Major Events'). "
+                    "2. Under each, place sub-bullets beginning with '-'. "
+                    "3. Keep all direct quotes and citations intact. "
+                    "4. Do not remove any factual content, just reorganize it."
+                    "\n\nText to restructure:\n"
+                    f"{response_text}"
+                )
+        
+                retry = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[{"role": "user", "content": restructure_instruction}]
+                )
+        
+                response_text = retry.choices[0].message.content.strip()
+        
+            return response_text
+
         def extract_sources(Intake_message):
             generation_instructions = (
                 f"Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
@@ -1319,6 +1344,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
