@@ -25,6 +25,39 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
+from PIL import Image, ImageDraw, ImageFont
+import streamlit as st
+
+# Text
+text = """This is an example string.
+Multiple lines are supported."""
+
+# Create a blank image (white background)
+width, height = 800, 400
+image = Image.new("RGB", (width, height), color="white")
+draw = ImageDraw.Draw(image)
+
+# Optional: set a font
+try:
+    font = ImageFont.truetype("arial.ttf", size=20)
+except:
+    font = ImageFont.load_default()
+
+# Draw text (wrap lines manually)
+lines = text.split("\n")
+y_text = 10
+for line in lines:
+    draw.text((10, y_text), line, fill="black", font=font)
+    y_text += 30  # vertical spacing
+
+# Save image
+image_file = "output.png"
+image.save(image_file)
+
+# Display in Streamlit
+st.image(image_file)
+
+
 
 def video_func(url, path, name, video_title):
     st.header(video_title)
@@ -1339,6 +1372,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
