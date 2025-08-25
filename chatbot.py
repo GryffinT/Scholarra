@@ -550,33 +550,16 @@ if st.session_state.page == 3:
             
             prompt = (
                 f"Classify the topic of this input: '{user_input}'. "
-                "Return ONLY main_topic and sub_type separated by a comma. "
-                "Example output: History, event"
+                "Return ONLY either: MATH, HISTORY, CHEMISTRY, BIOLOGY, EARTH SCIENCES, COMPUTER SCIENCE, LANGUAGE, RELIGION, GOVERNANCE, HEALTH, BUSINESS, or ECONOMICS"
             )
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
             )
             classification = response.choices[0].message.content.strip()
-            try:
-                main_topic, sub_type = classification.split(",")
-                return main_topic.strip(), sub_type.strip()
-            except ValueError:
-                print("NO TOPIC ERROR")
-                return "History", "event"  # fallback
-        
-        # -----------------------------
-        # Build URLs for sources
-        # -----------------------------
-        def build_urls(user_input, main_topic, sub_type):
-            encoded_query = quote(user_input)
-            urls = []
-            for source_name, variants in SOURCES.get(main_topic, {}).items():
-                if sub_type in variants:
-                    url = variants[sub_type].replace("[TOPIC]", encoded_query)
-                    urls.append(url)
-            return urls
-        
+
+            return classification
+
          # -----------------------------
          # Sources dictionary
          # -----------------------------
@@ -594,11 +577,11 @@ if st.session_state.page == 3:
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
         
          def answer_user(user_input, topic_sources):
-            main_topic, sub_type = classify_topic(user_input)
-            urls = build_urls(user_input, main_topic, sub_type)
+
+             sources = topic_sources[classify_topic(topic_sources)]
         
             search_instruction = (
-                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}, "
+                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {sources}, "
                 "using only the information that is available to you in your training data. "
                 "If there are no sources, use only verified academic or scholarly knowledge available to you. "
                 "You are only helping users gather information to assess; do not write essays or complete assignments. "
@@ -1356,6 +1339,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
