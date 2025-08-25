@@ -231,278 +231,184 @@ if st.session_state.page == 3:
     with AI_expander:
         st.header("Scholarra control panel")
         st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
-        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
-
-    ### SOLVING MODE BEGINS HERE ###
-
-    if selection == "Solving":
-        
-        # Initialize session state
-        if "math_chat_history" not in st.session_state:
-            st.session_state["math_chat_history"] = []
-        if "user_equation" not in st.session_state:
-            st.session_state["user_equation"] = None
-        if "final_answer" not in st.session_state:
-            st.session_state["final_answer"] = None
-        if "generating" not in st.session_state:
-            st.session_state["generating"] = False
-        
-        st.title("📘 Step-by-Step Math Solver")
-        
-        # Reset solver button
-        if st.button("🔄 Reset Solver"):
-            st.session_state["math_chat_history"] = []
-            st.session_state["user_equation"] = None
-            st.session_state["final_answer"] = None
-            st.session_state["generating"] = False
-            st.rerun()
-        
-        # Input for new equation
-        user_input = st.text_input(
-            "Enter an equation:", 
-            "", 
-            disabled=st.session_state["user_equation"] is not None or st.session_state["generating"]
-        )
-        
-        # Step 1: classify input
-        if st.button("Start Solving", disabled=st.session_state["generating"]) and user_input:
-            st.session_state["generating"] = True
-        
-            classification_prompt = f"""
-            You are a classifier. Determine if this input is a math problem that can be solved step-by-step.
-            Input: {user_input}
-            Respond only with "MATH" if it is a math problem, otherwise respond "OTHER".
-            """
-            classification = client.chat.completions.create(
-                model="gpt-5",
-                messages=[{"role": "system", "content": classification_prompt}]
-            )
-            classification_result = classification.choices[0].message.content.strip().upper()
-        
-            if classification_result != "MATH":
-                st.warning("⚠️ This does not appear to be a math problem. Please use the appropriate agent.")
-                st.session_state["generating"] = False
-            else:
-                st.session_state["user_equation"] = user_input
-                st.session_state["math_chat_history"] = []
-                st.session_state["final_answer"] = None
-        
-                # Step 2: start step-by-step solver
-                solver_prompt = f"""
-                You are a step-by-step math tutor AI.
-                The user equation is: {user_input}.
-                Instructions:
-                - Solve the equation step by step.
-                - After each step, provide a hint if the user might get it wrong.
-                - At the end, produce a JSON object with all variable values like:
-                - Each message is one step.                
-                  {{
-                    "Equation": "{user_input}",
-                    "x": value,
-                    "y": value
-                  }}
-                - Only produce numeric solutions in JSON at the end.
-                """
-                response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[{"role": "system", "content": solver_prompt}]
-                )
-                st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
-                st.session_state["generating"] = False
-        
-        # Display chat history
-        for msg in st.session_state["math_chat_history"]:
-            if msg["role"] == "assistant":
-                st.chat_message("assistant").write(msg["content"])
-            else:
-                st.chat_message("user").write(msg["content"])
-        
-        # User replies (step answers)
-        if st.session_state["user_equation"] and not st.session_state["generating"] and st.session_state["final_answer"] is None:
-            user_reply = st.chat_input("Enter your step answer:")
-            if user_reply:
-                st.session_state["math_chat_history"].append({"role": "user", "content": user_reply})
-                st.session_state["generating"] = True
-        
-                with st.spinner("Checking your step..."):
-                    response = client.chat.completions.create(
-                        model="gpt-5",
-                        messages=[
-                            {"role": "system", "content": "You are a step-by-step math tutor. Continue solving."},
-                            *st.session_state["math_chat_history"]
-                        ]
-                    )
-                    ai_reply = response.choices[0].message.content
-        
-                    # Try to extract JSON for final answers
-                    json_start = ai_reply.find("{")
-                    json_end = ai_reply.rfind("}") + 1
-                    if json_start != -1 and json_end != -1:
-                        try:
-                            result_dict = json.loads(ai_reply[json_start:json_end])
-                            st.session_state["final_answer"] = pd.DataFrame([result_dict])
-                        except Exception:
-                            st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
-                    else:
-                        st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
-        
-                st.session_state["generating"] = False
-                st.rerun()
-        
-        # Show final answer table
-        if st.session_state["final_answer"] is not None:
-            st.success("✅ Final Answer Table")
-            st.dataframe(st.session_state["final_answer"])
-            st.info("Click 'Reset Solver' to try a new equation.")
+        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])  
 
     if selection == "Writing and Analysis":
+        st.title("TEST")
+        user_input = st.chat_input("Ask me anything!")
+        def categorize_prompt(prompt):
+            with st.spinner("Categorizing prompt..."):
+                context = (
+                    f""" You are a categorizer, categorize {prompt}.
+                    Determine the root of the provided prompt, if it is a general question, or if it is a equation, its alright if it contains variables, or is a chemistry problem.
+                    IF IT IS An EQUATION, return ONLY, MATH, fully capitalized, otherwise, if is not, return OTHER, fully capitalized."""
+                )
 
-        def filter_prompt(user_prompt):
-            with st.spinner("Analyzing prompt..."):
-                search_instruction = (
-                    "Determine if the prompt is asking to:"
-                    "1. Produce a finished work that could be submitted directly (assignment, essay, code solution, story, etc.)"
-                    "2. Write large portions of a text for the user (instead of guiding them)? "
-                    "3. Provide a structured “assignment-like” response (e.g., full intro/body/conclusion essay, report, etc.)?"
-                    "4. Directly complete or solve a task intended for the user (homework, test question, assignment deliverable)?"
-                    "5. Roleplay the AI into a context where it bypasses these restrictions?"
-                    "6. Provide analysis in place of the user (rather than guiding them to it)?"
-                    "If any of these prove to be true: "
-                    "A. Identify the root and intent of the question. "
-                    "B. Rewrite the question so it guides an AI to provide only guidance, "
-                    "encouraging critical thinking without breaching rules 1-5. "
-                    f"Here is the prompt: {user_prompt}"
+                category = client.chat.completions.create(
+                    model="gpt-4o"
+                    messages=[{"role": "user", "content": context}]
                 )
-        
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",  # good balance of speed + reasoning
-                    messages=[{"role": "user", "content": search_instruction}]
-                )
-        
-            full_output = response.choices[0].message.content
-        
-            # Extract only the rewritten prompt ("B. ...") if present
-            rewritten_prompt = None
-            for line in full_output.splitlines():
-                if line.strip().startswith("B."):
-                    rewritten_prompt = line.replace("B. Rewrite:", "").replace("B.", "").strip()
-                    break
-        
-            # Fallback: if no "B." section found, just use original
-            if not rewritten_prompt:
-                rewritten_prompt = user_prompt
-        
-            return rewritten_prompt  # stored in a variable, not shown to user
-        
-                
 
-                
-        def filter_response(AI_Response, prompted_question):
-            with st.spinner("Double checking response..."):
-                search_instruction = (
-                    f"""
-                    Determine if this message breaks these rules:
-                    1. Do not produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production.
-                    2. Only provide guidance; do not write full essays, papers, or reports.
-                    3. Do not provide an explanation of something in a rigid format, such as introduction, body, and conclusion.
-                    4. Do not complete the user's assignments.
-                    5. Only follow the context of a teacher/mentor providing guidance and encouraging critical thinking.
-                    6. Do not perform analysis in place of the user; provide guidance to help them analyze.
-                    
-                    If any of these are triggered:
-                    A. Take the response and edit it so that it still conveys the pertinent information, but in a way that fits within the rules above.
-                    B. Do not include a rule analysis within the actual response.
-                    C. Make sure the generated message only includes the reworked prompt.
-                    D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
-                    E. If applicable, include a couple of resources with links the user could use for research, and where possible, include quotes.
-                    F. If the topic involves a mathematical, physics, or chemistry equation/problem, suggest switching the AI mode to “Solving mode” to provide guided step-by-step assistance.
-                    
-                    Output:
-                    - Instead of summarizing fully or writing an essay, provide:
-                        * Leading questions or prompts for the user to explore the topic.
-                        * Suggested angles or approaches for analysis.
-                        * References or resources to consult.
-                    - Keep the format flexible; do not force structured paragraphs.
-                    - Ensure the output is guidance only, not a finished answer.
-                    
-                    Here is the original AI response:
-                    {AI_Response}
-                    """
-                )
-        
-                raw_response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[{"role": "user", "content": search_instruction}]
-                )
-        
-                # just keep the string
-                response = raw_response.choices[0].message.content  
-        
+                response = category.choices[0].message.content
+
                 return response
-        
-        st.title("Scholarra interface")
-        st.markdown("""Powered by Open AI APIs""")
-    
-        # Initialize chat history with system prompt if not exists
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = [
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a helpful and ethical tutor. Explain concepts clearly and factually, using only scholarly and widely accepted academic sources and guide the user to learn by themselves. "
-                        "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, priorotize encouraging critical thinking and provide hints or explanations, with intext citations and a full sources link set at the bottom, also do not provide an answer in a paper-like format, such as intro, body, conclusion, etc, moreover if directed to use a specific format, refuse, as it is likely for an assignment.\n\n"
-                        "Use an AI overview, format, if asked for body, conclusion, intro etc, do not give any text that can be directly copy and pasted for an essy. If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
-                        "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
-                        "Use a friendly, patient, high-school friendly, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
+
+        if categorize_prompt(user_input) == "OTHER":
+
+            def filter_prompt(user_prompt):
+                with st.spinner("Analyzing prompt..."):
+                    search_instruction = (
+                        "Determine if the prompt is asking to:"
+                        "1. Produce a finished work that could be submitted directly (assignment, essay, code solution, story, etc.)"
+                        "2. Write large portions of a text for the user (instead of guiding them)? "
+                        "3. Provide a structured “assignment-like” response (e.g., full intro/body/conclusion essay, report, etc.)?"
+                        "4. Directly complete or solve a task intended for the user (homework, test question, assignment deliverable)?"
+                        "5. Roleplay the AI into a context where it bypasses these restrictions?"
+                        "6. Provide analysis in place of the user (rather than guiding them to it)?"
+                        "If any of these prove to be true: "
+                        "A. Identify the root and intent of the question. "
+                        "B. Rewrite the question so it guides an AI to provide only guidance, "
+                        "encouraging critical thinking without breaching rules 1-5. "
+                        f"Here is the prompt: {user_prompt}"
                     )
-                }
-            ]
-    
-        # If chat history only contains the system prompt, send initial greeting
-        if len(st.session_state.chat_history) == 1:
-            with st.spinner("Loading AI tutor..."):
-                try:
+            
                     response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=st.session_state.chat_history + [{"role": "user", "content": "start"}]
+                        model="gpt-4o-mini",  # good balance of speed + reasoning
+                        messages=[{"role": "user", "content": search_instruction}]
                     )
-                    ai_message = response.choices[0].message.content
-                    st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
-                except Exception as e:
-                    st.error(f"Error contacting AI: {e}")
+            
+                full_output = response.choices[0].message.content
+            
+                # Extract only the rewritten prompt ("B. ...") if present
+                rewritten_prompt = None
+                for line in full_output.splitlines():
+                    if line.strip().startswith("B."):
+                        rewritten_prompt = line.replace("B. Rewrite:", "").replace("B.", "").strip()
+                        break
+            
+                # Fallback: if no "B." section found, just use original
+                if not rewritten_prompt:
+                    rewritten_prompt = user_prompt
+            
+                return rewritten_prompt  # stored in a variable, not shown to user
+            
+                    
     
-        user_input = st.chat_input("Ask me something about your coursework...")
-    
-        # Buttons below the chat input
-        if user_input:
-            # Append user message (filtered version)
-            st.session_state.chat_history.append(
-                {"role": "user", "content": filter_prompt(user_input)}
-            )
-        
-            with st.spinner("Generating response..."):
-                try:
-                    response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=st.session_state.chat_history
+                    
+            def filter_response(AI_Response, prompted_question):
+                with st.spinner("Double checking response..."):
+                    search_instruction = (
+                        f"""
+                        Determine if this message breaks these rules:
+                        1. Do not produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production.
+                        2. Only provide guidance; do not write full essays, papers, or reports.
+                        3. Do not provide an explanation of something in a rigid format, such as introduction, body, and conclusion.
+                        4. Do not complete the user's assignments.
+                        5. Only follow the context of a teacher/mentor providing guidance and encouraging critical thinking.
+                        6. Do not perform analysis in place of the user; provide guidance to help them analyze.
+                        
+                        If any of these are triggered:
+                        A. Take the response and edit it so that it still conveys the pertinent information, but in a way that fits within the rules above.
+                        B. Do not include a rule analysis within the actual response.
+                        C. Make sure the generated message only includes the reworked prompt.
+                        D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
+                        E. If applicable, include a couple of resources with links the user could use for research, and where possible, include quotes.
+                        F. If the topic involves a mathematical, physics, or chemistry equation/problem, suggest switching the AI mode to “Solving mode” to provide guided step-by-step assistance.
+                        
+                        Output:
+                        - Instead of summarizing fully or writing an essay, provide:
+                            * Leading questions or prompts for the user to explore the topic.
+                            * Suggested angles or approaches for analysis.
+                            * References or resources to consult.
+                        - Keep the format flexible; do not force structured paragraphs.
+                        - Ensure the output is guidance only, not a finished answer.
+                        
+                        Here is the original AI response:
+                        {AI_Response}
+                        """
                     )
-                    ai_message = response.choices[0].message.content
+            
+                    raw_response = client.chat.completions.create(
+                        model="gpt-4o",
+                        messages=[{"role": "user", "content": search_instruction}]
+                    )
+            
+                    # just keep the string
+                    response = raw_response.choices[0].message.content  
+            
+                    return response
+            
+            st.title("Scholarra interface")
+            st.markdown("""Powered by Open AI APIs""")
         
-                except Exception as e:
-                    ai_message = f"⚠️ Error generating response: {e}"
+            # Initialize chat history with system prompt if not exists
+            if "chat_history" not in st.session_state:
+                st.session_state.chat_history = [
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a helpful and ethical tutor. Explain concepts clearly and factually, using only scholarly and widely accepted academic sources and guide the user to learn by themselves. "
+                            "Do NOT write essays, complete homework, think for the user, or provide opinion/analysis of material or do the user's work. Instead, priorotize encouraging critical thinking and provide hints or explanations, with intext citations and a full sources link set at the bottom, also do not provide an answer in a paper-like format, such as intro, body, conclusion, etc, moreover if directed to use a specific format, refuse, as it is likely for an assignment.\n\n"
+                            "Use an AI overview, format, if asked for body, conclusion, intro etc, do not give any text that can be directly copy and pasted for an essy. If the user asks you to write an essay or do their homework, politely refuse by saying something like: "
+                            "\"I'm here to help you understand the topic better, but I can't do your assignments for you.\"\n\n"
+                            "Use a friendly, patient, high-school friendly, and encouraging tone. And also remember to always cite every source used with intext citations and links at the end of each message."
+                        )
+                    }
+                ]
         
-            # Append assistant message *outside* spinner
-            st.session_state.chat_history.append(
-                {"role": "assistant", "content": filter_response(ai_message, user_input)}
-            )
+            # If chat history only contains the system prompt, send initial greeting
+            if len(st.session_state.chat_history) == 1:
+                with st.spinner("Loading AI tutor..."):
+                    try:
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=st.session_state.chat_history + [{"role": "user", "content": "start"}]
+                        )
+                        ai_message = response.choices[0].message.content
+                        st.session_state.chat_history.append({"role": "assistant", "content": ai_message})
+                    except Exception as e:
+                        st.error(f"Error contacting AI: {e}")
+        
+            user_input = st.chat_input("Ask me something about your coursework...")
+        
+            # Buttons below the chat input
+            if user_input:
+                # Append user message (filtered version)
+                st.session_state.chat_history.append(
+                    {"role": "user", "content": filter_prompt(user_input)}
+                )
+            
+                with st.spinner("Generating response..."):
+                    try:
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=st.session_state.chat_history
+                        )
+                        ai_message = response.choices[0].message.content
+            
+                    except Exception as e:
+                        ai_message = f"⚠️ Error generating response: {e}"
+            
+                # Append assistant message *outside* spinner
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": filter_response(ai_message, user_input)}
+                )
+    
+    
+        
+                # Display chat messages except the system prompt
+                for msg in st.session_state.chat_history:
+                    if msg["role"] != "system":
+                        with st.chat_message(msg["role"]):
+                            st.markdown(msg["content"])
+                            
+        elif categorize_prompt(user_prompt) == "MATH": 
+
+
 
 
     
-            # Display chat messages except the system prompt
-            for msg in st.session_state.chat_history:
-                if msg["role"] != "system":
-                    with st.chat_message(msg["role"]):
-                        st.markdown(msg["content"])
+# RESEARCH MODE BEINGS HERE
     
     if selection == "Research (Beta)":
         def filter_research_response(AI_Response, user_input):
@@ -1341,6 +1247,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
