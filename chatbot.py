@@ -584,7 +584,7 @@ if st.session_state.page == 3:
                     "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
                     "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
         
-         def answer_user(user_input):
+         def answer_user(user_input, topic_sources):
             main_topic, sub_type = classify_topic(user_input)
             urls = build_urls(user_input, main_topic, sub_type)
         
@@ -594,15 +594,17 @@ if st.session_state.page == 3:
                 f"Fetch factual information about '{user_input}' from the top 5 most relevant of these sources: {topic_sources}. "
                 "If there are no sources, search from only verified academic/scholarly sources. "
                 "You are just supposed to help users gather information for them to assess, do not write essays or complete assignments. "
-                "Organize the answer in a **hierarchical bullet point outline**. "
-                "Format rules: "
-                "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Key Figures'). "
-                "2. Under each numbered header, include 2–4 sub-bullets starting with '-' that present distinct factual statements or quotes. "
-                "3. Each sub-bullet must include at least one direct quote in quotation marks with correct in-text citation. "
-                "4. Include at least 5 quotes total across the entire response. "
-                "5. Ensure all statements are politically neutral, factually accurate, and concise. "
-                "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste."
+                "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
+                "Format rules: \n"
+                "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
+                "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
+                "3. Each sub-bullet must contain at least one direct quote in quotation marks with correct in-text citation. \n"
+                "4. Include at least 5 quotes total across the response. \n"
+                "5. Do not use paragraphs or prose. Only use the outline format. \n"
+                "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
+                "⚠️ Final reminder: Output must ONLY be in numbered-topic outline format with bulleted subpoints. Do not write any paragraphs."
             )
+
         
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -1344,6 +1346,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
