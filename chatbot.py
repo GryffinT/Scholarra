@@ -485,19 +485,6 @@ if st.session_state.page == 3:
          # Sources dictionary
          # -----------------------------
     
-      SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
-                    "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
-                    "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
-                    "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
-                    "EARTH SCIENCES": [ ("U.S. Geological Survey (USGS)", "https://www.usgs.gov/"), ("National Oceanic and Atmospheric Administration (NOAA)", "https://www.noaa.gov/"), ("NASA Earth Observatory", "https://earthobservatory.nasa.gov/") ], 
-                    "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
-                    "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
-                    "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
-                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
-                    "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
-                    "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
-                    "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
-        
         def answer_user(user_input, topic_sources):
             sources = topic_sources[classify_topic(topic_sources)]
         
@@ -564,6 +551,19 @@ if st.session_state.page == 3:
                 messages=[{"role":"user", "content":generation_instructions}]
             )
             return response.choices[0].message.content
+        SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
+                    "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
+                    "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
+                    "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
+                    "EARTH SCIENCES": [ ("U.S. Geological Survey (USGS)", "https://www.usgs.gov/"), ("National Oceanic and Atmospheric Administration (NOAA)", "https://www.noaa.gov/"), ("NASA Earth Observatory", "https://earthobservatory.nasa.gov/") ], 
+                    "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
+                    "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
+                    "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
+                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
+                    "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
+                    "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
+                    "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
+
         
         # -----------------------------
         # Streamlit UI
@@ -1261,6 +1261,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
