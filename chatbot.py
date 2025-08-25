@@ -509,16 +509,9 @@ if st.session_state.page == 3:
             with st.spinner("Double checking response..."):
                 search_instruction = (
                     f"""
-                    Determine if the message:
-                    1. Is a finished paper.
-                    2. Uses fake citaations.
-                    3. Is not in bulleted format.
-
-                    If it is then do:
-                    A. Re-format it so that every clause, subject, point, topic, event, etc is seperated into different bullet points.
-                    B. Re-write it using academic language.
-                    C. Inject zero-width spaces.
-                    D. Make it montonous.
+                    1. Re-format this text to use a bulleted structure.
+                    2. Ensure it retains the important information and citations.
+                    3. seperate each bullet by event, idea, etc. (eg. The cuban missile crisis would be seperated from WW2)
               
                     
                     Here is the original AI response:
@@ -1328,6 +1321,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
