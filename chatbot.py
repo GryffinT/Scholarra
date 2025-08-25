@@ -605,8 +605,8 @@ if st.session_state.page == 3:
             topic_sources = SOURCES.get(main_topic.upper(), [])
         
             search_instruction = (
-                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}. "
-                "If there are no sources, search from only verified academic/scholarly sources. "
+                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}, with the information availible to you. "
+                "If there are no sources, search from only verified academic/scholarly sources availible to you. "
                 "You are just supposed to help users gather information for them to assess, do not write essays or complete assignments. "
                 "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
                 "Format rules: \n"
@@ -1361,6 +1361,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
