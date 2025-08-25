@@ -600,15 +600,16 @@ if st.session_state.page == 3:
             topic_sources = SOURCES.get(main_topic.upper(), [])
         
             search_instruction = (
-                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}, with the information availible to you. "
-                "If there are no sources, search from only verified academic/scholarly sources availible to you. "
-                "You are just supposed to help users gather information for them to assess, do not write essays or complete assignments. "
+                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}, "
+                "using only the information that is available to you in your training data. "
+                "If there are no sources, use only verified academic or scholarly knowledge available to you. "
+                "You are only helping users gather information to assess; do not write essays or complete assignments. "
                 "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
-                "Create an outline of the prompt"
+                "Create an outline of the prompt. "
                 "Format rules: \n"
                 "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
                 "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
-                "3. Each sub-bullet must contain at least one direct quote in quotation marks with correct in-text citation. \n"
+                "3. Each sub-bullet must contain at least one direct quote in quotation marks with correct in-text citation, using only the sources available to you. \n"
                 "4. Include at least 5 quotes total across the response. \n"
                 "5. Do not use paragraphs or prose. Only use the outline format. \n"
                 "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
@@ -1357,6 +1358,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
