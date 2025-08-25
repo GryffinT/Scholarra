@@ -523,6 +523,9 @@ if st.session_state.page == 3:
                     D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
                     E. include quotes if possible.
                     F. If the topic involves a mathematical, physics, or chemistry equation/problem, suggest switching the AI mode to “Solving mode” to provide guided step-by-step assistance.
+                    G. Re-write it in bullet point format for each main point with descriptions under.
+                    H. this is not a paper, do not write it like one, make it highly informative, and descriptive.
+                    I. Do not include an introduction and/or conclusion.
                     
                     Output:
                     - Instead of summarizing fully or writing an essay, provide:
@@ -1340,6 +1343,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
