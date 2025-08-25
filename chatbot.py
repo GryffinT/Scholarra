@@ -517,10 +517,7 @@ if st.session_state.page == 3:
                     "4. Do not add new information, only reorganize. \n"
                     "5. Do not write paragraphs. Only use outline format. \n\n"
                     "6. Remove any text about how the prompt is unable to fetch information directly from external sources."
-                    f"Text to reformat:\n{raw_text}"
-                               
-                    Here is the original AI response:
-                    {AI_Response}
+                    f"Text to reformat:\n{AI_Response}"
                     """
                 )
         
@@ -1363,6 +1360,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
