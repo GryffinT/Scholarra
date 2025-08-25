@@ -505,11 +505,18 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     
     if selection == "Research (Beta)":
-        def filter_research_response(AI_Response):
+        def filter_research_response(AI_Response, user_input):
             with st.spinner("Double checking response..."):
                 search_instruction = (
                     f"""
-                    1. Re-format this text to use a bulleted structure.
+                    f"Reformat the following text about '{user_input}' into a **hierarchical outline** ONLY. \n"
+                    "Rules: \n"
+                    "1. Use numbered topic headers (1., 2., 3.) with short descriptive titles (e.g., 'Causes', 'Major Figures'). \n"
+                    "2. Under each header, use '-' for 2–4 concise sub-bullets. \n"
+                    "3. Keep all quotes and citations intact. \n"
+                    "4. Do not add new information, only reorganize. \n"
+                    "5. Do not write paragraphs. Only use outline format. \n\n"
+                    f"Text to reformat:\n{raw_text}"
                                
                     Here is the original AI response:
                     {AI_Response}
@@ -530,9 +537,16 @@ if st.session_state.page == 3:
         # Hidden character injection
         # -----------------------------
         def obfuscate_text(text):
-            # inject zero-width spaces randomly between characters
             zwsp = "\u200b"
-            return zwsp.join(list(text))
+            result = []
+            for ch in text:
+                # Don't obfuscate control characters that affect formatting
+                if ch.isalpha():  
+                    result.append(ch + zwsp)
+                else:
+                    result.append(ch)
+            return "".join(result)
+
         
         # -----------------------------
         # Topic + type classification
@@ -591,7 +605,7 @@ if st.session_state.page == 3:
             topic_sources = SOURCES.get(main_topic.upper(), [])
         
             search_instruction = (
-                f"Fetch factual information about '{user_input}' from the top 5 most relevant of these sources: {topic_sources}. "
+                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {topic_sources}. "
                 "If there are no sources, search from only verified academic/scholarly sources. "
                 "You are just supposed to help users gather information for them to assess, do not write essays or complete assignments. "
                 "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
@@ -674,7 +688,7 @@ if st.session_state.page == 3:
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    answer = answer_user(user_input)
+                    answer = obfuscate_text(filter_research_response(answer_user(user_input), user_input))
                     st.markdown(answer)
                     source_expander = st.expander(label="Sources")
                     with source_expander:
@@ -1346,6 +1360,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
