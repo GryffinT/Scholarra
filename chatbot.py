@@ -510,10 +510,7 @@ if st.session_state.page == 3:
                 search_instruction = (
                     f"""
                     1. Re-format this text to use a bulleted structure.
-                    2. Ensure it retains the important information and citations.
-                    3. seperate each bullet by event, idea, etc. (eg. The cuban missile crisis would be seperated from WW2)
-              
-                    
+                               
                     Here is the original AI response:
                     {AI_Response}
                     """
@@ -1321,6 +1318,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
