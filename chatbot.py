@@ -505,38 +505,21 @@ if st.session_state.page == 3:
                         st.markdown(msg["content"])
     
     if selection == "Research (Beta)":
-        def filter_research_response(AI_Response, prompted_question):
+        def filter_research_response(AI_Response):
             with st.spinner("Double checking response..."):
                 search_instruction = (
                     f"""
-                    Determine if this message breaks these rules:
-                    1. Do not produce a work that can be used directly, via copy and paste, or similar means, within an assignment, paper, or personal production.
-                    2. Do not provide an explanation of something in a rigid format, such as introduction, body, and conclusion.
-                    3. Do not complete the user's assignments.
-                    4. Only follow the context of a teacher/mentor informing the user on the prompt.
-                    5. Do not perform analysis in place of the user; only give the facts.
-                    
-                    If any of these are triggered:
-                    A. Take the response and edit it so that it still conveys the pertinent information, but in a way that fits within the rules above.
-                    B. Do not include a rule analysis within the actual response.
-                    C. Make sure the generated message only includes the reworked text.
-                    D. Include the original prompted question at the beginning, but only display it as the prompt; do not use it to generate content, here is the original prompted question: {prompted_question}.
-                    E. include quotes if possible.
-                    F. If the topic involves a mathematical, physics, or chemistry equation/problem, suggest switching the AI mode to “Solving mode” to provide guided step-by-step assistance.
-                    G. Re-write it in bullet point format for each main point with descriptions under.
-                    H. this is not a paper, do not write it like one, make it highly informative, and descriptive.
-                    I. Do not include an introduction and/or conclusion.
-                    J. Do not write in the format requested from the user.
-                    K. seperate each clause, point, topic, event, subject, etc into a seperate bullet point with its description underneath, make the description monotone and informative with academic language.
-                    
-                    Output:
-                    - Instead of summarizing fully or writing an essay, provide:
-                        * Facts on the topic, be informative.
-                        * Suggested angles or approaches for analysis.
-                    - organize it into bullet points.
-                    - Ensure the output is informative and factual while not being a paper someone could submit as an assignment.
-                    - inject zero width spaces and similar characters to obfuscate the text, without it being obvious.
-                    - include no preambles stating that you're unable to reach web-pages, etc, or synthetic/fake citations.
+                    Determine if the message:
+                    1. Is a finished paper.
+                    2. Uses fake citaations.
+                    3. Is not in bulleted format.
+
+                    If it is then do:
+                    A. Re-format it so that every clause, subject, point, topic, event, etc is seperated into different bullet points.
+                    B. Re-write it using academic language.
+                    C. Inject zero-width spaces.
+                    D. Make it montonous.
+              
                     
                     Here is the original AI response:
                     {AI_Response}
@@ -679,7 +662,7 @@ if st.session_state.page == 3:
                     with source_expander:
                         source_text = extract_sources(answer)
                         st.session_state["output_sources"] = source_text
-                        st.write(filter_research_response(source_text, user_input))
+                        st.write(filter_research_response(source_text))
                 except Exception as e:
                     st.error(f"Error fetching answer: {e}")
                     
@@ -1345,6 +1328,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
