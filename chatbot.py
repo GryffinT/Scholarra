@@ -516,6 +516,7 @@ if st.session_state.page == 3:
                     "3. Keep all quotes and citations intact. \n"
                     "4. Do not add new information, only reorganize. \n"
                     "5. Do not write paragraphs. Only use outline format. \n\n"
+                    "6. Remove any text about how the prompt is unable to fetch information directly from external sources."
                     f"Text to reformat:\n{raw_text}"
                                
                     Here is the original AI response:
@@ -609,6 +610,7 @@ if st.session_state.page == 3:
                 "If there are no sources, search from only verified academic/scholarly sources availible to you. "
                 "You are just supposed to help users gather information for them to assess, do not write essays or complete assignments. "
                 "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
+                "Create an outline of the prompt"
                 "Format rules: \n"
                 "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
                 "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
@@ -1361,6 +1363,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
