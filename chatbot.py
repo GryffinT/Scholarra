@@ -237,6 +237,7 @@ if st.session_state.page == 3:
     def categorize_prompt(prompt):
         with st.spinner("Categorizing prompt..."):
             context = f"""You are a prompt categorizer. 
+                Determine the root question of the prompt provided and classify it
     
                 Classify the following input: {prompt}
                 
@@ -409,7 +410,7 @@ if st.session_state.page == 3:
             if category == "OTHER":
                 general_ask(user_input)
             elif category == "MATH":
-                st.info("Mathematics")
+                st.write("Mathematics")
             
 
 
@@ -1257,6 +1258,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
