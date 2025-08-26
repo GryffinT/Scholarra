@@ -406,6 +406,8 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
 
+        equations = []
+
 
         def filter_task(prompt):
             
@@ -422,6 +424,7 @@ if st.session_state.page == 3:
                 messages = [{"role": "user", "content": criterion}]
             )
             rewritten_task = task.choices[0].message.content  
+            equations.append(str(prompt))
             return (rewritten_task)
 
         def solver(task):
@@ -443,7 +446,6 @@ if st.session_state.page == 3:
             solution_message = solution.choices[0].message.content  
             return (solution_message)
 
-            
         
         if user_input:
             category = categorize_prompt(user_input)
@@ -451,7 +453,11 @@ if st.session_state.page == 3:
             if category == "OTHER":
                 general_ask(user_input)
             elif category == "MATH":
-                equation_ask(user_input)
+                if str(user_input) not in equations:
+                    solver(filter_task(user_input))
+                else:
+                    solver(user_input)
+                
             
 
 
@@ -1299,6 +1305,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
