@@ -373,6 +373,28 @@ if st.session_state.page == 3:
                     st.error(f"Error contacting AI: {e}")
     
         user_input = st.chat_input("Ask me something about your coursework...")
+
+        def general_ask(prompted_input):
+                        # Append user message (filtered version)
+            st.session_state.chat_history.append(
+                {"role": "user", "content": filter_prompt(prompted_input)}
+            )
+        
+            with st.spinner("Generating response..."):
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=st.session_state.chat_history
+                    )
+                    ai_message = response.choices[0].message.content
+        
+                except Exception as e:
+                    ai_message = f"⚠️ Error generating response: {e}"
+        
+            # Append assistant message *outside* spinner
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": filter_response(ai_message, prompted_input)}
+            )
         
         if "math_state" not in st.session_state:
             st.session_state.math_state = None  # Holds the current problem steps
@@ -451,8 +473,6 @@ if st.session_state.page == 3:
                 with st.chat_message(msg.get("name", msg["role"])):
                     st.markdown(msg["content"])
         
-
-        
         if user_input:
             category = categorize_prompt(user_input)
             print(category)
@@ -461,14 +481,8 @@ if st.session_state.page == 3:
                 general_ask(user_input)
         
             elif category == "MATH":
-                process_math_input(user_input)  # 👈 this will run the math tutor loop
+                process_math_input(user_input) 
 
-  
-            
-
-
-
-    
 # RESEARCH MODE BEINGS HERE
 
     if selection == "Research (Beta)":
@@ -1311,6 +1325,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
