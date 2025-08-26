@@ -253,7 +253,7 @@ if st.session_state.page == 3:
             )
     
             response = category.choices[0].message.content.strip().upper()
-            if response != "MATH" or response != "OTHER":
+            if response not in ["MATH", "OTHER"]:
                 response = "OTHER"
             return response
 
@@ -1258,6 +1258,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
