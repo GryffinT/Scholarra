@@ -429,8 +429,6 @@ if st.session_state.page == 3:
             st.session_state.step_index = 0
         
                 
-
-        
         def general_ask(prompted_input):
                         # Append user message (filtered version)
             st.session_state.chat_history.append(
@@ -460,17 +458,24 @@ if st.session_state.page == 3:
                 if msg["role"] != "system":
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
-        
-       def process_math_input(user_input):
+                                
+        def process_math_input(user_input):
+            """
+            Processes a math problem in a step-by-step interactive manner.
+            """
             # Initialize session state
             if "equations" not in st.session_state:
                 st.session_state.equations = []
+        
             if "math_chat_history" not in st.session_state:
                 st.session_state.math_chat_history = []
+        
             if "current_task" not in st.session_state:
                 st.session_state.current_task = None
+        
             if "steps" not in st.session_state:
                 st.session_state.steps = []
+        
             if "step_index" not in st.session_state:
                 st.session_state.step_index = 0
         
@@ -525,9 +530,6 @@ if st.session_state.page == 3:
                     for msg in st.session_state.math_chat_history:
                         with st.chat_message(msg["role"]):
                             st.markdown(msg["content"])
-
-        
-
         
         if user_input:
             category = categorize_prompt(user_input)
@@ -1383,6 +1385,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
