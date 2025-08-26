@@ -247,7 +247,7 @@ if st.session_state.page == 3:
                 Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
                 
             category = client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-5",
                 messages=[{"role": "user", "content": context}]
             )
     
@@ -1257,6 +1257,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
