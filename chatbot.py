@@ -1355,11 +1355,17 @@ if st.session_state.page == 7:
                     score_question(lesson_2_q4, lesson_2_quiz_answers, 3)
 
                     segment_completed(2)
-                    
+
+                lesson_three_expander = st.expander(label="Lesson three")
+                with lesson_three_expander:
+                    video_func("https://www.youtube.com/watch?v=0SRt9dkR3Zg", "Task3Video1","learnexcel.video","Excel Page Layout: The Ultimate Guide")
+                    video_func("https://www.youtube.com/shorts/l5UFTMXOuiU", "Task3Video2", "TutorialsPoint_", "How to AutoFit rows and columns in Excel?")
+                    video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "Task3Video3", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
