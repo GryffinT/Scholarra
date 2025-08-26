@@ -25,7 +25,6 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
-
 def video_func(url, path, name, video_title):
     st.header(video_title)
     base_dir = os.path.dirname(__file__)
@@ -228,134 +227,43 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
-    AI_expander = st.expander("Control panel")
+    AI_expander = st.expander("Agent panel")
     with AI_expander:
-        st.header("Scholarra control panel")
-        st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
-        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])
+        st.header("Scholarra agent panel")
+        st.write("Here you can select from Scholarra's offered agents from the dropdown to best fit your needs.")
+        selection = st.selectbox("AI Mode", ["PBCA-0.2", "Research (Beta)"])  
 
-    ### SOLVING MODE BEGINS HERE ###
 
-    if selection == "Solving":
-        
-        # Initialize session state
-        if "math_chat_history" not in st.session_state:
-            st.session_state["math_chat_history"] = []
-        if "user_equation" not in st.session_state:
-            st.session_state["user_equation"] = None
-        if "final_answer" not in st.session_state:
-            st.session_state["final_answer"] = None
-        if "generating" not in st.session_state:
-            st.session_state["generating"] = False
-        
-        st.title("📘 Step-by-Step Math Solver")
-        
-        # Reset solver button
-        if st.button("🔄 Reset Solver"):
-            st.session_state["math_chat_history"] = []
-            st.session_state["user_equation"] = None
-            st.session_state["final_answer"] = None
-            st.session_state["generating"] = False
-            st.rerun()
-        
-        # Input for new equation
-        user_input = st.text_input(
-            "Enter a math equation (e.g., 2x + 3 = 7):", 
-            "", 
-            disabled=st.session_state["user_equation"] is not None or st.session_state["generating"]
-        )
-        
-        # Step 1: classify input
-        if st.button("Start Solving", disabled=st.session_state["generating"]) and user_input:
-            st.session_state["generating"] = True
-        
-            classification_prompt = f"""
-            You are a classifier. Determine if this input is a math problem that can be solved step-by-step.
-            Input: {user_input}
-            Respond only with "MATH" if it is a math problem, otherwise respond "OTHER".
-            """
-            classification = client.chat.completions.create(
+    def categorize_prompt(prompt):
+        with st.spinner("Categorizing prompt..."):
+            context = f"""You are a prompt categorizer. 
+                Determine the root question of the prompt provided and classify it
+    
+                Classify the following input: {prompt}
+                
+                Return **only one word** as output:
+                - "MATH" if the prompt is a mathematical equation, even if it contains variables, or is a chemistry equation.
+                - "OTHER" for any other type of prompt (general question, text, etc.).
+                
+                Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
+                
+            category = client.chat.completions.create(
                 model="gpt-5",
-                messages=[{"role": "system", "content": classification_prompt}]
+                messages=[{"role": "user", "content": context}]
             )
-            classification_result = classification.choices[0].message.content.strip().upper()
-        
-            if classification_result != "MATH":
-                st.warning("⚠️ This does not appear to be a math problem. Please use the appropriate agent.")
-                st.session_state["generating"] = False
-            else:
-                st.session_state["user_equation"] = user_input
-                st.session_state["math_chat_history"] = []
-                st.session_state["final_answer"] = None
-        
-                # Step 2: start step-by-step solver
-                solver_prompt = f"""
-                You are a step-by-step math tutor AI.
-                The user equation is: {user_input}.
-                Instructions:
-                - Solve the equation step by step.
-                - After each step, provide a hint if the user might get it wrong.
-                - At the end, produce a JSON object with all variable values like:
-                  {{
-                    "Equation": "{user_input}",
-                    "x": value,
-                    "y": value
-                  }}
-                - Only produce numeric solutions in JSON at the end.
-                """
-                response = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[{"role": "system", "content": solver_prompt}]
-                )
-                st.session_state["math_chat_history"].append({"role": "assistant", "content": response.choices[0].message.content})
-                st.session_state["generating"] = False
-        
-        # Display chat history
-        for msg in st.session_state["math_chat_history"]:
-            if msg["role"] == "assistant":
-                st.chat_message("assistant").write(msg["content"])
-            else:
-                st.chat_message("user").write(msg["content"])
-        
-        # User replies (step answers)
-        if st.session_state["user_equation"] and not st.session_state["generating"] and st.session_state["final_answer"] is None:
-            user_reply = st.chat_input("Enter your step answer:")
-            if user_reply:
-                st.session_state["math_chat_history"].append({"role": "user", "content": user_reply})
-                st.session_state["generating"] = True
-        
-                with st.spinner("Checking your step..."):
-                    response = client.chat.completions.create(
-                        model="gpt-5",
-                        messages=[
-                            {"role": "system", "content": "You are a step-by-step math tutor. Continue solving."},
-                            *st.session_state["math_chat_history"]
-                        ]
-                    )
-                    ai_reply = response.choices[0].message.content
-        
-                    # Try to extract JSON for final answers
-                    json_start = ai_reply.find("{")
-                    json_end = ai_reply.rfind("}") + 1
-                    if json_start != -1 and json_end != -1:
-                        try:
-                            result_dict = json.loads(ai_reply[json_start:json_end])
-                            st.session_state["final_answer"] = pd.DataFrame([result_dict])
-                        except Exception:
-                            st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
-                    else:
-                        st.session_state["math_chat_history"].append({"role": "assistant", "content": ai_reply})
-        
-                st.session_state["generating"] = False
-                st.rerun()
-        
-        # Show final answer table
-        if st.session_state["final_answer"] is not None:
-            st.success("✅ Final Answer Table")
-            st.dataframe(st.session_state["final_answer"])
-            st.info("Click 'Reset Solver' to try a new equation.")
+    
+            response = category.choices[0].message.content.strip().upper()
+            if response not in ["MATH", "OTHER"]:
+                response = "OTHER"
+            return response
 
-    if selection == "Writing and Analysis":
+    if selection == "PBCA-0.2":
+        st.title("PBCA-0.2")
+        PBCA_expander = st.expander("PBCA-0.2 agent profile")
+        with PBCA_expander:
+            st.title("Prompt Based Cascading Agent (PBCA) V 0.2")
+            st.write("The PBCA-0.2, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are cascaded sequentially through six specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
+        st.markdown("""Powered by Open AI APIs""")
 
         def filter_prompt(user_prompt):
             with st.spinner("Analyzing prompt..."):
@@ -439,10 +347,7 @@ if st.session_state.page == 3:
                 response = raw_response.choices[0].message.content  
         
                 return response
-        
-        st.title("Scholarra interface")
-        st.markdown("""Powered by Open AI APIs""")
-    
+            
         # Initialize chat history with system prompt if not exists
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = [
@@ -472,13 +377,17 @@ if st.session_state.page == 3:
                     st.error(f"Error contacting AI: {e}")
     
         user_input = st.chat_input("Ask me something about your coursework...")
-    
-        # Buttons below the chat input
-        if user_input:
+
+        def general_ask(prompted_input):
             # Append user message (filtered version)
+            user_message = filter_prompt(prompted_input)
             st.session_state.chat_history.append(
-                {"role": "user", "content": filter_prompt(user_input)}
+                {"role": "user", "content": user_message}
             )
+        
+            # Render the user message immediately
+            with st.chat_message("user"):
+                st.markdown(user_message)
         
             with st.spinner("Generating response..."):
                 try:
@@ -487,32 +396,143 @@ if st.session_state.page == 3:
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
-        
                 except Exception as e:
                     ai_message = f"⚠️ Error generating response: {e}"
         
-            # Append assistant message *outside* spinner
+            # Append assistant message
+            assistant_message = filter_response(ai_message, prompted_input)
             st.session_state.chat_history.append(
-                {"role": "assistant", "content": filter_response(ai_message, user_input)}
+                {"role": "assistant", "content": assistant_message}
             )
+        
+            # Render the assistant message
+            with st.chat_message("assistant"):
+                st.markdown(assistant_message)
 
-
-    
-            # Display chat messages except the system prompt
-            for msg in st.session_state.chat_history:
-                if msg["role"] != "system":
-                    with st.chat_message(msg["role"]):
+        
+        if "math_state" not in st.session_state:
+            st.session_state.math_state = None  # Holds the current problem steps
+        if "math_current_step" not in st.session_state:
+            st.session_state.math_current_step = 0
+        if "math_chat_history" not in st.session_state:
+            st.session_state.math_chat_history = []
+        
+        def filter_task(prompt: str) -> str:
+            with st.spinner("Filtering task..."):
+                
+                """Classifies the math task, returns something like 'SOLVE: 2x+3=y'."""
+                response = client.responses.create(
+                    model="gpt-5-mini",
+                    input=f"Classify this math problem. Example outputs: 'SOLVE: 2x+3=y' or 'FACTOR: x^2+5x+6'.\n\nProblem: {prompt}"
+                )
+                return response.output[0].content[0].text.strip()
+            
+        def generate_steps(problem: str) -> list:
+            with st.spinner("Generating steps..."):
+                """Generate a list of step-by-step solutions for the math problem."""
+                response = client.responses.create(
+                    model="gpt-5-mini",
+                    input=f"Solve this math problem step by step. Return each step as a numbered list:\n\n{problem}"
+                )
+                steps_text = response.output[0].content[0].text.strip()
+                return steps_text.split("\n")
+            
+        def init_math_session(equation: str):
+            with st.spinner("Constructing session..."):
+                """Initialize a new math tutoring session with an equation."""
+                st.session_state.math_equation = equation          # constant equation
+                st.session_state.math_step = 0                     # current step index
+                st.session_state.math_expected = None              # what we expect from user
+                st.session_state.math_chat_history = []            # reset chat
+            
+                # Log initial message
+                st.session_state.math_chat_history.append({
+                    "role": "system", "content": f"Equation set: {equation}"
+                })
+        
+        
+        def process_math_input(user_input: str):
+            """Process either the initial equation or a step reply."""
+        
+            # --- If no session yet, assume this is the equation ---
+            if "math_equation" not in st.session_state:
+                init_math_session(user_input)
+        
+                tutor_prompt = f"""
+                You are a step-by-step math tutor.
+                The problem to solve is: {user_input}
+        
+                Instructions:
+                - Break the solution into numbered steps.
+                - For each step: explain what to do, then ask the user to try.
+                - Store the expected next equation or answer.
+                - DO NOT restart the problem in later steps.
+                - Wait for user before continuing.
+                """
+        
+                ai_msg = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[{"role": "system", "content": tutor_prompt}],
+                ).choices[0].message.content.strip()
+        
+                st.session_state.math_chat_history.append({"role": "assistant", "name": "math", "content": ai_msg})
+        
+            else:
+                # --- Otherwise, this is a reply to the current step ---
+                with st.spinner("Generating step..."):
+                    step_prompt = f"""
+                    You are continuing a math tutoring session.
+            
+                    Original equation: {st.session_state.math_equation}
+                    Current step index: {st.session_state.math_step}
+                    User just replied: {user_input}
+            
+                    Your tasks:
+                    1. Check if the user's answer is correct for this step.
+                    2. If correct, acknowledge and move to the next step.
+                    3. If wrong, give a hint and ask again.
+                    4. Always keep referencing the original equation, don't reset it.
+                    5. Increment the step index ONLY if the user's answer is correct.
+                    """
+            
+                    ai_msg = client.chat.completions.create(
+                        model="gpt-5",
+                        messages=[{"role": "system", "content": step_prompt}],
+                    ).choices[0].message.content.strip()
+            
+                    st.session_state.math_chat_history.append({"role": "assistant", "name": "math", "content": ai_msg})
+            
+            # --- Render chat ---
+            with st.spinner("Rendering messages..."):
+                for msg in st.session_state.math_chat_history:
+                    with st.chat_message(msg.get("name", msg["role"])):
                         st.markdown(msg["content"])
-    
+        
+        if user_input:
+            category = categorize_prompt(user_input)
+            print(category)
+        
+            if category == "OTHER":
+                general_ask(user_input)
+        
+            elif category == "MATH":
+                process_math_input(user_input) 
+
+# RESEARCH MODE BEINGS HERE
+
     if selection == "Research (Beta)":
-        def filter_research_response(AI_Response):
+        
+        def filter_research_response(AI_Response, user_input):
             with st.spinner("Double checking response..."):
                 search_instruction = (
                     f"""
-                    1. Re-format this text to use a bulleted structure.
-                               
-                    Here is the original AI response:
-                    {AI_Response}
+                    "Task: Review the provided text into a list/bulleted structure:"
+                    "1. Topic idea from the text.\n"
+                    "2. Sub categories from the text that fall under the main topic.\n"
+                    "3. a short description of each subcategory, from the text.\n"
+                    "4. an intext citation after each description, adapted from the text\n\n" 
+                    "5. ensure low perplexity and burstiness in writing, so its easy to detect as AI"
+                    f"Text to reformat:\n{AI_Response}"
                     """
                 )
         
@@ -529,85 +549,92 @@ if st.session_state.page == 3:
         # -----------------------------
         # Hidden character injection
         # -----------------------------
+        
         def obfuscate_text(text):
-            # inject zero-width spaces randomly between characters
             zwsp = "\u200b"
-            return zwsp.join(list(text))
+            result = []
+            for ch in text:
+                # Don't obfuscate control characters that affect formatting
+                if ch.isalpha():  
+                    result.append(ch + zwsp)
+                else:
+                    result.append(ch)
+            return "".join(result)
+
         
         # -----------------------------
         # Topic + type classification
         # -----------------------------
+        
         def classify_topic(user_input):
             
             prompt = (
                 f"Classify the topic of this input: '{user_input}'. "
-                "Return ONLY main_topic and sub_type separated by a comma. "
-                "Example output: History, event"
+                "Return ONLY either: MATH, HISTORY, CHEMISTRY, BIOLOGY, EARTH SCIENCES, COMPUTER SCIENCE, LANGUAGE, RELIGION, GOVERNANCE, HEALTH, BUSINESS, or ECONOMICS"
             )
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}]
             )
             classification = response.choices[0].message.content.strip()
-            try:
-                main_topic, sub_type = classification.split(",")
-                return main_topic.strip(), sub_type.strip()
-            except ValueError:
-                print("NO TOPIC ERROR")
-                return "History", "event"  # fallback
-        
-        # -----------------------------
-        # Build URLs for sources
-        # -----------------------------
-        def build_urls(user_input, main_topic, sub_type):
-            encoded_query = quote(user_input)
-            urls = []
-            for source_name, variants in SOURCES.get(main_topic, {}).items():
-                if sub_type in variants:
-                    url = variants[sub_type].replace("[TOPIC]", encoded_query)
-                    urls.append(url)
-            return urls
-        
+
+            return classification
+
          # -----------------------------
          # Sources dictionary
          # -----------------------------
-        SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
-                    "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
-                    "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
-                    "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
-                    "EARTH SCIENCES": [ ("U.S. Geological Survey (USGS)", "https://www.usgs.gov/"), ("National Oceanic and Atmospheric Administration (NOAA)", "https://www.noaa.gov/"), ("NASA Earth Observatory", "https://earthobservatory.nasa.gov/") ], 
-                    "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
-                    "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
-                    "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
-                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
-                    "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
-                    "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
-                    "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
+    
+        def answer_user(user_input, topic_sources):
+            sources = topic_sources[classify_topic(topic_sources)]
         
-        def answer_user(user_input):
-            main_topic, sub_type = classify_topic(user_input)
-            urls = build_urls(user_input, main_topic, sub_type)
-            
-            topic_sources = SOURCES.get(main_topic.upper(), [])
-            
             search_instruction = (
-                f"Fetch factual information about '{user_input}' from the top 5 most relevant of these sources: {topic_sources}. "
-                "If there are no sources, search from only verified academic/scholarly sources. "
-                "you are just supposed to help users gather information for them to assess, do not write essays or complete assignments"
-                "Synthesize a concise, descriptive, and academic answer, using quotation marks when applicable, in bulleted structure, seperated by subject/clause/point. "
-                "Each answer should have at least 1 quote (<500 words), cite the sources with in-text citation, "
-                "and insert hidden characters (zero-width spaces) between letters to prevent direct copy-paste while maintaining text wrap. "
-                "It is important that every statement is politically neutral, 100% factually based, cited correctly, "
-                "and that each response contains at least 5 quotes from the aforementioned sources, with quotation marks and citation."
+                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {sources}, "
+                "using only the information that is available to you in your training data. "
+                "If there are no sources, use only verified academic or scholarly knowledge available to you. "
+                "You are only helping users gather information to assess; do not write essays or complete assignments. "
+                "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
+                "Ensure you write with low perplexity and burstiness so the text is easily flaged as AI"
+                "Create an outline of the prompt. "
+                "Format rules: \n"
+                "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
+                "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
+                "3. Each sub-bullet may contain one quote in quotation marks with correct in-text citation, using only the sources available to you, if possible. \n"
+                "4. if possible include, at least 5 quotes total across the response. \n"
+                "5. Do not use paragraphs or prose. Only use the outline format. \n"
+                "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
+                "⚠️ Final reminder: Output must ONLY be in numbered-topic outline format with bulleted subpoints. Do not write any paragraphs."
             )
             
+        
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": search_instruction}]
             )
-            
-            return response.choices[0].message.content
-            
+        
+            response_text = response.choices[0].message.content.strip()
+        
+            # --- Fallback: restructure if no numbered sections are detected ---
+            if not any(line.strip().startswith("1.") for line in response_text.splitlines()):
+                restructure_instruction = (
+                    f"Restructure the following text into a **hierarchical outline** for '{user_input}'. "
+                    "Rules: "
+                    "1. Create numbered topic headers (1., 2., 3.) with short descriptive titles (e.g., 'Causes', 'Major Events'). "
+                    "2. Under each, place sub-bullets beginning with '-'. "
+                    "3. Keep all direct quotes and citations intact. "
+                    "4. Do not remove any factual content, just reorganize it."
+                    "\n\nText to restructure:\n"
+                    f"{response_text}"
+                )
+        
+                retry = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[{"role": "user", "content": restructure_instruction}]
+                )
+        
+                response_text = retry.choices[0].message.content.strip()
+        
+            return response_text
+
         def extract_sources(Intake_message):
             generation_instructions = (
                 f"Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
@@ -623,6 +650,19 @@ if st.session_state.page == 3:
                 messages=[{"role":"user", "content":generation_instructions}]
             )
             return response.choices[0].message.content
+        SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
+                    "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
+                    "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
+                    "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
+                    "EARTH SCIENCES": [ ("U.S. Geological Survey (USGS)", "https://www.usgs.gov/"), ("National Oceanic and Atmospheric Administration (NOAA)", "https://www.noaa.gov/"), ("NASA Earth Observatory", "https://earthobservatory.nasa.gov/") ], 
+                    "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
+                    "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
+                    "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
+                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
+                    "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
+                    "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
+                    "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
+
         
         # -----------------------------
         # Streamlit UI
@@ -647,8 +687,9 @@ if st.session_state.page == 3:
         if st.button("Get Answer") and user_input.strip():
             with st.spinner("Fetching answer..."):
                 try:
-                    answer = answer_user(user_input)
-                    st.markdown(answer)
+                    answer = obfuscate_text(filter_research_response(answer_user(user_input, SOURCES), user_input))
+                    print(repr(answer))
+                    st.markdown(f"<div>{answer}</div>", unsafe_allow_html=True)
                     source_expander = st.expander(label="Sources")
                     with source_expander:
                         source_text = extract_sources(answer)
@@ -1319,6 +1360,70 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
