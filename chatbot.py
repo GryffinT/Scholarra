@@ -374,6 +374,54 @@ if st.session_state.page == 3:
     
         user_input = st.chat_input("Ask me something about your coursework...")
 
+        def filter_task(prompt):
+            """
+            Determines the root task of the math problem and rewrites it in standard format.
+            Returns: TASK: EQUATION (string)
+            """
+            criterion = f"""
+            Determine the root task of this prompt: {prompt}.
+            Identify if it wants solving, factoring, simplifying, etc.
+            Rewrite in this format:
+            TASK: EQUATION
+            Only return the rewritten task, no explanations.
+            """
+            
+            # Send request to your OpenAI client
+            task_response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": criterion}]
+            )
+            
+            rewritten_task = task_response.choices[0].message.content.strip()
+            return rewritten_task
+
+        def generate_steps(task):
+            """
+            Generates a list of step-by-step instructions for solving the math problem.
+            Stores steps in st.session_state.steps as a list.
+            """
+            instruction = f"""
+            You are a math tutor guiding a student step-by-step through this task: {task}.
+            Break the problem into sequential steps.
+            Format each step as:
+            STEP n: <instruction>
+            Return as plain text, numbered by line.
+            """
+            
+            solution_response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": instruction}]
+            )
+            
+            steps_text = solution_response.choices[0].message.content.strip()
+            
+            # Split by lines starting with "STEP"
+            steps = [line for line in steps_text.split("\n") if line.strip().startswith("STEP")]
+            
+            st.session_state.steps = steps
+            st.session_state.step_index = 0
+        
 
         
         def general_ask(prompted_input):
@@ -1341,6 +1389,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
