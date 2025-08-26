@@ -227,10 +227,10 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
-    AI_expander = st.expander("Control panel")
+    AI_expander = st.expander("Agent panel")
     with AI_expander:
-        st.header("Scholarra control panel")
-        st.write("The PBCA-0.2, or Prompt Based, Cascading, Agent is a trained combination of GPT agents set within academic parameters to ensure its usage is respectful of the contexts in which it's used.")
+        st.header("Scholarra agent panel")
+        st.write("Here you can select from Scholarra's offered agents from the dropdown to best fit your needs.")
         selection = st.selectbox("AI Mode", ["PBCA-0.2", "Research (Beta)"])  
 
 
@@ -1354,6 +1354,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
