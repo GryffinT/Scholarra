@@ -441,7 +441,7 @@ if st.session_state.page == 3:
 
             solution = client.chat.completions.create(
             model="gpt-4o",
-            messages = [{"role": "user", "content": criterion}]
+            messages = [{"role": "user", "content": instruction}]
             )
             solution_message = solution.choices[0].message.content  
             return (solution_message)
@@ -1305,6 +1305,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
