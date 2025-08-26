@@ -1364,8 +1364,13 @@ if st.session_state.page == 7:
                 lesson_four_expander= st.expander(label="Lesson 3.1")
                 with lesson_four_expander:
                     video_func("https://www.youtube.com/watch?v=ERCg7RznD3w", "ssvid.net--Customize-the-Quick-Access-Toolbar-in-Excel_v720P.mp4", "Simon Sez IT", "Customize the Quick Access toolbar")
-                    video_func("")
+                    video_func("https://www.youtube.com/watch?v=rqjStG5xTZ4", "ssvid.net--Microsoft-Excel-Display-and-Modify-workbook-content-in-different_1080p.mp4", "Kay Rand Morgan", "Display and modify workbook content in different views")
+                    video_func("https://www.youtube.com/shorts/SY9R06sqg3A", "ssvid.net--Freeze-or-lock-rows-and-columns-in-Excel_v720P.mp4", "SpreadsheetNation", "Freeze worksheet rows and columns")
+                    video_func("https://www.youtube.com/watch?v=GfHWyniYja4", "ssvid.net--Microsoft-Excel-Change-window-views-CC_1080p.mp4", "Kay Rand Morgan", "Change window views")
+                    video_func("https://www.youtube.com/watch?v=5ta5Vf8VRms", "ssvid.net--MO-200-Excel-Manage-Worksheets-and-Workbooks-Modify_v720P.mp4", "David Hays", "Modify basic workbook properties")
+                    video_func("https://www.youtube.com/watch?v=nBkv7EGsAIU", "ssvid.net--How-to-Show-Formulas-in-Excel_1080pFHR.mp4", "Excel Tutorials by EasyClick Academy", "Display formulas")
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
