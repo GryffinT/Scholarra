@@ -262,7 +262,7 @@ if st.session_state.page == 3:
         PBCA_expander = st.expander("PBCA-0.2 agent profile")
         with PBCA_expander:
             st.title("Prompt Based Cascading Agent (PBCA) V 0.2")
-            st.write("The PBCA-0.2, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are propagated sequentially through three specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
+            st.write("The PBCA-0.2, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are cascaded sequentially through six specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
         st.markdown("""Powered by Open AI APIs""")
 
         def filter_prompt(user_prompt):
@@ -1354,6 +1354,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
