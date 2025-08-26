@@ -402,30 +402,33 @@ if st.session_state.page == 3:
 
         def generate_steps(task):
             """
-            Generates a list of step-by-step instructions for solving the math problem.
+            Generates step-by-step instructions for the math problem.
             Stores steps in st.session_state.steps as a list.
             """
             instruction = f"""
-            You are a math tutor guiding a student step-by-step through this task: {task}.
-            Break the problem into sequential steps.
-            Format each step as:
-            STEP n: <instruction>
-            Return as plain text, numbered by line.
+            You are a math tutor. The task is:
+            {task}
+        
+            Break it down into numbered steps that a student can follow to solve it.
+            Format each step like:
+            STEP 1: ...
+            STEP 2: ...
+            Only return the steps, one per line.
             """
             
-            solution_response = client.chat.completions.create(
+            response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": instruction}]
             )
-            
-            steps_text = solution_response.choices[0].message.content.strip()
-            
-            # Split by lines starting with "STEP"
+        
+            steps_text = response.choices[0].message.content.strip()
+            # Split into lines that start with STEP
             steps = [line for line in steps_text.split("\n") if line.strip().startswith("STEP")]
             
             st.session_state.steps = steps
             st.session_state.step_index = 0
         
+                
 
         
         def general_ask(prompted_input):
@@ -458,61 +461,47 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
         
-        def process_math_input(user_input):
-            """
-            Processes a math problem in a step-by-step interactive manner.
-            Uses the pre-defined `client` object for AI calls.
-            """
+       def process_math_input(user_input):
             # Initialize session state
             if "equations" not in st.session_state:
                 st.session_state.equations = []
-        
             if "math_chat_history" not in st.session_state:
                 st.session_state.math_chat_history = []
-        
             if "current_task" not in st.session_state:
                 st.session_state.current_task = None
-        
             if "steps" not in st.session_state:
                 st.session_state.steps = []
-        
             if "step_index" not in st.session_state:
                 st.session_state.step_index = 0
         
-            # Only process new problems once
+            # Process new problem
             if user_input not in st.session_state.equations:
-                # Step 1: Filter the task
                 filtered_task = filter_task(user_input)
                 st.session_state.current_task = filtered_task
                 st.session_state.equations.append(user_input)
         
-                # Step 2: Generate step-by-step solution
+                # Generate steps
                 generate_steps(filtered_task)
         
-                # Add user message to math chat history
-                st.session_state.math_chat_history.append(
-                    {"role": "user", "content": filtered_task}
-                )
+                # Add user message to chat
+                st.session_state.math_chat_history.append({"role": "user", "content": filtered_task})
         
-                # Show the first step
+                # Add first AI step to chat
                 if st.session_state.steps:
                     first_step = st.session_state.steps[0]
-                    st.session_state.math_chat_history.append(
-                        {"role": "assistant", "content": first_step}
-                    )
+                    st.session_state.math_chat_history.append({"role": "assistant", "content": first_step})
         
-            # Display math chat history
+            # Display chat history
             for msg in st.session_state.math_chat_history:
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
         
-            # Handle current step input if there are steps remaining
+            # Handle next step input
             if st.session_state.steps and st.session_state.step_index < len(st.session_state.steps):
                 step_number = st.session_state.step_index + 1
                 student_answer = st.chat_input(f"Your answer for Step {step_number}:")
         
                 if student_answer:
-                    # Validate step via AI
                     validation_prompt = f"""
                     Student attempted: {student_answer}
                     Correct step: {st.session_state.steps[st.session_state.step_index]}
@@ -524,7 +513,7 @@ if st.session_state.page == 3:
                     )
                     feedback_text = feedback.choices[0].message.content.strip()
         
-                    # Update math chat history
+                    # Update math chat
                     st.session_state.math_chat_history.append({"role": "user", "content": student_answer})
                     st.session_state.math_chat_history.append({"role": "assistant", "content": feedback_text})
         
@@ -532,10 +521,11 @@ if st.session_state.page == 3:
                     if "Correct!" in feedback_text:
                         st.session_state.step_index += 1
         
-                    # Re-render updated math chat history
+                    # Re-render chat
                     for msg in st.session_state.math_chat_history:
                         with st.chat_message(msg["role"]):
                             st.markdown(msg["content"])
+
         
 
         
@@ -1393,6 +1383,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
