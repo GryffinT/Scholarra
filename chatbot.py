@@ -375,10 +375,15 @@ if st.session_state.page == 3:
         user_input = st.chat_input("Ask me something about your coursework...")
 
         def general_ask(prompted_input):
-                        # Append user message (filtered version)
+            # Append user message (filtered version)
+            user_message = filter_prompt(prompted_input)
             st.session_state.chat_history.append(
-                {"role": "user", "content": filter_prompt(prompted_input)}
+                {"role": "user", "content": user_message}
             )
+        
+            # Render the user message immediately
+            with st.chat_message("user"):
+                st.markdown(user_message)
         
             with st.spinner("Generating response..."):
                 try:
@@ -387,14 +392,19 @@ if st.session_state.page == 3:
                         messages=st.session_state.chat_history
                     )
                     ai_message = response.choices[0].message.content
-        
                 except Exception as e:
                     ai_message = f"⚠️ Error generating response: {e}"
         
-            # Append assistant message *outside* spinner
+            # Append assistant message
+            assistant_message = filter_response(ai_message, prompted_input)
             st.session_state.chat_history.append(
-                {"role": "assistant", "content": filter_response(ai_message, prompted_input)}
+                {"role": "assistant", "content": assistant_message}
             )
+        
+            # Render the assistant message
+            with st.chat_message("assistant"):
+                st.markdown(assistant_message)
+
         
         if "math_state" not in st.session_state:
             st.session_state.math_state = None  # Holds the current problem steps
@@ -1340,6 +1350,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
