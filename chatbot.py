@@ -242,8 +242,8 @@ if st.session_state.page == 3:
                 Classify the following input: {prompt}
                 
                 Return **only one word** as output:
-                - "MATH" if the prompt is a mathematical equation, even if it contains variables.
-                - "OTHER" for any other type of prompt (general question, chemistry, text, etc.).
+                - "MATH" if the prompt is a mathematical equation, even if it contains variables, or is a chemistry equation.
+                - "OTHER" for any other type of prompt (general question, text, etc.).
                 
                 Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
                 
@@ -1360,6 +1360,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
