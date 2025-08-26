@@ -374,78 +374,52 @@ if st.session_state.page == 3:
     
         user_input = st.chat_input("Ask me something about your coursework...")
 
-        # Keep track of math chat history and current step
-        if "math_chat_history" not in st.session_state:
-            st.session_state.math_chat_history = []
-        if "math_step" not in st.session_state:
-            st.session_state.math_step = None
-        if "math_problem" not in st.session_state:
-            st.session_state.math_problem = None
-        
-        # --- Filter user task into structured form ---
+        # --- Math task classifier ---
         def filter_task(user_input: str) -> str:
-            with st.spinner("Identifying task..."):
-                """
-                Classifies the math task.
-                Example outputs:
-                  "SOLVE: 2x+3=y"
-                  "FACTOR: x^2+5x+6"
-                """
-                prompt = f"User asked: {user_input}\n\nClassify as:\n- SOLVE: equation\n- FACTOR: expression\n- SIMPLIFY: expression\n- DERIVE: function\n- INTEGRATE: function"
-                response = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[{"role": "system", "content": prompt}]
-                )
-                return response.choices[0].message.content.strip()
+            response = st.session_state.client.chat.completions.create(
+                model="gpt-5-mini",
+                messages=[
+                    {"role": "system", "content": "Classify the math task. Reply in format like 'SOLVE: 2x+3=y' or 'FACTOR: x^2+5x+6'."},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+            return response.choices[0].message.content.strip()
         
-        # --- Generate step-by-step problem from filtered task ---
-        def generate_steps(filtered_task: str):
-            with st.spinner("Generating steps..."):
-                """
-                Generates step-by-step solution with hints.
-                """
-                response = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[
-                        {"role": "system", "content": "You are a step-by-step math tutor. Break problems into steps. At each step, show your solution and ask the user to try their version."},
-                        {"role": "user", "content": filtered_task}
-                    ]
-                )
-                return response.choices[0].message.content
+        # --- Step generator ---
+        def generate_steps(filtered_task: str) -> str:
+            response = st.session_state.client.chat.completions.create(
+                model="gpt-5-mini",
+                messages=[
+                    {"role": "system", "content": """You are a step-by-step math tutor AI. 
+                    - Solve the problem step by step.
+                    - At each step, explain clearly.
+                    - Give hints if the user might get stuck."""},
+                    {"role": "user", "content": filtered_task}
+                ]
+            )
+            return response.choices[0].message.content.strip()
         
-        # --- Main process function ---
+        # --- Main math processor ---
         def process_math_input(user_input: str):
-            # If we are in the middle of a step, check answer
-            if st.session_state.math_step is not None:
-                # Here you could validate numerically, but for now just echo
-                st.session_state.math_chat_history.append(
-                    {"role": "user", "content": user_input, "tag": "math"}
-                )
-                st.session_state.math_chat_history.append(
-                    {"role": "assistant", "content": f"Checking your answer: {user_input} (next step soon...)", "tag": "math"}
-                )
-                st.session_state.math_step = None  # Reset step for now
-                return
+            # ensure chat history exists
+            if "math_chat_history" not in st.session_state:
+                st.session_state.math_chat_history = []
         
-            # Otherwise, treat as a new math problem
+            # add user message to history
+            st.session_state.math_chat_history.append({"role": "user", "content": user_input})
+        
+            # classify task
             filtered_task = filter_task(user_input)
-            st.session_state.math_chat_history.append(
-                {"role": "user", "content": user_input, "tag": "math"}
-            )
-            st.session_state.math_chat_history.append(
-                {"role": "assistant", "content": f"Interpreted as: {filtered_task}", "tag": "math"}
-            )
+            st.session_state.math_chat_history.append({"role": "assistant", "content": f"Task: {filtered_task}"})
         
-            solution = generate_steps(filtered_task)
-            st.session_state.math_chat_history.append(
-                {"role": "assistant", "content": solution, "tag": "math"}
-            )
-            st.session_state.math_step = 1  # Start at step 1
+            # generate step-by-step solution
+            steps = generate_steps(filtered_task)
+            st.session_state.math_chat_history.append({"role": "assistant", "content": steps})
         
-        # --- Display messages ---
-        for msg in st.session_state.math_chat_history:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+            # display chat in UI
+            for msg in st.session_state.math_chat_history:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
         
 
         
@@ -1303,6 +1277,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
