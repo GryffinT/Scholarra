@@ -420,55 +420,70 @@ if st.session_state.page == 3:
             steps_text = response.output[0].content[0].text.strip()
             return steps_text.split("\n")
         
+        def init_math_session(equation: str):
+            """Initialize a new math tutoring session with an equation."""
+            st.session_state.math_equation = equation          # constant equation
+            st.session_state.math_step = 0                     # current step index
+            st.session_state.math_expected = None              # what we expect from user
+            st.session_state.math_chat_history = []            # reset chat
+        
+            # Log initial message
+            st.session_state.math_chat_history.append({
+                "role": "system", "content": f"Equation set: {equation}"
+            })
+        
+        
         def process_math_input(user_input: str):
-            """
-            Handles math inputs step by step.
-            Uses the global `client` you already defined.
-            Stores chat in st.session_state.math_chat_history
-            """
+            """Process either the initial equation or a step reply."""
         
-            # --- Ensure history exists ---
-            if "math_chat_history" not in st.session_state:
-                st.session_state.math_chat_history = []
+            # --- If no session yet, assume this is the equation ---
+            if "math_equation" not in st.session_state:
+                init_math_session(user_input)
         
-            # --- Step 1: classify the task ---
-            filter_prompt = f"""
-            Classify the math task. 
-            Example outputs: "SOLVE: 2x+3=y", "FACTOR: x^2+5x+6"
-            Only output the classification and problem, nothing else.
-            USER INPUT: {user_input}
-            """
+                tutor_prompt = f"""
+                You are a step-by-step math tutor.
+                The problem to solve is: {user_input}
         
-            filtered_task = client.chat.completions.create(
-                model="gpt-5",
-                messages=[{"role": "system", "content": filter_prompt}],
-            ).choices[0].message.content.strip()
+                Instructions:
+                - Break the solution into numbered steps.
+                - For each step: explain what to do, then ask the user to try.
+                - Store the expected next equation or answer.
+                - DO NOT restart the problem in later steps.
+                - Wait for user before continuing.
+                """
         
-            # Append filtered task to history
-            st.session_state.math_chat_history.append({"role": "system", "content": filtered_task})
+                ai_msg = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[{"role": "system", "content": tutor_prompt}],
+                ).choices[0].message.content.strip()
         
-            # --- Step 2: generate step-by-step solution ---
-            step_prompt = f"""
-            You are a step-by-step math tutor AI. 
-            Problem: {filtered_task}
+                st.session_state.math_chat_history.append({"role": "assistant", "name": "math", "content": ai_msg})
         
-            Instructions:
-            - Solve the problem step by step.
-            - At each step, show your step and then ask the user to solve the corresponding step for their problem.
-            - Wait for the user's response before continuing.
-            - If the user's response is incorrect, give a hint and ask again.
-            - Tag all your messages under 'math'.
-            """
+            else:
+                # --- Otherwise, this is a reply to the current step ---
+                step_prompt = f"""
+                You are continuing a math tutoring session.
         
-            ai_response = client.chat.completions.create(
-                model="gpt-5",
-                messages=[{"role": "system", "content": step_prompt}],
-            ).choices[0].message.content.strip()
+                Original equation: {st.session_state.math_equation}
+                Current step index: {st.session_state.math_step}
+                User just replied: {user_input}
         
-            # Append tutor's first step to history
-            st.session_state.math_chat_history.append({"role": "assistant", "content": ai_response, "name": "math"})
+                Your tasks:
+                1. Check if the user's answer is correct for this step.
+                2. If correct, acknowledge and move to the next step.
+                3. If wrong, give a hint and ask again.
+                4. Always keep referencing the original equation, don't reset it.
+                5. Increment the step index ONLY if the user's answer is correct.
+                """
         
-            # --- Display messages in the chatbox ---
+                ai_msg = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[{"role": "system", "content": step_prompt}],
+                ).choices[0].message.content.strip()
+        
+                st.session_state.math_chat_history.append({"role": "assistant", "name": "math", "content": ai_msg})
+        
+            # --- Render chat ---
             for msg in st.session_state.math_chat_history:
                 with st.chat_message(msg.get("name", msg["role"])):
                     st.markdown(msg["content"])
@@ -1325,6 +1340,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
