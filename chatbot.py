@@ -230,8 +230,8 @@ if st.session_state.page == 3:
     AI_expander = st.expander("Control panel")
     with AI_expander:
         st.header("Scholarra control panel")
-        st.write("Scholarra is a LLM through openai's API utilizing gpt-4o-mini. It's functioning is oriented around prompt engineering with extra parameters added in certain contexts. All of the code for Scholarra and its features are open source and can be found on the public Github.")
-        selection = st.selectbox("AI Mode", ["Writing and Analysis", "Research (Beta)", "Solving"])  
+        st.write("The PBCA-0.2, or Prompt Based, Cascading, Agent is a trained combination of GPT agents set within academic parameters to ensure its usage is respectful of the contexts in which it's used.")
+        selection = st.selectbox("AI Mode", ["PBCA-0.2", "Research (Beta)"])  
 
 
     def categorize_prompt(prompt):
@@ -257,8 +257,8 @@ if st.session_state.page == 3:
                 response = "OTHER"
             return response
 
-    if selection == "Writing and Analysis":
-        st.title("PBST-0.2")
+    if selection == "PBCA-0.2":
+        st.title("PBCA-0.2")
         st.markdown("""Powered by Open AI APIs""")
 
         def filter_prompt(user_prompt):
@@ -1350,6 +1350,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
