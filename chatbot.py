@@ -1316,7 +1316,7 @@ if st.session_state.page == 7:
                     if segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
                         st.balloons()
-                lesson_one_expander = st.expander(label="Lesson one")
+                lesson_one_expander = st.expander(label="Lesson 1")
                 with lesson_one_expander:
                     st.title("Lesson one, importing data")
                     st.write("In this lesson, you’ll learn how to bring data from outside sources into Excel. We’ll explore how to import information from both text files and CSV files, and see how Excel organizes that data so it’s ready for you to work with.")
@@ -1326,7 +1326,7 @@ if st.session_state.page == 7:
                     segment_completed(1)
 
                 # Lesson Two
-                lesson_two_expander = st.expander(label="Lesson two")
+                lesson_two_expander = st.expander(label="Lesson 2")
                 with lesson_two_expander:
                     st.title("Lesson two, navigating workbook")
                     st.write("In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.")
@@ -1356,119 +1356,16 @@ if st.session_state.page == 7:
 
                     segment_completed(2)
 
-                lesson_three_expander = st.expander(label="Lesson three")
+                lesson_three_expander = st.expander(label="Lesson 3")
                 with lesson_three_expander:
                     video_func("https://www.youtube.com/watch?v=0SRt9dkR3Zg", "Excel Page Layout_ The Ultimate Guide.mp4","learnexcel.video","Excel Page Layout: The Ultimate Guide")
                     video_func("https://www.youtube.com/shorts/l5UFTMXOuiU", "ssvid.net--How-to-AutoFit-rows-and-columns-in-Excel-shorts-excel_1080pFHR.mp4", "TutorialsPoint_", "How to AutoFit rows and columns in Excel?")
                     video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "ssvid.net--Create-Custom-Headers-and-Footers-in-Excel_1080p.mp4", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
+                lesson_four_expander= st.expander(label="Lesson 3.1")
+                with lesson_four_expander:
+                    video_func("https://www.youtube.com/watch?v=ERCg7RznD3w", "ssvid.net--Customize-the-Quick-Access-Toolbar-in-Excel_v720P.mp4", "Simon Sez IT", "Customize the Quick Access toolbar")
+                    video_func("")
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
