@@ -375,26 +375,30 @@ if st.session_state.page == 3:
         user_input = st.chat_input("Ask me something about your coursework...")
 
         def filter_task(prompt):
-            """
-            Determines the root task of the math problem and rewrites it in standard format.
-            Returns: TASK: EQUATION (string)
-            """
             criterion = f"""
-            Determine the root task of this prompt: {prompt}.
-            Identify if it wants solving, factoring, simplifying, etc.
-            Rewrite in this format:
-            TASK: EQUATION
+            You are a math assistant. Analyze the following problem:
+            {prompt}
+            
+            Determine exactly what the user wants to do: solve, factor, simplify, etc.
+            Rewrite the problem in this exact format: TASK_TYPE: EQUATION
+            Examples:
+                SOLVE: 3x + 2 = y
+                FACTOR: 6x + 2
             Only return the rewritten task, no explanations.
             """
-            
-            # Send request to your OpenAI client
-            task_response = client.chat.completions.create(
+        
+            response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": criterion}]
             )
             
-            rewritten_task = task_response.choices[0].message.content.strip()
+            # Debugging
+            print("Full response:", response)
+            
+            rewritten_task = response.choices[0].message.content.strip()
+            print("Rewritten task:", rewritten_task)
             return rewritten_task
+
 
         def generate_steps(task):
             """
@@ -1389,6 +1393,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
