@@ -479,7 +479,7 @@ if st.session_state.page == 3:
         
             else:
                 # --- Otherwise, this is a reply to the current step ---
-                with st.spinner("Generating step...")
+                with st.spinner("Generating step..."):
                     step_prompt = f"""
                     You are continuing a math tutoring session.
             
@@ -1360,6 +1360,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
