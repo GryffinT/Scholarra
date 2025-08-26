@@ -373,63 +373,85 @@ if st.session_state.page == 3:
                     st.error(f"Error contacting AI: {e}")
     
         user_input = st.chat_input("Ask me something about your coursework...")
-
-        # --- Math task classifier ---
-        def filter_task(user_input: str) -> str:
-            response = st.session_state.client.chat.completions.create(
-                model="gpt-5-mini",
-                messages=[
-                    {"role": "system", "content": "Classify the math task. Reply in format like 'SOLVE: 2x+3=y' or 'FACTOR: x^2+5x+6'."},
-                    {"role": "user", "content": user_input}
-                ]
-            )
-            return response.choices[0].message.content.strip()
         
-        # --- Step generator ---
-        def generate_steps(filtered_task: str) -> str:
-            response = st.session_state.client.chat.completions.create(
-                model="gpt-5-mini",
-                messages=[
-                    {"role": "system", "content": """You are a step-by-step math tutor AI. 
-                    - Solve the problem step by step.
-                    - At each step, explain clearly.
-                    - Give hints if the user might get stuck."""},
-                    {"role": "user", "content": filtered_task}
-                ]
-            )
-            return response.choices[0].message.content.strip()
+        if "math_state" not in st.session_state:
+            st.session_state.math_state = None  # Holds the current problem steps
+        if "math_current_step" not in st.session_state:
+            st.session_state.math_current_step = 0
+        if "math_chat_history" not in st.session_state:
+            st.session_state.math_chat_history = []
         
-        # --- Main math processor ---
+        def filter_task(prompt: str) -> str:
+            """Classifies the math task, returns something like 'SOLVE: 2x+3=y'."""
+            response = client.responses.create(
+                model="gpt-5-mini",
+                input=f"Classify this math problem. Example outputs: 'SOLVE: 2x+3=y' or 'FACTOR: x^2+5x+6'.\n\nProblem: {prompt}"
+            )
+            return response.output[0].content[0].text.strip()
+        
+        def generate_steps(problem: str) -> list:
+            """Generate a list of step-by-step solutions for the math problem."""
+            response = client.responses.create(
+                model="gpt-5-mini",
+                input=f"Solve this math problem step by step. Return each step as a numbered list:\n\n{problem}"
+            )
+            steps_text = response.output[0].content[0].text.strip()
+            return steps_text.split("\n")
+        
         def process_math_input(user_input: str):
-            # ensure chat history exists
-            if "math_chat_history" not in st.session_state:
-                st.session_state.math_chat_history = []
+            """Main entry point for math AI. Handles classification, steps, and validation."""
+            # If no problem is active, classify and start new one
+            if st.session_state.math_state is None:
+                classified = filter_task(user_input)
+                steps = generate_steps(classified)
         
-            # add user message to history
-            st.session_state.math_chat_history.append({"role": "user", "content": user_input})
+                st.session_state.math_state = steps
+                st.session_state.math_current_step = 0
         
-            # classify task
-            filtered_task = filter_task(user_input)
-            st.session_state.math_chat_history.append({"role": "assistant", "content": f"Task: {filtered_task}"})
+                first_step = steps[0]
+                st.session_state.math_chat_history.append({"role": "assistant", "tag": "math", "content": f"Let's solve this! Step 1:\n{first_step}"})
+                st.chat_message("assistant").markdown(f"**Math AI (Step 1):** {first_step}")
+                return
         
-            # generate step-by-step solution
-            steps = generate_steps(filtered_task)
-            st.session_state.math_chat_history.append({"role": "assistant", "content": steps})
+            # Otherwise, validate user response against current step
+            current_step = st.session_state.math_state[st.session_state.math_current_step]
         
-            # display chat in UI
-            for msg in st.session_state.math_chat_history:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+            if user_input.strip().lower() in current_step.lower():
+                # ✅ User correct → move to next step
+                st.session_state.math_chat_history.append({"role": "user", "tag": "math", "content": user_input})
+                st.chat_message("user").markdown(user_input)
+        
+                st.session_state.math_current_step += 1
+                if st.session_state.math_current_step < len(st.session_state.math_state):
+                    next_step = st.session_state.math_state[st.session_state.math_current_step]
+                    st.session_state.math_chat_history.append({"role": "assistant", "tag": "math", "content": f"Correct! Next step:\n{next_step}"})
+                    st.chat_message("assistant").markdown(f"✅ Correct! Next step:\n{next_step}")
+                else:
+                    st.session_state.math_chat_history.append({"role": "assistant", "tag": "math", "content": "🎉 Great job! You've solved the whole problem!"})
+                    st.chat_message("assistant").markdown("🎉 Great job! You've solved the whole problem!")
+                    st.session_state.math_state = None  # Reset for next problem
+                    st.session_state.math_current_step = 0
+            else:
+                # ❌ Wrong → give a hint
+                st.session_state.math_chat_history.append({"role": "user", "tag": "math", "content": user_input})
+                st.chat_message("user").markdown(user_input)
+        
+                st.session_state.math_chat_history.append({"role": "assistant", "tag": "math", "content": "Not quite. Hint: Check your algebra again."})
+                st.chat_message("assistant").markdown("❌ Not quite. Hint: Check your algebra again.")
         
 
         
         if user_input:
             category = categorize_prompt(user_input)
             print(category)
+        
             if category == "OTHER":
                 general_ask(user_input)
+        
             elif category == "MATH":
-                process_math_input(user_input)        
+                process_math_input(user_input)  # 👈 this will run the math tutor loop
+
+  
             
 
 
@@ -1277,6 +1299,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
