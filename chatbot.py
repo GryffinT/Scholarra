@@ -454,10 +454,29 @@ if st.session_state.page == 3:
                 general_ask(user_input)
             elif category == "MATH":
                 if str(user_input) not in equations:
-                    solver(filter_task(user_input))
+                    st.session_state.chat_history.append(
+                        {"role": "user", "content": filter_task(user_input)}
+                        )
+                    ai_math_response = solver(filter_task(user_input))
+                    st.session_state.chat_history.append(
+                        {"role": "assistant", "content": ai_math_response}
+                        )
+                    for msg in st.session_state.chat_history:
+                        if msg["role"] != "system":
+                            with st.chat_message(msg["role"]):
+                                st.markdown(msg["content"])
                 else:
-                    solver(user_input)
-                
+                    st.session_state.chat_history.append(
+                        {"role": "user", "content": filter_task(user_input)}
+                        )
+                    ai_math_response = solver(user_input)
+                    st.session_state.chat_history.append(
+                        {"role": "assistant", "content": ai_math_response}
+                        )
+                    for msg in st.session_state.chat_history:
+                        if msg["role"] != "system":
+                            with st.chat_message(msg["role"]):
+                                st.markdown(msg["content"])                
             
 
 
@@ -1305,6 +1324,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
