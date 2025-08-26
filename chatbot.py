@@ -258,7 +258,7 @@ if st.session_state.page == 3:
             return response
 
     if selection == "Writing and Analysis":
-        st.title("PBST-0.1")
+        st.title("PBST-0.2")
         st.markdown("""Powered by Open AI APIs""")
 
         def filter_prompt(user_prompt):
@@ -1350,6 +1350,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
