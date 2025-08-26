@@ -373,6 +373,8 @@ if st.session_state.page == 3:
                     st.error(f"Error contacting AI: {e}")
     
         user_input = st.chat_input("Ask me something about your coursework...")
+
+
         
         def general_ask(prompted_input):
                         # Append user message (filtered version)
@@ -403,6 +405,45 @@ if st.session_state.page == 3:
                 if msg["role"] != "system":
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
+
+
+        def filter_task(prompt):
+            
+            criterion = (f"""
+                Determine the root task of the provided prompt: {prompt}, 
+                Figure if it wants you to solve it, factor, simplify, etc,
+                after determining the root task of the question, rewrite it with the format:
+                TASK: EQUATION
+                """
+            )
+
+            task = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages = [{"role": "user", "content": criterion}]
+            )
+            rewritten_task = task.choices[0].message.content  
+            return (rewritten_task)
+
+        def solver(task):
+
+            instruction = (f"""
+                You are an instructor solving an equation with a student, step by step.
+                They've come to you asking about how to {task}.
+                go through how, where each message is one step, when the student replies
+                if they get the step wrong give them an encouraging hint, otherwise,
+                if they get the step correct proceed to the next step. Finally, at the end
+                restate {task} and the final solution.
+                """
+            )
+
+            solution = client.chat.completions.create(
+            model="gpt-4o",
+            messages = [{"role": "user", "content": criterion}]
+            )
+            solution_message = solution.choices[0].message.content  
+            return (solution_message)
+
+            
         
         if user_input:
             category = categorize_prompt(user_input)
@@ -410,7 +451,7 @@ if st.session_state.page == 3:
             if category == "OTHER":
                 general_ask(user_input)
             elif category == "MATH":
-                st.write("Mathematics")
+                equation_ask(user_input)
             
 
 
@@ -1258,6 +1299,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
