@@ -384,32 +384,34 @@ if st.session_state.page == 3:
         
         # --- Filter user task into structured form ---
         def filter_task(user_input: str) -> str:
-            """
-            Classifies the math task.
-            Example outputs:
-              "SOLVE: 2x+3=y"
-              "FACTOR: x^2+5x+6"
-            """
-            prompt = f"User asked: {user_input}\n\nClassify as:\n- SOLVE: equation\n- FACTOR: expression\n- SIMPLIFY: expression\n- DERIVE: function\n- INTEGRATE: function"
-            response = client.chat.completions.create(
-                model="gpt-5",
-                messages=[{"role": "system", "content": prompt}]
-            )
-            return response.choices[0].message.content.strip()
+            with st.spinner("Identifying task..."):
+                """
+                Classifies the math task.
+                Example outputs:
+                  "SOLVE: 2x+3=y"
+                  "FACTOR: x^2+5x+6"
+                """
+                prompt = f"User asked: {user_input}\n\nClassify as:\n- SOLVE: equation\n- FACTOR: expression\n- SIMPLIFY: expression\n- DERIVE: function\n- INTEGRATE: function"
+                response = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[{"role": "system", "content": prompt}]
+                )
+                return response.choices[0].message.content.strip()
         
         # --- Generate step-by-step problem from filtered task ---
         def generate_steps(filtered_task: str):
-            """
-            Generates step-by-step solution with hints.
-            """
-            response = client.chat.completions.create(
-                model="gpt-5",
-                messages=[
-                    {"role": "system", "content": "You are a step-by-step math tutor. Break problems into steps. At each step, show your solution and ask the user to try their version."},
-                    {"role": "user", "content": filtered_task}
-                ]
-            )
-            return response.choices[0].message["content"]
+            with st.spinner("Generating steps..."):
+                """
+                Generates step-by-step solution with hints.
+                """
+                response = client.chat.completions.create(
+                    model="gpt-5",
+                    messages=[
+                        {"role": "system", "content": "You are a step-by-step math tutor. Break problems into steps. At each step, show your solution and ask the user to try their version."},
+                        {"role": "user", "content": filtered_task}
+                    ]
+                )
+                return response.choices[0].message["content"]
         
         # --- Main process function ---
         def process_math_input(user_input: str):
@@ -1301,6 +1303,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
