@@ -411,7 +411,7 @@ if st.session_state.page == 3:
                         {"role": "user", "content": filtered_task}
                     ]
                 )
-                return response.choices[0].message["content"]
+                return response.choices[0].message.content
         
         # --- Main process function ---
         def process_math_input(user_input: str):
@@ -1303,6 +1303,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
