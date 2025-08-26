@@ -1360,11 +1360,12 @@ if st.session_state.page == 7:
                 with lesson_three_expander:
                     video_func("https://www.youtube.com/watch?v=0SRt9dkR3Zg", "Excel Page Layout_ The Ultimate Guide.mp4","learnexcel.video","Excel Page Layout: The Ultimate Guide")
                     video_func("https://www.youtube.com/shorts/l5UFTMXOuiU", "ssvid.net--How-to-AutoFit-rows-and-columns-in-Excel-shorts-excel_1080pFHR.mp4", "TutorialsPoint_", "How to AutoFit rows and columns in Excel?")
-                    video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "Task3Video3", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
+                    video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "ssvid.net--Create-Custom-Headers-and-Footers-in-Excel_1080p.mp4", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
