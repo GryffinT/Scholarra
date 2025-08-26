@@ -406,27 +406,53 @@ if st.session_state.page == 3:
                     with st.chat_message(msg["role"]):
                         st.markdown(msg["content"])
 
-        equations = []
+        if "equations" not in st.session_state:
+            st.session_state.equations = []
+        
+        if "current_task" not in st.session_state:
+            st.session_state.current_task = None
+        
+        if "steps" not in st.session_state:
+            st.session_state.steps = []
+        
+        if "step_index" not in st.session_state:
+            st.session_state.step_index = 0
 
 
         def filter_task(prompt):
-            
-            criterion = (f"""
-                Determine the root task of the provided prompt: {prompt}, 
-                Figure if it wants you to solve it, factor, simplify, etc,
-                after determining the root task of the question, rewrite it with the format:
-                TASK: EQUATION
-                """
-            )
-
-            task = client.chat.completions.create(
+            criterion = f"""
+            Determine the root task of this prompt: {prompt}.
+            Identify if it wants solving, factoring, simplifying, etc.
+            Rewrite in this format:
+            TASK: EQUATION
+            Only return the rewritten task.
+            """
+            task_response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages = [{"role": "user", "content": criterion}]
-            )
-            rewritten_task = task.choices[0].message.content  
-            equations.append(str(prompt))
-            return (rewritten_task)
+                messages=[{"role": "user", "content": criterion}]
+            ) 
+            rewritten_task = task_response.choices[0].message.content.strip()
+            st.session_state.equations.append(prompt)
+            st.session_state.current_task = rewritten_task
 
+
+        def generate_steps(task):
+            instruction = f"""
+            Break this task into sequential steps. 
+            For each step, clearly explain what the student should do.
+            Format as a numbered list: 
+            STEP 1: ...
+            STEP 2: ...
+            """
+            solution_response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": instruction}]
+            )
+            steps_text = solution_response.choices[0].message.content.strip()
+            st.session_state.steps = steps_text.split("\n")
+            st.session_state.step_index = 0
+
+        # Potentially obsolete
         def solver(task):
 
             instruction = (f"""
@@ -453,30 +479,57 @@ if st.session_state.page == 3:
             if category == "OTHER":
                 general_ask(user_input)
             elif category == "MATH":
-                if str(user_input) not in equations:
+                if user_input not in st.session_state.equations:
+                    filtered_task = filter_task(user_input)
+                    st.session_state.current_task = filtered_task
+                    st.session_state.equations.append(user_input)
+            
+                    # Generate step-by-step solution
+                    generate_steps(filtered_task)
+            
+                    # Add user's filtered task to chat history
                     st.session_state.chat_history.append(
-                        {"role": "user", "content": filter_task(user_input)}
+                        {"role": "user", "content": filtered_task}
+                    )
+            
+                # Display current step if available
+                if st.session_state.steps and st.session_state.step_index < len(st.session_state.steps):
+                    current_step = st.session_state.steps[st.session_state.step_index]
+                    st.session_state.chat_history.append({"role": "assistant", "content": current_step})
+            
+                # Render chat history
+                for msg in st.session_state.chat_history:
+                    with st.chat_message(msg["role"]):
+                        st.markdown(msg["content"])
+            
+                # Allow the user to answer the current step
+                if st.session_state.steps and st.session_state.step_index < len(st.session_state.steps):
+                    student_answer = st.chat_input(f"Your answer for Step {st.session_state.step_index + 1}:")
+            
+                    if student_answer:
+                        # Validate step via AI
+                        validation_prompt = f"""
+                        Student attempted: {student_answer}
+                        Correct step: {st.session_state.steps[st.session_state.step_index]}
+                        Give feedback: say 'Correct!' if correct, otherwise give a hint.
+                        """
+                        feedback = client.chat.completions.create(
+                            model="gpt-4o",
+                            messages=[{"role": "user", "content": validation_prompt}]
                         )
-                    ai_math_response = solver(filter_task(user_input))
-                    st.session_state.chat_history.append(
-                        {"role": "assistant", "content": ai_math_response}
-                        )
-                    for msg in st.session_state.chat_history:
-                        if msg["role"] != "system":
+                        feedback_text = feedback.choices[0].message.content.strip()
+            
+                        st.session_state.chat_history.append({"role": "user", "content": student_answer})
+                        st.session_state.chat_history.append({"role": "assistant", "content": feedback_text})
+            
+                        # Move to next step if correct
+                        if "Correct!" in feedback_text:
+                            st.session_state.step_index += 1
+            
+                        # Re-render updated chat
+                        for msg in st.session_state.chat_history:
                             with st.chat_message(msg["role"]):
-                                st.markdown(msg["content"])
-                else:
-                    st.session_state.chat_history.append(
-                        {"role": "user", "content": filter_task(user_input)}
-                        )
-                    ai_math_response = solver(user_input)
-                    st.session_state.chat_history.append(
-                        {"role": "assistant", "content": ai_math_response}
-                        )
-                    for msg in st.session_state.chat_history:
-                        if msg["role"] != "system":
-                            with st.chat_message(msg["role"]):
-                                st.markdown(msg["content"])                
+                                st.markdown(msg["content"])           
             
 
 
@@ -1324,6 +1377,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
