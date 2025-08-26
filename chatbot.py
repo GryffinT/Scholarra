@@ -418,33 +418,37 @@ if st.session_state.page == 3:
             st.session_state.math_chat_history = []
         
         def filter_task(prompt: str) -> str:
-            """Classifies the math task, returns something like 'SOLVE: 2x+3=y'."""
-            response = client.responses.create(
-                model="gpt-5-mini",
-                input=f"Classify this math problem. Example outputs: 'SOLVE: 2x+3=y' or 'FACTOR: x^2+5x+6'.\n\nProblem: {prompt}"
-            )
-            return response.output[0].content[0].text.strip()
-        
+            with st.spinner("Filtering task..."):
+                
+                """Classifies the math task, returns something like 'SOLVE: 2x+3=y'."""
+                response = client.responses.create(
+                    model="gpt-5-mini",
+                    input=f"Classify this math problem. Example outputs: 'SOLVE: 2x+3=y' or 'FACTOR: x^2+5x+6'.\n\nProblem: {prompt}"
+                )
+                return response.output[0].content[0].text.strip()
+            
         def generate_steps(problem: str) -> list:
-            """Generate a list of step-by-step solutions for the math problem."""
-            response = client.responses.create(
-                model="gpt-5-mini",
-                input=f"Solve this math problem step by step. Return each step as a numbered list:\n\n{problem}"
-            )
-            steps_text = response.output[0].content[0].text.strip()
-            return steps_text.split("\n")
-        
+            with st.spinner("Generating steps..."):
+                """Generate a list of step-by-step solutions for the math problem."""
+                response = client.responses.create(
+                    model="gpt-5-mini",
+                    input=f"Solve this math problem step by step. Return each step as a numbered list:\n\n{problem}"
+                )
+                steps_text = response.output[0].content[0].text.strip()
+                return steps_text.split("\n")
+            
         def init_math_session(equation: str):
-            """Initialize a new math tutoring session with an equation."""
-            st.session_state.math_equation = equation          # constant equation
-            st.session_state.math_step = 0                     # current step index
-            st.session_state.math_expected = None              # what we expect from user
-            st.session_state.math_chat_history = []            # reset chat
-        
-            # Log initial message
-            st.session_state.math_chat_history.append({
-                "role": "system", "content": f"Equation set: {equation}"
-            })
+            with st.spinner("Constructing session...")
+                """Initialize a new math tutoring session with an equation."""
+                st.session_state.math_equation = equation          # constant equation
+                st.session_state.math_step = 0                     # current step index
+                st.session_state.math_expected = None              # what we expect from user
+                st.session_state.math_chat_history = []            # reset chat
+            
+                # Log initial message
+                st.session_state.math_chat_history.append({
+                    "role": "system", "content": f"Equation set: {equation}"
+                })
         
         
         def process_math_input(user_input: str):
@@ -475,32 +479,34 @@ if st.session_state.page == 3:
         
             else:
                 # --- Otherwise, this is a reply to the current step ---
-                step_prompt = f"""
-                You are continuing a math tutoring session.
-        
-                Original equation: {st.session_state.math_equation}
-                Current step index: {st.session_state.math_step}
-                User just replied: {user_input}
-        
-                Your tasks:
-                1. Check if the user's answer is correct for this step.
-                2. If correct, acknowledge and move to the next step.
-                3. If wrong, give a hint and ask again.
-                4. Always keep referencing the original equation, don't reset it.
-                5. Increment the step index ONLY if the user's answer is correct.
-                """
-        
-                ai_msg = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[{"role": "system", "content": step_prompt}],
-                ).choices[0].message.content.strip()
-        
-                st.session_state.math_chat_history.append({"role": "assistant", "name": "math", "content": ai_msg})
-        
+                with st.spinner("Generating step...")
+                    step_prompt = f"""
+                    You are continuing a math tutoring session.
+            
+                    Original equation: {st.session_state.math_equation}
+                    Current step index: {st.session_state.math_step}
+                    User just replied: {user_input}
+            
+                    Your tasks:
+                    1. Check if the user's answer is correct for this step.
+                    2. If correct, acknowledge and move to the next step.
+                    3. If wrong, give a hint and ask again.
+                    4. Always keep referencing the original equation, don't reset it.
+                    5. Increment the step index ONLY if the user's answer is correct.
+                    """
+            
+                    ai_msg = client.chat.completions.create(
+                        model="gpt-5",
+                        messages=[{"role": "system", "content": step_prompt}],
+                    ).choices[0].message.content.strip()
+            
+                    st.session_state.math_chat_history.append({"role": "assistant", "name": "math", "content": ai_msg})
+            
             # --- Render chat ---
-            for msg in st.session_state.math_chat_history:
-                with st.chat_message(msg.get("name", msg["role"])):
-                    st.markdown(msg["content"])
+            with st.spinner("Rendering messages..."):
+                for msg in st.session_state.math_chat_history:
+                    with st.chat_message(msg.get("name", msg["role"])):
+                        st.markdown(msg["content"])
         
         if user_input:
             category = categorize_prompt(user_input)
@@ -1354,6 +1360,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
