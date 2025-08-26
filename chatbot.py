@@ -438,7 +438,7 @@ if st.session_state.page == 3:
                 return steps_text.split("\n")
             
         def init_math_session(equation: str):
-            with st.spinner("Constructing session...")
+            with st.spinner("Constructing session..."):
                 """Initialize a new math tutoring session with an equation."""
                 st.session_state.math_equation = equation          # constant equation
                 st.session_state.math_step = 0                     # current step index
@@ -1360,6 +1360,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
