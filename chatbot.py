@@ -395,7 +395,7 @@ if st.session_state.page == 3:
                 model="gpt-5",
                 messages=[{"role": "system", "content": prompt}]
             )
-            return response.choices[0].message["content"].strip()
+            return response.choices[0].message.content.strip()
         
         # --- Generate step-by-step problem from filtered task ---
         def generate_steps(filtered_task: str):
@@ -1301,6 +1301,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
