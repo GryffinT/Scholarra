@@ -374,6 +374,9 @@ if st.session_state.page == 3:
     
         user_input = st.chat_input("Ask me something about your coursework...")
 
+        # -----------------------------
+        #  1 Filter Task Function
+        # -----------------------------
         def filter_task(prompt):
             """
             Rewrites the user's math prompt in the format TASK_TYPE: EQUATION
@@ -401,7 +404,7 @@ if st.session_state.page == 3:
             return rewritten_task
         
         # -----------------------------
-        # 3️⃣ Generate Steps Function
+        #  #2 Generate Steps Function
         # -----------------------------
         def generate_steps(task):
             """
@@ -432,7 +435,7 @@ if st.session_state.page == 3:
             st.session_state.step_index = 0
         
         # -----------------------------
-        # 4️⃣ Main Math Processing Function
+        #  #3 Main Math Processing Function
         # -----------------------------
         def process_math_input(user_input):
             """
@@ -499,6 +502,12 @@ if st.session_state.page == 3:
                     else:
                         # Finished all steps
                         st.session_state.math_chat_history.append({"role": "assistant", "content": "🎉 Problem solved!"})
+        
+            # Display the chat history
+            for msg in st.session_state.math_chat_history:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+
         
         if user_input:
             category = categorize_prompt(user_input)
@@ -1354,6 +1363,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
