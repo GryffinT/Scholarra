@@ -1289,7 +1289,7 @@ if st.session_state.page == 7:
             "MO-200 Microsoft Excel (Office 2019)": 
             [
                 os.path.join(base_path, "mo-200-microsoft-excel-2019-skills-measured.pdf"),
-                os.path.join(base_path, "Syllabus TTS.mp3"),
+                os.path.join(os.path.join(base_dir, "Audio"), "Syllabus TTS.mp3"),
                 "We’re excited to have you here! In this course, you’ll explore the core skills of Excel—from organizing worksheets and managing data to using formulas, functions, and charts. Our goal is to help you become confident and efficient in Excel, whether for everyday tasks, professional projects, or preparing for the MO-200 certification. Let’s get started and make Excel work for you!"
                                                  ] }
         if entered_course_key in student_course_keys:
@@ -1418,6 +1418,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
