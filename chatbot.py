@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import requests
 from bs4 import BeautifulSoup
+from streamlit_gsheets import GSheetsConnection
 import re
 import os
 import pandas as pd
@@ -128,6 +129,18 @@ def last_page():
 
 # ---------------- PAGE 1 ----------------
 if st.session_state.page == 1:
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    df = conn.read(
+        worksheet="Sheet1",
+        ttl="10m",
+        usecols=[0, 1],
+        nrows=3,
+    )
+        
+    # Print results.
+    for row in df.itertuples():
+        st.write(f"{row.name} has a :{row.pet}:")
+    
     start_time = datetime.now()
     print(start_time)
     col1, col2, col3 = st.columns([1, 3, 1])
@@ -1418,6 +1431,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
