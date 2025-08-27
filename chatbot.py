@@ -25,6 +25,24 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
+def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
+    """
+    Creates a Streamlit download button for any PDF URL.
+    """
+    if file_name is None:
+        file_name = pdf_url.split("/")[-1]  # default to URL filename
+    
+    # Lazy download only when button clicked
+    if st.button(label):
+        with st.spinner("Fetching PDF..."):
+            pdf_bytes = requests.get(pdf_url).content
+        st.download_button(
+            label=f"Click to save {file_name}",
+            data=pdf_bytes,
+            file_name=file_name,
+            mime="application/pdf"
+        )
+
 def video_func(url, path, name, video_title):
     st.header(video_title)
     base_dir = os.path.dirname(__file__)
@@ -1313,22 +1331,16 @@ if st.session_state.page == 7:
                         with col1:
                             st.download_button(
                                 label="Download Syllabus",
-                                data=f,  # pass the file contents, not the path
+                                data=f, 
                                 file_name=os.path.basename(syllabus),  # name for the downloaded file
                                 mime="application/pdf"
                             )
                         with col2:
-                            pdf_url = "https://www.sgul.ac.uk/about/our-professional-services/information-services/library/documents/training-manuals/Excel-Fundamentals-Manual.pdf"
-                            
-                            response = requests.get(pdf_url)
-                            pdf_bytes = response.content 
-                            
-                            st.download_button(
-                                label="Download Textbook",
-                                data=pdf_bytes,
-                                file_name="Excel-Fundamentals-Manual.pdf",
-                                mime="application/pdf"
+                            download_pdf_button(
+                                "https://www.sgul.ac.uk/about/our-professional-services/information-services/library/documents/training-manuals/Excel-Fundamentals-Manual.pdf",
+                                label="Download Excel Manual"
                             )
+
                             
                     segment_completion = st.checkbox("Completed")
                     if segment_completion:
@@ -1426,6 +1438,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
