@@ -1387,6 +1387,7 @@ if st.session_state.page == 7:
                 lesson_five_expander= st.expander(label="Lesson 4")
                 with lesson_five_expander:
                     st.title("Lesson 4, how to configure for collaboration")
+                    st.write("In this lesson, you’ll learn how to set a print area, save workbooks in alternative file formats, configure print settings, and inspect workbooks for issues. These skills will ensure your spreadsheets are prepared for sharing, printing, and distribution while maintaining accuracy, compatibility, and professionalism.")
                     url_video_func("https://www.youtube.com/watch?v=Mrt4v0ysA8w", "Excel Tutorials by EasyClick Academy", "How to Set the Print Area in Excel (Step by Step)")
                     url_video_func("https://www.youtube.com/watch?v=P2L4GOGDsx8", "Kay Rand Morgan", "Microsoft Excel - Save workbooks in alternative file formats CC")
                     url_video_func("https://www.youtube.com/watch?v=HfwMo6M1XzM", "Kevin Stratvert", "How to Print Excel Sheet")
@@ -1395,6 +1396,7 @@ if st.session_state.page == 7:
                 lesson_six_expander = st.expander(label="Lesson 5")
                 with lesson_six_expander:
                     st.title("Lesson 5, formatting cells and ranges")
+                    st.write("In this lesson, you’ll learn how to merge and unmerge cells, modify cell alignment, orientation, and indentation, format cells using the Format Painter, and wrap text within cells. You’ll also explore how to apply number formats, use the Format Cells dialog box, apply cell styles, and clear cell formatting. Together, these skills will help you present data clearly, maintain consistency in your worksheets, and create professional, easy-to-read spreadsheets.")
                     url_video_func("https://www.youtube.com/watch?v=b0T9XjhBK_g", "Microsoft 365", "How to merge and unmerge cells in Microsoft Excel")
                     url_video_func("https://www.youtube.com/watch?v=FljG3k2Ly6s", "Kay Rand Morgan", "Microsoft Excel - Modify cell alignment, orientation, and indentation CC")
                     url_video_func("https://www.youtube.com/watch?v=LHSJJvkVrvA", "LearnFree", "Excel Quick Tip: Two Ways to Use the Format Painter")
@@ -1403,11 +1405,19 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=FwI46frGd9k", "KnowWithBeau", "Excel MOS 2.2.6 Apply cell formats from the Format Cells dialog box - KwB")
                     url_video_func("https://www.youtube.com/watch?v=YSsQmEPFNaI", "Simon Sez IT", "Using Cell Styles in Excel")
                     url_video_func("https://www.youtube.com/watch?v=B9ol_9_QmJU", "ExcelHow Tech", "How to Clear Cell Contents and Formatting")
-    
+                lesson_seven_expander = st.expander(label="Lesson 6")
+                with lesson_seven_expander:
+                    st.title("Lesson 6, manipulating data in worksheets")
+                    st.write("In this lesson, you’ll learn how to paste data by using special paste options, fill cells efficiently with Auto Fill, and insert or delete multiple columns, rows, or individual cells. These skills will help you manage and organize data more effectively, saving time while ensuring your worksheets remain accurate and well-structured.")
+                    url_video_func("https://www.youtube.com/watch?v=_ODK4XW-aNs", "HowcastTechGadgets", "How to Use Paste Special | Microsoft Excel")
+                    url_video_func("https://www.youtube.com/watch?v=HMXLU9TGogc", "Excel Tutorials by EasyClick Academy", "How to Use AutoFill in Excel (Best Practices)")
+                    url_video_func("https://www.youtube.com/watch?v=JvSoAAkcWyY", "Microsoft 365", "How to insert or delete rows and columns in Microsoft Excel")
+                lesson_    
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
