@@ -113,7 +113,7 @@ if st.session_state.page == 1:
     print(start_time)
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
-        st.image(logo[0], width='stretch)  # Works with GIFs too
+        st.image(logo[0], width='stretch')  # Works with GIFs too
 
     # Inject Batangas font CSS once
     st.markdown(
@@ -686,7 +686,7 @@ if st.session_state.page == 3:
                 for name, link in items:
                     source_rows.append({"Category": category, "Source": name, "Link": link})
             sources_df = pd.DataFrame(source_rows)
-            st.dataframe(sources_df, width='stretch)
+            st.dataframe(sources_df, width='stretch')
             
             
         user_input = st.text_input("Ask me a research question:")
@@ -696,7 +696,6 @@ if st.session_state.page == 3:
             with st.spinner("Fetching answer..."):
                 try:
                     answer = obfuscate_text(filter_research_response(answer_user(user_input, SOURCES), user_input))
-                    print(repr(answer))
                     st.markdown(f"<div>{answer}</div>", unsafe_allow_html=True)
                     source_expander = st.expander(label="Sources")
                     with source_expander:
@@ -1040,7 +1039,7 @@ if st.session_state.page == 4:
                 title_x=0.5
             )
 
-            st.plotly_chart(fig, width='stretch)
+            st.plotly_chart(fig, width='stretch')
 
         # Statistical calculations display
         if stat_functions:
@@ -1153,10 +1152,9 @@ if st.session_state.page == 4:
 
 if st.session_state.page >= 3:
     AI_sources = st.session_state["output_sources"]
-    print(AI_sources)
     
     with st.sidebar:
-        st.sidebar.image(logo[1], width='stretch)
+        st.sidebar.image(logo[1], width='stretch')
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
@@ -1417,6 +1415,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
