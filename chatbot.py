@@ -139,7 +139,7 @@ if st.session_state.page == 1:
         
     # Print results.
     for row in df.itertuples():
-        st.write(f"{row.name} has a :{row.pet}:")
+        st.title(f"{row.name} has a :{row.pet}:")
     
     start_time = datetime.now()
     print(start_time)
@@ -1431,6 +1431,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
