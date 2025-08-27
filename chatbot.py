@@ -213,8 +213,6 @@ if st.session_state.page == 2:
     # Access control & navigation
     # -----------------------------
     
-    keys = st.secrets["access_keys"]
-
     col1, col2, col3, col4 = st.columns(4)
     
     @st.dialog(" ")
@@ -1485,6 +1483,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
