@@ -127,11 +127,16 @@ def next_page(start, page_num):
 def last_page():
     st.session_state.page -= 1
 
+def time_delta(start_time, end_time, page):
+    delta = end_time - start_time
+    print (f"The user has spent {delta.total_seconds()}s on the {page} page")
+    return delta.total_seconds()
+    
+
 # ---------------- PAGE 1 ----------------
 if st.session_state.page == 1:
+    start1 = datetime.now
     
-    start_time = datetime.now()
-    print(start_time)
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
         st.image(logo[0], width='stretch')  # Works with GIFs too
@@ -173,7 +178,8 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
-    start_time2 = datetime.now()
+    end1 = datetime.now()
+    start2 = datetime.now()
     
     st.button("Back", on_click=last_page)
     st.markdown(
@@ -301,6 +307,9 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
+    end2 = datetime.now()
+    start3 = datetime.now()
+    
     AI_expander = st.expander("Agent panel")
     with AI_expander:
         st.header("Scholarra agent panel")
@@ -825,6 +834,9 @@ def calculate_stats(df):
     return result
 
 if st.session_state.page == 4:
+    end3 = datetime.now()
+    start4 = datetime.now()
+
     st.title("Scholistics")
     st.header("Next level graphing and statistics calculator.")
     st.write("Fill out the desired fields below to plot data points, you can navigate the graph view the navigation tools located on the top right corner of the graph. To download the graph click the camera icon next to the navigation tools.")
@@ -1217,45 +1229,50 @@ if st.session_state.page == 4:
 # ---------------- PAGE 3-5 (Scholarra Terminal) ----------------
 
 if st.session_state.page >= 3:
-    AI_sources = st.session_state["output_sources"]
-    
-    with st.sidebar:
-        st.sidebar.image(logo[1], width='stretch')
-        st.header("Scholarra terminal")
-        st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
+    main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
 
-        if st.session_state.page >= 3:
-            main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
-            if main_switch == "Login":
-                progress_bar("Loading login page.", 2)
-            if main_switch == "Messager":
-                progress_bar("Loading AI interface.", 3)
-            if main_switch == "Grapher":
-                progress_bar("Loading Scolistics", 4)
-            if main_switch == "Account Info":
-                progress_bar("Loading account info", 5)
-            if main_switch == "Analytics":
-                progress_bar("Loading Scholarra analytics", 6)
-            if main_switch == "Material Library":
-                progress_bar("Loading courses", 7)
-            
-        notes_expander = st.expander("Notes")
-        with notes_expander:
-            if "sidebar_note" not in st.session_state:
-                st.session_state.sidebar_note = ""
-    
-            st.session_state.sidebar_note = st.text_area(
-                "Enter your notes here",
-                value=st.session_state.sidebar_note,
-                key="sidebar_note_area",
-                height=500
-            )
-        side_source_expander = st.expander("AI sources")
-        with side_source_expander:
-            if AI_sources == "":
-                st.write("Here you can find the source output from the AI research assistant.")
-            else:
-                st.write(AI_sources)
+    # Record time spent on previous page
+    if st.session_state['current_page']:
+        now = time.time()
+        elapsed = now - st.session_state['page_start_time']
+        prev_page = st.session_state['current_page']
+        st.session_state['page_times'][prev_page] = st.session_state['page_times'].get(prev_page, 0) + elapsed
+
+    # Update current page and start time
+    st.session_state['current_page'] = main_switch
+    st.session_state['page_start_time'] = time.time()
+
+    # Your existing progress_bar calls
+    if main_switch == "Login":
+        progress_bar("Loading login page.", 2)
+    elif main_switch == "Messager":
+        progress_bar("Loading AI interface.", 3)
+    elif main_switch == "Grapher":
+        progress_bar("Loading Scolistics", 4)
+    elif main_switch == "Account Info":
+        progress_bar("Loading account info", 5)
+    elif main_switch == "Analytics":
+        progress_bar("Loading Scholarra analytics", 6)
+    elif main_switch == "Material Library":
+        progress_bar("Loading courses", 7)
+
+    notes_expander = st.expander("Notes")
+    with notes_expander:
+        if "sidebar_note" not in st.session_state:
+            st.session_state.sidebar_note = ""
+
+        st.session_state.sidebar_note = st.text_area(
+            "Enter your notes here",
+            value=st.session_state.sidebar_note,
+            key="sidebar_note_area",
+            height=500
+        )
+    side_source_expander = st.expander("AI sources")
+    with side_source_expander:
+        if AI_sources == "":
+            st.write("Here you can find the source output from the AI research assistant.")
+        else:
+            st.write(AI_sources)
             
 # ---------------- PAGE 5 (info Database) ----------------
 
@@ -1265,6 +1282,9 @@ plan_info = {"Admin": "As a site admin you have unrestricted access to all featu
 # ---------------- PAGE 5 (User Info) ----------------
 
 if st.session_state.page == 5:
+    end4 = datetime.now()
+    start5 = datetime.now()
+
     st.title("Account Info")
     st.write("Find your account info below.")
 
@@ -1303,10 +1323,19 @@ if st.session_state.page == 5:
 # ---------------- PAGE 6 (Analytics) ----------------
 
 if st.session_state.page == 6:
-    pass
+    st.header("User Analytics")
+    st.write("Time spent on each page (seconds):")
+
+    # Check if there are any recorded times
+    if 'page_times' in st.session_state and st.session_state['page_times']:
+        for page, t in st.session_state['page_times'].items():
+            st.write(f"**{page}:** {t:.2f}s")
+    else:
+        st.write("No page activity recorded yet.")
+
 
 # ---------------- PAGE 7 (Courses) ----------------
-def segment_completed(lesson_number):
+def segment_completed(lesson_number):    
     segment_completion = st.checkbox("Completed", key=lesson_number)
     if segment_completion:
         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
@@ -1330,6 +1359,8 @@ def score_question(answer, questions, question_num):
 
 
 if st.session_state.page == 7:
+    end5 = datetime.now()
+    start7 = datetime.now()
     student_course_keys = {"KStudent": "MO-200 Microsoft Excel (Office 2019)"}
     accepted_courses = ["MO-200 Microsoft Excel (Office 2019)"]
 
@@ -1483,6 +1514,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
