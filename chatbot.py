@@ -240,7 +240,8 @@ if st.session_state.page == 2:
                             st.rerun()
                         else:
                             valid = False
-                   if valid == False:
+                            
+                    if valid == False:
                        st.warning("Username or passowrd is incorrect.")
         if item == "B":
             st.warning("The signup function is not currently availible, if you are interested in registering feel free to contact us, you can find contacts on the Github.")
@@ -1431,6 +1432,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
