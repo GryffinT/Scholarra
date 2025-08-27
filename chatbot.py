@@ -1228,11 +1228,36 @@ if st.session_state.page == 4:
 
 # ---------------- PAGE 3-5 (Scholarra Terminal) ----------------
 
+import streamlit as st
+import time
+
+# --- Initialize session state keys ---
+if 'current_page' not in st.session_state:
+    st.session_state['current_page'] = None
+
+if 'page_start_time' not in st.session_state:
+    st.session_state['page_start_time'] = time.time()
+
+if 'page_times' not in st.session_state:
+    st.session_state['page_times'] = {}
+
+if 'sidebar_note' not in st.session_state:
+    st.session_state['sidebar_note'] = ""
+
+# Example placeholder for AI_sources variable
+if 'AI_sources' not in st.session_state:
+    st.session_state['AI_sources'] = ""
+
+
+# --- Page selection and time tracking ---
 if st.session_state.page >= 3:
-    main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
+    main_switch = st.selectbox(
+        "Function selection",
+        ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Material Library"]
+    )
 
     # Record time spent on previous page
-    if st.session_state['current_page']:
+    if st.session_state['current_page'] is not None:
         now = time.time()
         elapsed = now - st.session_state['page_start_time']
         prev_page = st.session_state['current_page']
@@ -1242,7 +1267,7 @@ if st.session_state.page >= 3:
     st.session_state['current_page'] = main_switch
     st.session_state['page_start_time'] = time.time()
 
-    # Your existing progress_bar calls
+    # --- Progress bars ---
     if main_switch == "Login":
         progress_bar("Loading login page.", 2)
     elif main_switch == "Messager":
@@ -1256,23 +1281,25 @@ if st.session_state.page >= 3:
     elif main_switch == "Material Library":
         progress_bar("Loading courses", 7)
 
+    # --- Notes Expander ---
     notes_expander = st.expander("Notes")
     with notes_expander:
-        if "sidebar_note" not in st.session_state:
-            st.session_state.sidebar_note = ""
-
-        st.session_state.sidebar_note = st.text_area(
+        st.session_state['sidebar_note'] = st.text_area(
             "Enter your notes here",
-            value=st.session_state.sidebar_note,
+            value=st.session_state['sidebar_note'],
             key="sidebar_note_area",
             height=500
         )
+
+    # --- AI Sources Expander ---
     side_source_expander = st.expander("AI sources")
     with side_source_expander:
+        AI_sources = st.session_state.get('AI_sources', "")
         if AI_sources == "":
             st.write("Here you can find the source output from the AI research assistant.")
         else:
             st.write(AI_sources)
+
             
 # ---------------- PAGE 5 (info Database) ----------------
 
@@ -1514,6 +1541,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
