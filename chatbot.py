@@ -13,6 +13,7 @@ import random
 from urllib.parse import quote
 from datetime import datetime
 import io
+import string
 from scipy import stats
 import math
 import urllib.parse
@@ -242,35 +243,47 @@ if st.session_state.page == 2:
                     if valid == False:
                        st.warning("Username or password is incorrect.")
                         
+        def generate_id(length=8):
+            """Generate a random alphanumeric string."""
+            return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+        
         if item == "B":
             conn = st.connection("gsheets", type=GSheetsConnection)
         
             st.header("Signup")
         
             username = st.text_input("Username")
-            school = st.text_input("School")
             password = st.text_input("Password", type="password")
+            organization = st.text_input("Organization")
         
             if st.button("Submit"):
-                # Load current data
-                df = conn.read(worksheet="Users", usecols=list(range(3)), ttl=5)
+                # Load current data from Sheet1
+                df = conn.read(worksheet="Sheet1", ttl=5)
         
                 # Check if username already exists
                 if username in df["Username"].values:
                     st.error("That username is already taken. Please choose another.")
                 else:
-                    # Create new row as DataFrame
-                    new_row = pd.DataFrame(
-                        {"Username": [username], "School": [school], "Password": [password]}
-                    )
+                    # Generate ID + default plan
+                    user_id = generate_id()
+                    plan = "User"
         
-                    # Append to existing data
+                    # Create new row
+                    new_row = pd.DataFrame({
+                        "Username": [username],
+                        "Password": [password],
+                        "ID": [user_id],
+                        "Organization": [organization],
+                        "Plan": [plan]
+                    })
+        
+                    # Append row
                     updated_df = pd.concat([df, new_row], ignore_index=True)
         
-                    # Write back to Google Sheet
-                    conn.update(worksheet="Users", data=updated_df)
+                    # Save back to Google Sheets
+                    conn.update(worksheet="Sheet1", data=updated_df)
         
-                    st.success("Account created successfully! You can now log in.")
+                    st.success(f"Account created successfully! Your ID is {user_id}. You can now log in.")
 
 
     
@@ -1454,6 +1467,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
