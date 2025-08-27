@@ -1382,11 +1382,13 @@ if st.session_state.page == 7:
                     video_func("https://www.youtube.com/watch?v=P2L4GOGDsx8", "Lesson4Video2.mp4", "Kay Rand Morgan", "Microsoft Excel - Save workbooks in alternative file formats CC")
                     video_func("https://www.youtube.com/watch?v=HfwMo6M1XzM", "Lesson4Video3.mp4", "Kevin Stratvert", "How to Print Excel Sheet")
                     video_func("https://www.youtube.com/watch?v=KbJUKAY8FZ8", "Lesson4Video4.mp4", "How To Tutorials- Maha Gurus", "Inspecting and Protecting Workbooks- Inspect Document in Excel Tutorial")
+                    st.video("https://www.youtube.com/watch?v=_ODK4XW-aNs")
                     segment_completed(4)
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
