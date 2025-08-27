@@ -1209,26 +1209,9 @@ if st.session_state.page >= 3:
                 st.write(AI_sources)
             
 # ---------------- PAGE 5 (info Database) ----------------
-info_dict = {
-    "Scholar-EG-01": {
-        "ID": "ADMIN_HKf23kaL",
-        "PLAN": "Admin",
-        "NAME": "Admin",
-        "EMAIL": "N/A:" },
-    "pibble67": {
-        "ID": "USER_isJ82Kl1",
-        "PLAN": "User",
-        "NAME": "N/A",
-        "EMAIL": "N/A"}, 
-    "3651881": {
-        "ID": "USER_hjaP293K",
-        "PLAN": "User",
-        "NAME": "N/A",
-        "EMAIL": "N/A"
-    }
-}
+
 plan_info = {"Admin": "As a site admin you have unrestricted access to all features of the app, free of cost.", "User": "As a user you have free access to the entire site except for developer features."}
-access_keys = ["pibble67", "3651881"]
+access_keys = st.secrets["access_keys"]
 
                                                               
 # ---------------- PAGE 5 (User Info) ----------------
@@ -1242,17 +1225,13 @@ if st.session_state.page == 5:
         # safely get the user_key from session_state, or show default text
         st.write(f"Currently logged in using key: {used_key}")
         ID = None
-        st.write("Account ID is: ", info_dict[used_key]["ID"])
+        st.write("Account ID is: ", st.secrets[used_key]["ID"])
 
     plan_expandable = st.expander(label="Subscription")
     with plan_expandable:
-        st.write("Your're subscribed to the ", info_dict[used_key]["PLAN"], " plan.")
-        st.info(plan_info[(info_dict[used_key]["PLAN"])])
+        st.write("Your're subscribed to the ", st.secrets[used_key]["PLAN"], " plan.")
+        st.info(plan_info[(st.secrets[used_key]["PLAN"])])
         
-    plan_expandable = st.expander(label="Personal information")
-    with plan_expandable:
-        st.write("Email:", info_dict[used_key]["EMAIL"])
-        st.write("Name: ", info_dict[used_key]["NAME"])
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
@@ -1437,6 +1416,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
