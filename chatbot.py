@@ -1302,30 +1302,32 @@ if st.session_state.page == 7:
                 st.write(course_media[course_name][2])
                 syllabus_expander = st.expander(label="Syllabus")
                 with syllabus_expander:
-                    st.header("Course syllabus")
-                    st.write("Welcome! Here you can find the syllabus for the course, which you can either download in PDF format or listen to below.")
+                    st.header("Course materials")
+                    st.write("Welcome! Here you can find the syllabus and textbook for this course, which you can either download in PDF format or listen to below.")
                     syllabus = course_media[course_name][0]  # file path
                     syllabus_tts = course_media[course_name][1]
                     st.audio(syllabus_tts)
                 
                     with open(syllabus, "rb") as f:  # read file contents
+                        col1, col2, col3 = st.columns(3)
                         st.download_button(
                             label="Download Syllabus",
                             data=f,  # pass the file contents, not the path
                             file_name=os.path.basename(syllabus),  # name for the downloaded file
                             mime="application/pdf"
                         )
-                        pdf_url = "https://www.sgul.ac.uk/about/our-professional-services/information-services/library/documents/training-manuals/Excel-Fundamentals-Manual.pdf"
-                        
-                        response = requests.get(pdf_url)
-                        pdf_bytes = response.content 
-                        
-                        st.download_button(
-                            label="Download Textbook",
-                            data=pdf_bytes,
-                            file_name="Excel-Fundamentals-Manual.pdf",
-                            mime="application/pdf"
-                        )
+                        with col2:
+                            pdf_url = "https://www.sgul.ac.uk/about/our-professional-services/information-services/library/documents/training-manuals/Excel-Fundamentals-Manual.pdf"
+                            
+                            response = requests.get(pdf_url)
+                            pdf_bytes = response.content 
+                            
+                            st.download_button(
+                                label="Download Textbook",
+                                data=pdf_bytes,
+                                file_name="Excel-Fundamentals-Manual.pdf",
+                                mime="application/pdf"
+                            )
                             
                     segment_completion = st.checkbox("Completed")
                     if segment_completion:
@@ -1423,6 +1425,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
