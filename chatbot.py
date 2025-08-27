@@ -1314,10 +1314,19 @@ if st.session_state.page == 7:
                             data=f,  # pass the file contents, not the path
                             file_name=os.path.basename(syllabus),  # name for the downloaded file
                             mime="application/pdf"
-                            
-                
                         )
-    
+                        pdf_url = "https://www.sgul.ac.uk/about/our-professional-services/information-services/library/documents/training-manuals/Excel-Fundamentals-Manual.pdf"
+                        
+                        response = requests.get(pdf_url)
+                        pdf_bytes = response.content 
+                        
+                        st.download_button(
+                            label="Download Textbook",
+                            data=pdf_bytes,
+                            file_name="Excel-Fundamentals-Manual.pdf",
+                            mime="application/pdf"
+                        )
+                            
                     segment_completion = st.checkbox("Completed")
                     if segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
@@ -1410,11 +1419,11 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=_ODK4XW-aNs", "HowcastTechGadgets", "How to Use Paste Special | Microsoft Excel")
                     url_video_func("https://www.youtube.com/watch?v=HMXLU9TGogc", "Excel Tutorials by EasyClick Academy", "How to Use AutoFill in Excel (Best Practices)")
                     url_video_func("https://www.youtube.com/watch?v=JvSoAAkcWyY", "Microsoft 365", "How to insert or delete rows and columns in Microsoft Excel")
-                lesson_    
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
