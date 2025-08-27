@@ -133,13 +133,13 @@ if st.session_state.page == 1:
     df = conn.read(
         worksheet="Sheet1",
         ttl="10m",
-        usecols=[0, 1],
-        nrows=3,
+        usecols=[0, 4],
+        nrows=5,
     )
         
     # Print results.
     for row in df.itertuples():
-        st.title(f"{row.Username} has a :{row.School}:")
+        st.title(f"{row.Username}:{row.Password}:{row.ID}:{row.Organization}:{row.Plan}")
     
     start_time = datetime.now()
     print(start_time)
@@ -1431,6 +1431,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
