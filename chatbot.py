@@ -67,7 +67,6 @@ page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Pag
 st.session_state["page_counter"] = page_counter
 
 def progress_bar(loading_text, page):
-    # ✅ guard: if already ran for this page, skip
     if st.session_state.get("_progress_lock") == page:
         return
     
@@ -217,11 +216,10 @@ if st.session_state.page == 2:
 
     col1, col2, col3, col4 = st.columns(4)
     
-    @st.dialog("Login or Signup")
+    @st.dialog("")
     def vote(item):
         if item == "A":
             st.header("Login")
-            st.warning("Currently the username field is purely for testing purposes, you can still login if the field is empty.")
             username = st.text_input("Username")
             st.session_state['use_key'] = get_key()
             key = st.session_state['use_key']
@@ -1432,6 +1430,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
