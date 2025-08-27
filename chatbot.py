@@ -25,26 +25,21 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
-def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
+def lazy_download_pdf(pdf_url, label="Download PDF", file_name=None):
+
     if file_name is None:
         file_name = pdf_url.split("/")[-1]
-
-    st.markdown(f"""
-        <a href={pdf_url} download={file_name} style="text-decoration:none">
-            <div style="
-                display:inline-block;
-                background-color:#0e1117;
-                color:white;
-                padding:8px 20px;
-                border-radius:5px;
-                font-weight:bold;
-                text-align:center;
-                cursor:pointer;
-            ">
-                {label}
-            </div>
-        </a>
-    """, unsafe_allow_html=True)
+    
+    # Use a placeholder button to trigger the fetch
+    if st.button(label):
+        with st.spinner("Fetching PDF..."):
+            pdf_bytes = requests.get(pdf_url).content
+        st.download_button(
+            label=f"Click again to save {file_name}",
+            data=pdf_bytes,
+            file_name=file_name,
+            mime="application/pdf"
+        )
 
 def video_func(url, path, name, video_title):
     st.header(video_title)
@@ -1441,6 +1436,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
