@@ -113,7 +113,7 @@ if st.session_state.page == 1:
     print(start_time)
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
-        st.image(logo[0], use_container_width=True)  # Works with GIFs too
+        st.image(logo[0], width='stretch)  # Works with GIFs too
 
     # Inject Batangas font CSS once
     st.markdown(
@@ -686,7 +686,7 @@ if st.session_state.page == 3:
                 for name, link in items:
                     source_rows.append({"Category": category, "Source": name, "Link": link})
             sources_df = pd.DataFrame(source_rows)
-            st.dataframe(sources_df, use_container_width=True)
+            st.dataframe(sources_df, width='stretch)
             
             
         user_input = st.text_input("Ask me a research question:")
@@ -1040,7 +1040,7 @@ if st.session_state.page == 4:
                 title_x=0.5
             )
 
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch)
 
         # Statistical calculations display
         if stat_functions:
@@ -1156,7 +1156,7 @@ if st.session_state.page >= 3:
     print(AI_sources)
     
     with st.sidebar:
-        st.sidebar.image(logo[1], use_container_width=True)
+        st.sidebar.image(logo[1], width='stretch)
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
@@ -1417,6 +1417,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
