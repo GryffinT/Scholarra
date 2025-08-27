@@ -25,6 +25,7 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
+
 def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
 
     if file_name is None:
@@ -208,7 +209,7 @@ if st.session_state.page == 2:
     # Access control & navigation
     # -----------------------------
     
-    access_keys = ["pibble67", "3651881"]    
+    keys = st.secrets["access_keys"]
 
     col1, col2, col3, col4 = st.columns(4)
     
@@ -222,7 +223,7 @@ if st.session_state.page == 2:
             key = st.session_state['use_key']
             submit_button = st.button("Submit")
             if submit_button:
-                if key in access_keys or key == "Scholar-EG-01":
+                if key in keys or key == st.secrets["admin_key"]:
                     st.success(f"Welcome, {username}!")
                     next_page(start_time2, "Page2")
                     st.rerun()
@@ -1436,6 +1437,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
