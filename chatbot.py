@@ -1329,7 +1329,8 @@ if st.session_state.page == 7:
                     st.title("Lesson one, importing data")
                     st.write("In this lesson, you’ll learn how to bring data from outside sources into Excel. We’ll explore how to import information from both text files and CSV files, and see how Excel organizes that data so it’s ready for you to work with.")
 
-                    url_video_func("https://www.youtube.com/shorts/_5nGeEwx9ZI", "Mike Tholfsen", "How to import PDF into Excel" )
+                    url_video_func("https://www.youtube.com/watch?v=EaS2Ooe9BNc&t=67s", "Kevin Stratvert", "How to import PDF into Excel" )
+                    url_video_func("https://www.youtube.com/watch?v=ebnNy5yEkvc", "ProgrammingKnowledge2", "How to Import CSV File Into Excel")
 
                     segment_completed(1)
 
@@ -1349,7 +1350,7 @@ if st.session_state.page == 7:
 
                     # Video 3
 
-                    url_video_func("https://www.youtube.com/shorts/NIg7m4nv5Fg", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
+                    url_video_func("https://www.youtube.com/watch?v=QMzx3h-USM4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
                     lesson_2_quiz_answers = ["Find & Select", "Yes", "An entry's column and row.", "Ctrl + K"]
@@ -1369,7 +1370,7 @@ if st.session_state.page == 7:
                     st.title("Lesson 3, formatting")
                     st.write("In this lesson, you’ll learn how to format worksheets and workbooks, modify page setup for printing and presentation, adjust row height and column width, and customize headers and footers. These skills will help you organize data more effectively, improve the readability of your spreadsheets, and ensure your work is presented in a clear and professional manner.")
                     url_video_func("https://www.youtube.com/watch?v=0SRt9dkR3Zg", "learnexcel.video","Excel Page Layout: The Ultimate Guide")
-                    url_video_func("https://www.youtube.com/shorts/l5UFTMXOuiU", "TutorialsPoint_", "How to AutoFit rows and columns in Excel?")
+                    url_video_func("https://www.youtube.com/watch?v=wI6U9I2nZWg", "Technology for Teachers and Students", "3 Ways to AutoFit all Columns and Rows in Excel")
                     url_video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
                     segment_completed(3)
                 lesson_four_expander= st.expander(label="Lesson 3.1")
@@ -1378,7 +1379,7 @@ if st.session_state.page == 7:
                     st.write("In this lesson, you’ll learn how to customize the Quick Access Toolbar, display and modify workbook content in different views, freeze worksheet rows and columns, change window views, modify basic workbook properties, and display formulas. Mastering these features will make navigating Excel more efficient, allow you to organize and review data with greater ease, and give you more control over how your workbook is displayed and managed.")
                     url_video_func("https://www.youtube.com/watch?v=ERCg7RznD3w", "Simon Sez IT", "Customize the Quick Access toolbar")
                     url_video_func("https://www.youtube.com/watch?v=rqjStG5xTZ4", "Kay Rand Morgan", "Display and modify workbook content in different views")
-                    url_video_func("https://www.youtube.com/shorts/SY9R06sqg3A", "SpreadsheetNation", "Freeze worksheet rows and columns")
+                    url_video_func("https://www.youtube.com/watch?v=UJ4vPQ18PLg", "Excel Rush", "How to Freeze Multiple Rows and or Columns in Excel using Freeze Panes")
                     url_video_func("https://www.youtube.com/watch?v=GfHWyniYja4", "Kay Rand Morgan", "Change window views")
                     url_video_func("https://www.youtube.com/watch?v=5ta5Vf8VRms", "David Hays", "Modify basic workbook properties")
                     url_video_func("https://www.youtube.com/watch?v=nBkv7EGsAIU", "Excel Tutorials by EasyClick Academy", "Display formulas")
@@ -1407,6 +1408,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
