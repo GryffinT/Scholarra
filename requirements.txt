@@ -13,4 +13,3 @@ aiohttp
 asyncio
 pdf2image
 streamlit-modal
-streamlit_gsheets
