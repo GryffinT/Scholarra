@@ -26,16 +26,23 @@ from rapidfuzz import fuzz
 import json
 
 def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
-    """
-    Creates a Streamlit button that downloads a PDF directly from a URL.
-    """
     if file_name is None:
-        file_name = pdf_url.split("/")[-1]  # default to URL filename
+        file_name = pdf_url.split("/")[-1]
 
-    # Using Markdown with a download attribute
     st.markdown(f"""
-        <a href="{pdf_url}" download="{file_name}">
-            <button>{label}</button>
+        <a href={pdf_url} download={file_name} style="text-decoration:none">
+            <div style="
+                display:inline-block;
+                background-color:#0e1117;
+                color:white;
+                padding:8px 20px;
+                border-radius:5px;
+                font-weight:bold;
+                text-align:center;
+                cursor:pointer;
+            ">
+                {label}
+            </div>
         </a>
     """, unsafe_allow_html=True)
 
@@ -1434,6 +1441,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
