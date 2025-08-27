@@ -202,7 +202,7 @@ if st.session_state.page == 2:
         )
 
     # Scatterplot image
-    scatter_path = os.path.join(base_path, "scatter_plot.png")
+    scatter_path = os.path.join(images_dir, "scatter_plot.png")
     st.image(scatter_path, caption="Example scatter plot generated with the Scholistics function")
 
     #st.write("Your key is:", key)
@@ -1418,6 +1418,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
