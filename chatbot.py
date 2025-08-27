@@ -34,6 +34,14 @@ def video_func(url, path, name, video_title):
     with video_credit_expander:
         st.write(f"Video produced by {name} on Youtube.")
         st.write(f"URL: [{url}]({url})")
+
+def url_video_func(url, name, video_title):
+    st.header(video_title)
+    st.video(url)
+    video_credit_expander = st.expander("Video credit")
+    with video_credit_expander:
+        st.write(f"Video produced by {name} on Youtube.")
+        st.write(f"URL: [{url}]({url})")
         
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
@@ -1382,12 +1390,24 @@ if st.session_state.page == 7:
                     video_func("https://www.youtube.com/watch?v=P2L4GOGDsx8", "Lesson4Video2.mp4", "Kay Rand Morgan", "Microsoft Excel - Save workbooks in alternative file formats CC")
                     video_func("https://www.youtube.com/watch?v=HfwMo6M1XzM", "Lesson4Video3.mp4", "Kevin Stratvert", "How to Print Excel Sheet")
                     video_func("https://www.youtube.com/watch?v=KbJUKAY8FZ8", "Lesson4Video4.mp4", "How To Tutorials- Maha Gurus", "Inspecting and Protecting Workbooks- Inspect Document in Excel Tutorial")
-                    st.video("https://www.youtube.com/watch?v=_ODK4XW-aNs")
                     segment_completed(4)
+                lesson_six_expander = st.expander(label="Lesson 5")
+                with lesson_six_expander:
+                    st.title("Lesson 5, formatting cells and ranges")
+                    url_video_func("https://www.youtube.com/watch?v=b0T9XjhBK_g", "Microsoft 365", "How to merge and unmerge cells in Microsoft Excel")
+                    url_video_func("https://www.youtube.com/watch?v=FljG3k2Ly6s", "Kay Rand Morgan", "Microsoft Excel - Modify cell alignment, orientation, and indentation CC")
+                    url_video_func("https://www.youtube.com/watch?v=LHSJJvkVrvA", "LearnFree", "Excel Quick Tip: Two Ways to Use the Format Painter")
+                    url_video_func("https://www.youtube.com/watch?v=fu0o9fkkMWI", "Technology for Teachers and Students", "3 Ways to Fit Excel Data within a Cell")
+                    url_video_func("https://www.youtube.com/watch?v=fjyOG7Ls7BA", "LearnFree", "Excel: Understanding Number Formats")
+                    url_video_func("https://www.youtube.com/watch?v=FwI46frGd9k", "KnowWithBeau", "Excel MOS 2.2.6 Apply cell formats from the Format Cells dialog box - KwB")
+                    url_video_func("https://www.youtube.com/watch?v=YSsQmEPFNaI", "Simon Sez IT", "Using Cell Styles in Excel")
+                    url_video_func("https://www.youtube.com/watch?v=B9ol_9_QmJU", "ExcelHow Tech", "How to Clear Cell Contents and Formatting")
+    
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
