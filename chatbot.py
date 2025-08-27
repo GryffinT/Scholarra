@@ -84,7 +84,7 @@ def progress_bar(loading_text, page):
 
 key = None
 def get_key():
-    user_key = st.text_input("Enter password")
+    user_key = st.text_input("Enter password", type="password")
     print (user_key)
     return user_key
 
@@ -1467,6 +1467,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
