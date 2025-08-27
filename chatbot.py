@@ -1271,22 +1271,21 @@ if st.session_state.page == 5:
     st.title("Account Info")
     st.write("Find your account info below.")
 
-    # Who is logged in (set at login)
-    username = st.session_state.get("username")
-    password = st.session_state.get("password")
+    key = st.session_state.get('use_key')  # the logged-in password
 
     # Load the spreadsheet
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read(worksheet="Sheet1", ttl=5)
 
-    # Find the row for this user
-    user_row = df[(df["Username"] == username) & (df["Password"] == password)]
+    # Find the row that matches the stored password
+    user_row = df[df["Password"] == key]
 
     if not user_row.empty:
-        # Extract account info from DataFrame
+        # Extract account info from that row
+        username = user_row.iloc[0]["Username"]
         user_id = user_row.iloc[0]["ID"]
-        plan = user_row.iloc[0]["Plan"]
         organization = user_row.iloc[0]["Organization"]
+        plan = user_row.iloc[0]["Plan"]
 
         key_expandable = st.expander(label="Account specifics")
         with key_expandable:
@@ -1298,8 +1297,10 @@ if st.session_state.page == 5:
         with plan_expandable:
             st.write("You're subscribed to the", plan, "plan.")
             st.info(plan_info.get(plan, "No info available for this plan."))
+
     else:
         st.error("Could not load account info. Please log in again.")
+
 
 
 # ---------------- PAGE 6 (Analytics) ----------------
@@ -1485,6 +1486,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
