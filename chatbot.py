@@ -1308,7 +1308,7 @@ if st.session_state.page == 7:
         if entered_course_key in student_course_keys:
             course_name = student_course_keys[entered_course_key]
             if course_name in accepted_courses:
-                st.image(os.path.join(image_path, "X.png"))
+                st.image(os.path.join(os.path.join(base_dir, "Images"), "X.png"))
                 st.title(course_name)
                 st.write(course_media[course_name][2])
                 syllabus_expander = st.expander(label="Syllabus")
@@ -1431,6 +1431,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
