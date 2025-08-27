@@ -1262,7 +1262,6 @@ if st.session_state.page >= 3:
 # ---------------- PAGE 5 (info Database) ----------------
 
 plan_info = {"Admin": "As a site admin you have unrestricted access to all features of the app, free of cost.", "User": "As a user you have free access to the entire site except for developer features."}
-access_keys = st.secrets["access_keys"]
 
                                                               
 # ---------------- PAGE 5 (User Info) ----------------
@@ -1486,6 +1485,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
