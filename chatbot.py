@@ -26,7 +26,7 @@ from rapidfuzz import fuzz
 import json
 
 base_dir = os.path.dirname(__file__)
-image_path = os.path.join(base_dir, "Images", path)
+images_dir = os.path.join(base_dir, "Images")
 
 def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
 
@@ -105,8 +105,8 @@ st.markdown(
 base_path = os.path.dirname(__file__)
 
 logo = [
-    os.path.join(image_path, "Scholarra Splotch Logo.png"),
-    os.path.join(image_path, "Scholarra Block Logo.png")
+    os.path.join(images_dir, "Scholarra Splotch Logo.png"),
+    os.path.join(images_dir, "Scholarra Block Logo.png")
 ]
 
 
@@ -1418,6 +1418,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
