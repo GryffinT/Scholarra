@@ -27,21 +27,17 @@ import json
 
 def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
     """
-    Creates a Streamlit download button for any PDF URL.
+    Creates a Streamlit button that downloads a PDF directly from a URL.
     """
     if file_name is None:
         file_name = pdf_url.split("/")[-1]  # default to URL filename
-    
-    # Lazy download only when button clicked
-    if st.button(label):
-        with st.spinner("Fetching PDF..."):
-            pdf_bytes = requests.get(pdf_url).content
-        st.download_button(
-            label=f"Click to save {file_name}",
-            data=pdf_bytes,
-            file_name=file_name,
-            mime="application/pdf"
-        )
+
+    # Using Markdown with a download attribute
+    st.markdown(f"""
+        <a href="{pdf_url}" download="{file_name}">
+            <button>{label}</button>
+        </a>
+    """, unsafe_allow_html=True)
 
 def video_func(url, path, name, video_title):
     st.header(video_title)
@@ -1438,6 +1434,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
