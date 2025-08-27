@@ -129,17 +129,6 @@ def last_page():
 
 # ---------------- PAGE 1 ----------------
 if st.session_state.page == 1:
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    df = conn.read(
-        worksheet="Sheet1",
-        ttl="10m",
-        nrows=5  # keep all columns
-    )
-    
-    # Print results
-    for row in df.itertuples(index=False):
-        st.title(f"{row.Username}:{row.Password}:{row.ID}:{row.Organization}:{row.Plan}")
-
     
     start_time = datetime.now()
     print(start_time)
@@ -238,10 +227,17 @@ if st.session_state.page == 2:
             key = st.session_state['use_key']
             submit_button = st.button("Submit")
             if submit_button:
-                if key in keys or key == st.secrets["admin_key"]:
-                    st.success(f"Welcome, {username}!")
-                    next_page(start_time2, "Page2")
-                    st.rerun()
+                    conn = st.connection("gsheets", type=GSheetsConnection)
+                    df = conn.read(
+                        worksheet="Sheet1",
+                        ttl="10m",
+                        nrows=5  # keep all columns
+                    )
+                    
+                    # Print results
+                    for row in df.itertuples(index=False):
+                        if row.Username == username and row.Password == key:
+                            next_page()
         if item == "B":
             st.warning("The signup function is not currently availible, if you are interested in registering feel free to contact us, you can find contacts on the Github.")
             st.header("Signup")
@@ -1431,6 +1427,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
