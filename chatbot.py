@@ -25,17 +25,17 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
-def lazy_download_pdf(pdf_url, label="Download PDF", file_name=None):
+def download_pdf_button(pdf_url, label="Download PDF", file_name=None):
 
     if file_name is None:
-        file_name = pdf_url.split("/")[-1]
+        file_name = pdf_url.split("/")[-1]  # default to URL filename
     
-    # Use a placeholder button to trigger the fetch
+    # Lazy download only when button clicked
     if st.button(label):
         with st.spinner("Fetching PDF..."):
             pdf_bytes = requests.get(pdf_url).content
         st.download_button(
-            label=f"Click again to save {file_name}",
+            label=f"Click to save {file_name}",
             data=pdf_bytes,
             file_name=file_name,
             mime="application/pdf"
@@ -1436,6 +1436,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
