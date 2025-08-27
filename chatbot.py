@@ -1310,12 +1310,13 @@ if st.session_state.page == 7:
                 
                     with open(syllabus, "rb") as f:  # read file contents
                         col1, col2, col3 = st.columns(3)
-                        st.download_button(
-                            label="Download Syllabus",
-                            data=f,  # pass the file contents, not the path
-                            file_name=os.path.basename(syllabus),  # name for the downloaded file
-                            mime="application/pdf"
-                        )
+                        with col1:
+                            st.download_button(
+                                label="Download Syllabus",
+                                data=f,  # pass the file contents, not the path
+                                file_name=os.path.basename(syllabus),  # name for the downloaded file
+                                mime="application/pdf"
+                            )
                         with col2:
                             pdf_url = "https://www.sgul.ac.uk/about/our-professional-services/information-services/library/documents/training-manuals/Excel-Fundamentals-Manual.pdf"
                             
@@ -1425,6 +1426,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
