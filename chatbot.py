@@ -241,14 +241,31 @@ if st.session_state.page == 2:
                             
                     if valid == False:
                        st.warning("Username or password is incorrect.")
+                        
         if item == "B":
-            st.warning("The signup function is not currently availible, if you are interested in registering feel free to contact us, you can find contacts on the Github.")
             st.header("Signup")
-            st.text_input("Username")
-            st.text_input("School")
-            st.text_input("Password")
+        
+            username = st.text_input("Username")
+            school = st.text_input("School")
+            password = st.text_input("Password", type="password")
+        
             if st.button("Submit"):
-                pass
+                # Load current data
+                df = conn.read(worksheet="Users", usecols=list(range(3)), ttl=5)
+        
+                # Check if username already exists
+                if username in df["Username"].values:
+                    st.error("That username is already taken. Please choose another.")
+                else:
+                    # Append new user row
+                    new_row = {"Username": username, "School": school, "Password": password}
+                    updated_df = df._append(new_row, ignore_index=True)
+        
+                    # Write back to Google Sheet
+                    conn.update(worksheet="Users", data=updated_df)
+        
+                    st.success("Account created successfully! You can now log in.")
+
     
     if "vote" not in st.session_state:
         with col2: 
@@ -1430,6 +1447,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
