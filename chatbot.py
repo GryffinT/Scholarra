@@ -1328,7 +1328,7 @@ if st.session_state.page == 7:
                 # Lesson Two
                 lesson_two_expander = st.expander(label="Lesson 2")
                 with lesson_two_expander:
-                    st.title("Lesson two, navigating workbook")
+                    st.title("Lesson 2, navigating workbook")
                     st.write("In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.")
 
                     # Video 1
@@ -1358,19 +1358,34 @@ if st.session_state.page == 7:
 
                 lesson_three_expander = st.expander(label="Lesson 3")
                 with lesson_three_expander:
+                    st.title("Lesson 3, formatting")
+                    st.write("In this lesson, you’ll learn how to format worksheets and workbooks, modify page setup for printing and presentation, adjust row height and column width, and customize headers and footers. These skills will help you organize data more effectively, improve the readability of your spreadsheets, and ensure your work is presented in a clear and professional manner.")
                     video_func("https://www.youtube.com/watch?v=0SRt9dkR3Zg", "Excel Page Layout_ The Ultimate Guide.mp4","learnexcel.video","Excel Page Layout: The Ultimate Guide")
                     video_func("https://www.youtube.com/shorts/l5UFTMXOuiU", "ssvid.net--How-to-AutoFit-rows-and-columns-in-Excel-shorts-excel_1080pFHR.mp4", "TutorialsPoint_", "How to AutoFit rows and columns in Excel?")
                     video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "ssvid.net--Create-Custom-Headers-and-Footers-in-Excel_1080p.mp4", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
+                    segment_completed(3)
                 lesson_four_expander= st.expander(label="Lesson 3.1")
                 with lesson_four_expander:
+                    st.title("Lesson 3.1, customization")
+                    st.write("In this lesson, you’ll learn how to customize the Quick Access Toolbar, display and modify workbook content in different views, freeze worksheet rows and columns, change window views, modify basic workbook properties, and display formulas. Mastering these features will make navigating Excel more efficient, allow you to organize and review data with greater ease, and give you more control over how your workbook is displayed and managed.")
                     video_func("https://www.youtube.com/watch?v=ERCg7RznD3w", "ssvid.net--Customize-the-Quick-Access-Toolbar-in-Excel_v720P.mp4", "Simon Sez IT", "Customize the Quick Access toolbar")
                     video_func("https://www.youtube.com/watch?v=rqjStG5xTZ4", "ssvid.net--Microsoft-Excel-Display-and-Modify-workbook-content-in-different_1080p.mp4", "Kay Rand Morgan", "Display and modify workbook content in different views")
                     video_func("https://www.youtube.com/shorts/SY9R06sqg3A", "ssvid.net--Freeze-or-lock-rows-and-columns-in-Excel_v720P.mp4", "SpreadsheetNation", "Freeze worksheet rows and columns")
                     video_func("https://www.youtube.com/watch?v=GfHWyniYja4", "ssvid.net--Microsoft-Excel-Change-window-views-CC_1080p.mp4", "Kay Rand Morgan", "Change window views")
                     video_func("https://www.youtube.com/watch?v=5ta5Vf8VRms", "ssvid.net--MO-200-Excel-Manage-Worksheets-and-Workbooks-Modify_v720P.mp4", "David Hays", "Modify basic workbook properties")
                     video_func("https://www.youtube.com/watch?v=nBkv7EGsAIU", "ssvid.net--How-to-Show-Formulas-in-Excel_1080pFHR.mp4", "Excel Tutorials by EasyClick Academy", "Display formulas")
+                    segment_completed(3.1)
+                lesson_five_expander= st.expander(label="Lesson 4")
+                with lesson_five_expander:
+                    st.title("Lesson 4, how to configure for collaboration")
+                    video_func()
+                    video_func()
+                    video_func()
+                    video_func()
+                    segment_completed(4)
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
