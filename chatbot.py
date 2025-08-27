@@ -1378,14 +1378,15 @@ if st.session_state.page == 7:
                 lesson_five_expander= st.expander(label="Lesson 4")
                 with lesson_five_expander:
                     st.title("Lesson 4, how to configure for collaboration")
-                    video_func()
-                    video_func()
-                    video_func()
-                    video_func()
+                    video_func("https://www.youtube.com/watch?v=Mrt4v0ysA8w", "Lesson4Video1.mp4", "Excel Tutorials by EasyClick Academy", "How to Set the Print Area in Excel (Step by Step)")
+                    video_func("https://www.youtube.com/watch?v=P2L4GOGDsx8", "Lesson4Video2.mp4", "Kay Rand Morgan", "Microsoft Excel - Save workbooks in alternative file formats CC")
+                    video_func("https://www.youtube.com/watch?v=HfwMo6M1XzM", "Lesson4Video3.mp4", "Kevin Stratvert", "How to Print Excel Sheet")
+                    video_func("https://www.youtube.com/watch?v=KbJUKAY8FZ8", "Lesson4Video4.mp4", "How To Tutorials- Maha Gurus", "Inspecting and Protecting Workbooks- Inspect Document in Excel Tutorial")
                     segment_completed(4)
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
