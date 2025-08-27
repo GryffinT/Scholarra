@@ -1270,19 +1270,37 @@ access_keys = st.secrets["access_keys"]
 if st.session_state.page == 5:
     st.title("Account Info")
     st.write("Find your account info below.")
-    used_key = st.session_state['use_key']
-    key_expandable = st.expander(label="Account specifics")
-    with key_expandable:
-        # safely get the user_key from session_state, or show default text
-        st.write(f"Currently logged in using key: {used_key}")
-        ID = None
-        st.write("Account ID is: ", st.secrets[used_key]["ID"])
 
-    plan_expandable = st.expander(label="Subscription")
-    with plan_expandable:
-        st.write("Your're subscribed to the ", st.secrets[used_key]["PLAN"], " plan.")
-        st.info(plan_info[(st.secrets[used_key]["PLAN"])])
-        
+    # Who is logged in (set at login)
+    username = st.session_state.get("username")
+    password = st.session_state.get("password")
+
+    # Load the spreadsheet
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    df = conn.read(worksheet="Sheet1", ttl=5)
+
+    # Find the row for this user
+    user_row = df[(df["Username"] == username) & (df["Password"] == password)]
+
+    if not user_row.empty:
+        # Extract account info from DataFrame
+        user_id = user_row.iloc[0]["ID"]
+        plan = user_row.iloc[0]["Plan"]
+        organization = user_row.iloc[0]["Organization"]
+
+        key_expandable = st.expander(label="Account specifics")
+        with key_expandable:
+            st.write(f"Currently logged in as: **{username}**")
+            st.write("Account ID:", user_id)
+            st.write("Organization:", organization)
+
+        plan_expandable = st.expander(label="Subscription")
+        with plan_expandable:
+            st.write("You're subscribed to the", plan, "plan.")
+            st.info(plan_info.get(plan, "No info available for this plan."))
+    else:
+        st.error("Could not load account info. Please log in again.")
+
 
 # ---------------- PAGE 6 (Analytics) ----------------
 
@@ -1467,6 +1485,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
