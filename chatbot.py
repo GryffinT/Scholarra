@@ -162,6 +162,7 @@ if st.session_state.page == 1:
     next = st.button("Next")
     if next:
         st.session_state.page += 1
+        st.rerun()
 
 # ---------------- PAGE 2 ----------------
 
@@ -1504,6 +1505,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
