@@ -159,7 +159,7 @@ if st.session_state.page == 1:
         "<h1 class='batangas-font' style='text-align: center;'>Smarter study starts here.</h1>",
         unsafe_allow_html=True,
     )
-    next = st.button("Next", disabled=True)
+    next = st.button("Next")
     if next:
         st.session_state.page += 1
         st.rerun()
@@ -1505,6 +1505,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
