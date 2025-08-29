@@ -760,7 +760,7 @@ if st.session_state.page == 3:
                 process_math_input(user_input) 
 
             elif category == "INFO":
-                research(user_input, )
+                research(user_input, SOURCES)
                 availible_sources_expander = st.expander("Availible sources and agent info")
                 with availible_sources_expander:
                     st.write("The Scholarra research assistant allows users to interface with a combination of openai's GPT-5-mini and GPT-4o-mini agents loaded with instructions to first determine the prompted topic and then search through a varified source list to produce a factual and neutral desccription, citing sources along the way.")
@@ -1533,6 +1533,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
