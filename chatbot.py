@@ -485,12 +485,21 @@ if st.session_state.page == 3:
                 response = "OTHER"
             return response
 
-    if selection == "PBCA-0.2":
+    if selection == "PBCA-0.3":
         st.title("PBCA-0.2")
         PBCA_expander = st.expander("PBCA-0.2 agent profile")
         with PBCA_expander:
             st.title("Prompt Based Cascading Agent (PBCA) V 0.2")
             st.write("The PBCA-0.2, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are cascaded sequentially through six specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
+            availible_sources_expander = st.expander("Availible sources")
+            with availible_sources_expander:
+                st.write("The availible sources are as follows:")
+                source_rows = []
+                for category, items in SOURCES.items():
+                    for name, link in items:
+                        source_rows.append({"Category": category, "Source": name, "Link": link})
+                sources_df = pd.DataFrame(source_rows)
+                st.dataframe(sources_df, width='stretch')
         st.markdown("""Powered by Open AI APIs""")
 
         def filter_prompt(user_prompt):
@@ -761,16 +770,7 @@ if st.session_state.page == 3:
 
             elif category == "INFO":
                 research(user_input, SOURCES)
-                availible_sources_expander = st.expander("Availible sources and agent info")
-                with availible_sources_expander:
-                    st.write("The Scholarra research assistant allows users to interface with a combination of openai's GPT-5-mini and GPT-4o-mini agents loaded with instructions to first determine the prompted topic and then search through a varified source list to produce a factual and neutral desccription, citing sources along the way.")
-                    st.write("The availible sources are as follows:")
-                    source_rows = []
-                    for category, items in SOURCES.items():
-                        for name, link in items:
-                            source_rows.append({"Category": category, "Source": name, "Link": link})
-                    sources_df = pd.DataFrame(source_rows)
-                    st.dataframe(sources_df, width='stretch')
+
                 
 
 # RESEARCH MODE BEINGS HERE
@@ -1533,6 +1533,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
