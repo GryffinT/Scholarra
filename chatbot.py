@@ -456,11 +456,7 @@ if st.session_state.page == 3:
     end2 = datetime.now()
     start3 = datetime.now()
     
-    AI_expander = st.expander("Agent panel")
-    with AI_expander:
-        st.header("Scholarra agent panel")
-        st.write("Here you can select from Scholarra's offered agents from the dropdown to best fit your needs.")
-        selection = st.selectbox("AI Mode", [f"{active_model}", "Research (Beta)"])  
+    selection = {active_model}
 
 
     def categorize_prompt(prompt):
@@ -772,13 +768,6 @@ if st.session_state.page == 3:
 
             elif category == "INFO":
                 research(user_input, SOURCES)
-
-                
-
-# RESEARCH MODE BEINGS HERE
-
-    if selection == "Research (Beta)":
-        pass
                     
 # ---------------- PAGE 4 (Grapher) ----------------
 
@@ -1535,6 +1524,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
