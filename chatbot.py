@@ -35,29 +35,31 @@ active_model = "PBCA-0.3"
 
 async def get_time(page_name, page_num):
     counter = 0
+    # Wait while user is on the specified page
     while st.session_state.page == page_num:
         counter += 60
-        time.sleep(60)
-        # Load current data from Sheet1
+        await asyncio.sleep(60)  # Correct async sleep
+
+    # Once the user leaves the page, update the sheet
     df = conn.read(worksheet="Sheet1", ttl=5)
 
-    # Check if username already exists
-    if time in df[f"{page_name}"].values:
-        # Create new row
-        new_row = pd.DataFrame({
-            
-        })
-        key = st.session_state['use_key']
+    username = st.session_state.get("username")
+    key = st.session_state.get("use_key")
 
-        for row in df.itertuples(index=False):
-            if row.Username == st.session_state["username"] and row.Password == key:
-                time = row.{page_name}
-                if time == 0:
-                    updated_df = pd.concat([time, counter], ignore_index=True)
-                    conn.update(worksheet="Sheet1", data=updated_df)
-                else:
-                    updated_df = pd.concat([time.value, counter], ignore_index=True)
-                    conn.update(worksheet="Sheet1", data=updated_df)
+    # Find the row for the current user
+    user_row = df[(df["Username"] == username) & (df["Password"] == key)]
+    if not user_row.empty:
+        # Update time spent on the page
+        idx = user_row.index[0]
+        current_time = df.at[idx, page_name]
+        if current_time == 0 or pd.isna(current_time):
+            df.at[idx, page_name] = counter
+        else:
+            df.at[idx, page_name] = current_time + counter
+        conn.update(worksheet="Sheet1", data=df)
+    else:
+        # Optionally handle case where user row is not found
+        pass
     
 
 base_dir = os.path.dirname(__file__)
@@ -1556,6 +1558,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
