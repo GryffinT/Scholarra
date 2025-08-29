@@ -115,7 +115,7 @@ def progress_bar(loading_text, page):
             print("No matching user found.")
 
         
-    if st.session_state.page == 7:
+    elif st.session_state.page == 7:
         username = st.session_state["username"]
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
@@ -1592,6 +1592,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
