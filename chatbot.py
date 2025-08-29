@@ -78,7 +78,7 @@ def progress_bar(loading_text, page):
     if st.session_state.get("_progress_lock") == page:
         return
 
-    if st.session_state.page != 3 and st.session_state.page != 7:
+    if st.session_state.page not in [3,4,7]:
         counter = datetime.now()
         st.session_state["counter"] = counter
     
@@ -133,6 +133,30 @@ def progress_bar(loading_text, page):
             conn.update(worksheet="Sheet1", data=df)
         
             print("MatLib time recorded successfully!")
+        else:
+            print("No matching user found.")
+    elif st.session_state.page == 4:
+        username = st.session_state["username"]
+        # Connect to Google Sheets
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = conn.read(worksheet="Sheet1", ttl="10m")
+        course_end = datetime.now()
+
+        # Calculate time delta
+        deltatime = (course_end - st.session_state.counter).total_seconds()
+        
+        # Find the row with matching username + password
+        mask = (df["Username"] == username) & (df["Password"] == key)
+        
+        if mask.any():
+            df["Grapher"] = df["Grapher"].fillna(0).astype(float)
+            # Update the "AI" column with the new delta time
+            df.loc[mask, "Grapher"] += deltatime
+        
+            # Push the changes back to Google Sheets
+            conn.update(worksheet="Sheet1", data=df)
+        
+            print("Grapher time recorded successfully!")
         else:
             print("No matching user found.")
     
@@ -1589,6 +1613,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
