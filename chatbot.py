@@ -77,6 +77,7 @@ def progress_bar(loading_text, page):
     if st.session_state.get("_progress_lock") == page:
         return
     if st.session_state.page == 3:
+        username = st.session_state["username"]
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
@@ -100,6 +101,7 @@ def progress_bar(loading_text, page):
             print("No matching user found.")
         
     if st.session_state.page == 7:
+        username = st.session_state["username"]
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
@@ -1575,6 +1577,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
