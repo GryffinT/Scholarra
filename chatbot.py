@@ -69,13 +69,62 @@ def url_video_func(url, name, video_title):
     with video_credit_expander:
         st.write(f"Video produced by {name} on Youtube.")
         st.write(f"URL: [{url}]({url})")
-        
+
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
 
 def progress_bar(loading_text, page):
     if st.session_state.get("_progress_lock") == page:
         return
+    if st.session_state.page == 3:
+        end_time = datetime.now()
+        deltatime = (end_time - st.session_state["ai_start"]).total_seconds()
+        # Connect to Google Sheets
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = conn.read(worksheet="Sheet1", ttl="10m")
+        
+        # Example: calculate elapsed time
+        end_time = datetime.now()
+        deltatime = (end_time - st.session_state["ai_start_time"]).total_seconds()
+        
+        # Find the row with matching username + password
+        mask = (df["Username"] == username) & (df["Password"] == key)
+        
+        if mask.any():
+            # Update the "AI" column with the new delta time
+            df.loc[mask, "AI"] += deltatime
+        
+            # Push the changes back to Google Sheets
+            conn.update(worksheet="Sheet1", data=df)
+        
+            print("AI time recorded successfully!")
+        else:
+            print("No matching user found.")
+        
+    if st.session_state.page == 7:
+        end_time = datetime.now()
+        deltatime = (end_time - st.session_state["course_start"]).total_seconds()
+        # Connect to Google Sheets
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = conn.read(worksheet="Sheet1", ttl="10m")
+        
+        # Example: calculate elapsed time
+        end_time = datetime.now()
+        deltatime = (end_time - st.session_state["ai_start_time"]).total_seconds()
+        
+        # Find the row with matching username + password
+        mask = (df["Username"] == username) & (df["Password"] == key)
+        
+        if mask.any():
+            # Update the "AI" column with the new delta time
+            df.loc[mask, "MatLib"] += deltatime
+        
+            # Push the changes back to Google Sheets
+            conn.update(worksheet="Sheet1", data=df)
+        
+            print("AI time recorded successfully!")
+        else:
+            print("No matching user found.")
     
     bar = st.progress(0, text=loading_text)
     for percent_complete in range(100):
@@ -141,7 +190,6 @@ def time_delta(start_time, end_time, page):
 
 # ---------------- PAGE 1 ----------------
 if st.session_state.page == 1:
-    start1 = datetime.now
     
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
@@ -187,8 +235,6 @@ if "user_key" not in st.session_state:
 # Page 2 content
 # -----------------------------
 if st.session_state.page == 2:
-    end1 = datetime.now()
-    start2 = datetime.now()
     
     st.button("Back", on_click=last_page)
     st.markdown(
@@ -317,6 +363,8 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
+    ai_start_time = datetime.now()
+    st.session_state["ai_start"] = ai_start_time
     
     def filter_research_response(AI_Response, user_input):
         with st.spinner("Double checking response..."):
@@ -1352,6 +1400,8 @@ def course_register(course):
         st.info(f"Your {course} access key is: {course}-{st.session_state["user_id"]}")
 
 if st.session_state.page == 7:
+    course_start_time = datetime.now()
+    st.session_state["course_start"] = course_start_time
     key = st.session_state.get('use_key')  # the logged-in password
 
     # Load the spreadsheet
@@ -1529,6 +1579,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
