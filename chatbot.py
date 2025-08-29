@@ -27,7 +27,38 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
+# DEFINE AS THE ACTIVE MODEL FOR THE AI
+
 active_model = "PBCA-0.3"
+
+# CODE BEGINS
+
+async def get_time(page_name, page_num):
+    counter = 0
+    while st.session_state.page == page_num:
+        counter += 60
+        time.sleep(60)
+        # Load current data from Sheet1
+    df = conn.read(worksheet="Sheet1", ttl=5)
+
+    # Check if username already exists
+    if time in df[f"{page_name}"].values:
+        # Create new row
+        new_row = pd.DataFrame({
+            
+        })
+        key = st.session_state['use_key']
+
+        for row in df.itertuples(index=False):
+            if row.Username == st.session_state["username"] and row.Password == key:
+                time = row.{page_name}
+                if time == 0:
+                    updated_df = pd.concat([time, counter], ignore_index=True)
+                    conn.update(worksheet="Sheet1", data=updated_df)
+                else:
+                    updated_df = pd.concat([time.value, counter], ignore_index=True)
+                    conn.update(worksheet="Sheet1", data=updated_df)
+    
 
 base_dir = os.path.dirname(__file__)
 images_dir = os.path.join(base_dir, "Images")
@@ -231,6 +262,7 @@ if st.session_state.page == 2:
         if item == "A":
             st.header("Login")
             username = st.text_input("Username")
+            st.session_state["username"] = username
             st.session_state['use_key'] = get_key()
             key = st.session_state['use_key']
             submit_button = st.button("Submit")
@@ -1524,6 +1556,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
