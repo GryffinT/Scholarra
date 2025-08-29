@@ -1358,7 +1358,7 @@ def score_question(answer, questions, question_num):
 def course_register(course):
     registration = st.button("Register")
     if registration:
-        st.info(f"Your {course} registration key is: {course}-{st.session_state["user_id"]}.")
+        st.info(f"Your {course} registration key is: {course}-{st.session_state["user_id"]}")
 
 if st.session_state.page == 7:
     key = st.session_state.get('use_key')  # the logged-in password
@@ -1538,66 +1538,3 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
