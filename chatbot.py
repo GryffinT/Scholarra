@@ -1,31 +1,18 @@
 import streamlit as st
 from openai import OpenAI
 import requests
-from bs4 import BeautifulSoup
 from streamlit_gsheets import GSheetsConnection
-import re
 import os
 import pandas as pd
 import numpy as np
-import httpx
 import plotly.express as px
 import random
-from urllib.parse import quote
 from datetime import datetime
-import io
 import string
-from scipy import stats
 import math
-import urllib.parse
 import time
-from sklearn.metrics.pairwise import cosine_similarity
-from rapidfuzz import process
-import asyncio
-import aiohttp
-from pdf2image import convert_from_path
-from streamlit_modal import Modal
 from rapidfuzz import fuzz
-import json
+from sklearn.metrics.pairwise import cosine_similarity
 
 base_dir = os.path.dirname(__file__)
 images_dir = os.path.join(base_dir, "Images")
@@ -1538,4 +1525,5 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
