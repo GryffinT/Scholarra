@@ -125,6 +125,7 @@ def progress_bar(loading_text, page):
         mask = (df["Username"] == username) & (df["Password"] == key)
         
         if mask.any():
+            df["MatLib"] = df["MatLib"].fillna(0).astype(float)
             # Update the "AI" column with the new delta time
             df.loc[mask, "MatLib"] += deltatime
         
@@ -1588,6 +1589,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
