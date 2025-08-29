@@ -73,11 +73,8 @@ def url_video_func(url, name, video_title):
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
 
-from datetime import datetime
-import streamlit as st
-from streamlit_gsheets import GSheetsConnection
-
 def progress_bar(loading_text, page):
+    key = st.session_state.get('use_key')
     if st.session_state.get("_progress_lock") == page:
         return
     
@@ -1595,6 +1592,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
