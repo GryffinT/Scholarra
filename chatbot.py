@@ -456,7 +456,7 @@ if st.session_state.page == 3:
     end2 = datetime.now()
     start3 = datetime.now()
     
-    selection = {active_model}
+    selection = active_model
 
 
     def categorize_prompt(prompt):
@@ -1524,6 +1524,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
