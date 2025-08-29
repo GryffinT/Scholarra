@@ -77,15 +77,13 @@ def progress_bar(loading_text, page):
     if st.session_state.get("_progress_lock") == page:
         return
     if st.session_state.page == 3:
-        end_time = datetime.now()
-        deltatime = (end_time - st.session_state["ai_start"]).total_seconds()
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
         
         # Example: calculate elapsed time
         end_time = datetime.now()
-        deltatime = (end_time - st.session_state["ai_start_time"]).total_seconds()
+        deltatime = (end_time - st.session_state["ai_start"]).total_seconds()
         
         # Find the row with matching username + password
         mask = (df["Username"] == username) & (df["Password"] == key)
@@ -102,15 +100,13 @@ def progress_bar(loading_text, page):
             print("No matching user found.")
         
     if st.session_state.page == 7:
-        end_time = datetime.now()
-        deltatime = (end_time - st.session_state["course_start"]).total_seconds()
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
         
         # Example: calculate elapsed time
         end_time = datetime.now()
-        deltatime = (end_time - st.session_state["ai_start_time"]).total_seconds()
+        deltatime = (end_time - st.session_state["course_start"]).total_seconds()
         
         # Find the row with matching username + password
         mask = (df["Username"] == username) & (df["Password"] == key)
@@ -1579,6 +1575,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
