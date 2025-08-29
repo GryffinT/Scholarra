@@ -27,6 +27,8 @@ from streamlit_modal import Modal
 from rapidfuzz import fuzz
 import json
 
+active_model = "PBCA-0.3"
+
 base_dir = os.path.dirname(__file__)
 images_dir = os.path.join(base_dir, "Images")
 
@@ -458,7 +460,7 @@ if st.session_state.page == 3:
     with AI_expander:
         st.header("Scholarra agent panel")
         st.write("Here you can select from Scholarra's offered agents from the dropdown to best fit your needs.")
-        selection = st.selectbox("AI Mode", ["PBCA-0.2", "Research (Beta)"])  
+        selection = st.selectbox("AI Mode", [f"{active_model}", "Research (Beta)"])  
 
 
     def categorize_prompt(prompt):
@@ -485,12 +487,12 @@ if st.session_state.page == 3:
                 response = "OTHER"
             return response
 
-    if selection == "PBCA-0.3":
-        st.title("PBCA-0.2")
-        PBCA_expander = st.expander("PBCA-0.2 agent profile")
+    if selection == active_model:
+        st.title(active_model)
+        PBCA_expander = st.expander(f"{active_model} agent profile")
         with PBCA_expander:
-            st.title("Prompt Based Cascading Agent (PBCA) V 0.2")
-            st.write("The PBCA-0.2, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are cascaded sequentially through six specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
+            st.title(f"Prompt Based Cascading Agent {active_model}")
+            st.write(f"The {active_model}, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are cascaded sequentially through six specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
             availible_sources_expander = st.expander("Availible sources")
             with availible_sources_expander:
                 st.write("The availible sources are as follows:")
@@ -1533,6 +1535,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
