@@ -1403,7 +1403,7 @@ if st.session_state.page == 7:
                 st.info("Course difficulty: N/A")
                 st.info("Course cost: Free")
                 st.info("Course duration: N/A")   
-                course_registration("Excel")
+                course_register("Excel")
     else:
         course_media = {
             "MO-200 Microsoft Excel (Office 2019)": 
@@ -1538,6 +1538,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
