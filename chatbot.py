@@ -1355,7 +1355,7 @@ def score_question(answer, questions, question_num):
     else:
         return st.error(f"Not quite, you answered {answer}, but the correct answer was {active_quiz[question_num]}.")
 
-def course_register(course, key):
+def course_register(course):
     registration = st.button("Register")
     if registration:
         st.info(f"Your {course} registration key is: {course}-{st.session_state["user_id"]}.")
@@ -1538,6 +1538,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
