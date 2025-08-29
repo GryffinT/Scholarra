@@ -1349,12 +1349,22 @@ def score_question(answer, questions, question_num):
         return st.error(f"Not quite, you answered {answer}, but the correct answer was {active_quiz[question_num]}.")
 
 def course_register(course, key):
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    df = conn.read(worksheet="Sheet1", ttl=5)
+
+    # Find the row that matches the stored password
+    user_row = df[df["Password"] == key]
     registration = st.button("Register")
     user_id = user_row.iloc[0]["ID"]
     if registration:
         st.info(f"Your {course} registration key is: {key}{user_id}.")
 
 if st.session_state.page == 7:
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    df = conn.read(worksheet="Sheet1", ttl=5)
+
+    # Find the row that matches the stored password
+    user_row = df[df["Password"] == key]
     end5 = datetime.now()
     user_id = user_row.iloc[0]["ID"]
     start7 = datetime.now()
@@ -1512,6 +1522,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
