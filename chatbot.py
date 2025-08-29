@@ -1361,6 +1361,28 @@ def course_register(course, key):
         st.info(f"Your {course} registration key is: {course}-{st.session_state["user_id"]}.")
 
 if st.session_state.page == 7:
+    key = st.session_state.get('use_key')  # the logged-in password
+
+    # Load the spreadsheet
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    df = conn.read(worksheet="Sheet1", ttl=5)
+
+    # Find the row that matches the stored password
+    user_row = df[df["Password"] == key]
+
+    if not user_row.empty:
+        # Extract account info from that row
+        username = user_row.iloc[0]["Username"]
+        user_id = user_row.iloc[0]["ID"]
+        organization = user_row.iloc[0]["Organization"]
+        plan = user_row.iloc[0]["Plan"]
+        
+        # Store them in session_state so they are accessible everywhere
+        st.session_state["username"] = username
+        st.session_state["user_id"] = user_id
+        st.session_state["organization"] = organization
+        st.session_state["plan"] = plan
+        
     start7 = datetime.now()
     student_course_keys = {f"Excel-{st.session_state["user_id"]}": "MO-200 Microsoft Excel (Office 2019)"}
     accepted_courses = ["MO-200 Microsoft Excel (Office 2019)"]
@@ -1516,6 +1538,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
