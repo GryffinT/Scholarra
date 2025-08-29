@@ -31,36 +31,7 @@ import json
 
 active_model = "PBCA-0.3"
 
-# CODE BEGINS
-
-async def get_time(page_name, page_num):
-    counter = 0
-    # Wait while user is on the specified page
-    while st.session_state.page == page_num:
-        counter += 60
-        await asyncio.sleep(60)  # Correct async sleep
-
-    # Once the user leaves the page, update the sheet
-    df = conn.read(worksheet="Sheet1", ttl=5)
-
-    username = st.session_state.get("username")
-    key = st.session_state.get("use_key")
-
-    # Find the row for the current user
-    user_row = df[(df["Username"] == username) & (df["Password"] == key)]
-    if not user_row.empty:
-        # Update time spent on the page
-        idx = user_row.index[0]
-        current_time = df.at[idx, page_name]
-        if current_time == 0 or pd.isna(current_time):
-            df.at[idx, page_name] = counter
-        else:
-            df.at[idx, page_name] = current_time + counter
-        conn.update(worksheet="Sheet1", data=df)
-    else:
-        # Optionally handle case where user row is not found
-        pass
-    
+# CODE BEGINS    
 
 base_dir = os.path.dirname(__file__)
 images_dir = os.path.join(base_dir, "Images")
@@ -346,8 +317,7 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
-    asyncio.run(get_time("AI", 3))
-
+    
     def filter_research_response(AI_Response, user_input):
         with st.spinner("Double checking response..."):
             search_instruction = (
@@ -1559,6 +1529,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
