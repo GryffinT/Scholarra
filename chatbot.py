@@ -1348,11 +1348,17 @@ def score_question(answer, questions, question_num):
     else:
         return st.error(f"Not quite, you answered {answer}, but the correct answer was {active_quiz[question_num]}.")
 
+def course_register(course, key):
+    registration = st.button("Register")
+    user_id = user_row.iloc[0]["ID"]
+    if registration:
+        st.info(f"Your {course} registration key is: {key}{user_id}.")
 
 if st.session_state.page == 7:
     end5 = datetime.now()
+    user_id = user_row.iloc[0]["ID"]
     start7 = datetime.now()
-    student_course_keys = {"KStudent": "MO-200 Microsoft Excel (Office 2019)"}
+    student_course_keys = {f"Excel-{user_id}": "MO-200 Microsoft Excel (Office 2019)"}
     accepted_courses = ["MO-200 Microsoft Excel (Office 2019)"]
 
     entered_course_key = st.text_input("Enter course key")
@@ -1371,6 +1377,7 @@ if st.session_state.page == 7:
                 st.info("Course difficulty: N/A")
                 st.info("Course cost: Free")
                 st.info("Course duration: N/A")   
+                course_registration("Excel 2019", "Excel-")
     else:
         course_media = {
             "MO-200 Microsoft Excel (Office 2019)": 
@@ -1505,6 +1512,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
