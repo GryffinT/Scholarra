@@ -346,6 +346,7 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
+    asyncio.run(get_time("AI", 3)())
 
     def filter_research_response(AI_Response, user_input):
         with st.spinner("Double checking response..."):
@@ -1558,6 +1559,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
