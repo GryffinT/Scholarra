@@ -73,32 +73,50 @@ def url_video_func(url, name, video_title):
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
 
+from datetime import datetime
+import streamlit as st
+from streamlit_gsheets import GSheetsConnection
+
 def progress_bar(loading_text, page):
     if st.session_state.get("_progress_lock") == page:
         return
+    
     if st.session_state.page == 3:
         username = st.session_state["username"]
+        key = st.session_state["use_key"]  # make sure you stored the password at login
+        
+        # Ensure ai_start exists
+        if "ai_start" not in st.session_state:
+            st.session_state["ai_start"] = datetime.now()
+            return  # don’t log yet, just set start time
+
+        # Calculate time delta
+        end_time = datetime.now()
+        deltatime = (end_time - st.session_state["ai_start"]).total_seconds()
+
+        # Reset start time so next call only measures the new interval
+        st.session_state["ai_start"] = end_time  
+
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
-        
-        # Example: calculate elapsed time
-        end_time = datetime.now()
-        deltatime = (end_time - st.session_state["ai_start"]).total_seconds()
-        
-        # Find the row with matching username + password
+
+        # Match user row
         mask = (df["Username"] == username) & (df["Password"] == key)
-        
+
         if mask.any():
-            # Update the "AI" column with the new delta time
+            # Make sure "AI" column is numeric
+            df["AI"] = df["AI"].fillna(0).astype(float)
+
+            # Add elapsed time
             df.loc[mask, "AI"] += deltatime
-        
-            # Push the changes back to Google Sheets
+
+            # Push changes back
             conn.update(worksheet="Sheet1", data=df)
-        
-            print("AI time recorded successfully!")
+            print(f"AI time recorded: {deltatime:.2f} seconds")
         else:
             print("No matching user found.")
+
         
     if st.session_state.page == 7:
         username = st.session_state["username"]
@@ -1577,6 +1595,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
