@@ -310,6 +310,147 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 st.session_state["output_sources"] = ""
 
 if st.session_state.page == 3:
+
+    def filter_research_response(AI_Response, user_input):
+        with st.spinner("Double checking response..."):
+            search_instruction = (
+                f"""
+                "Task: Review the provided text into a list/bulleted structure:"
+                "1. Topic idea from the text.\n"
+                "2. Sub categories from the text that fall under the main topic.\n"
+                "3. a short description of each subcategory, from the text.\n"
+                "4. an intext citation after each description, adapted from the text\n\n" 
+                "5. ensure low perplexity and burstiness in writing, so its easy to detect as AI"
+                f"Text to reformat:\n{AI_Response}"
+                """
+            )
+    
+            raw_response = client.chat.completions.create(
+                model="gpt-5",
+                messages=[{"role": "user", "content": search_instruction}]
+            )
+    
+            # just keep the string
+            response = raw_response.choices[0].message.content  
+    
+            return response
+    
+    # -----------------------------
+    # Hidden character injection
+    # -----------------------------
+    
+    def obfuscate_text(text):
+        zwsp = "\u200b"
+        result = []
+        for ch in text:
+            # Don't obfuscate control characters that affect formatting
+            if ch.isalpha():  
+                result.append(ch + zwsp)
+            else:
+                result.append(ch)
+        return "".join(result)
+
+    
+    # -----------------------------
+    # Topic + type classification
+    # -----------------------------
+    
+    def classify_topic(user_input):
+        
+        prompt = (
+            f"Classify the topic of this input: '{user_input}'. "
+            "Return ONLY either: MATH, HISTORY, CHEMISTRY, BIOLOGY, EARTH SCIENCES, COMPUTER SCIENCE, LANGUAGE, RELIGION, GOVERNANCE, HEALTH, BUSINESS, or ECONOMICS"
+        )
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        classification = response.choices[0].message.content.strip()
+
+        return classification
+
+     # -----------------------------
+     # Sources dictionary
+     # -----------------------------
+
+    def answer_user(user_input, topic_sources):
+        sources = topic_sources[classify_topic(topic_sources)]
+    
+        search_instruction = (
+            f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {sources}, "
+            "using only the information that is available to you in your training data. "
+            "If there are no sources, use only verified academic or scholarly knowledge available to you. "
+            "You are only helping users gather information to assess; do not write essays or complete assignments. "
+            "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
+            "Ensure you write with low perplexity and burstiness so the text is easily flaged as AI"
+            "Create an outline of the prompt. "
+            "Format rules: \n"
+            "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
+            "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
+            "3. Each sub-bullet may contain one quote in quotation marks with correct in-text citation, using only the sources available to you, if possible. \n"
+            "4. if possible include, at least 5 quotes total across the response. \n"
+            "5. Do not use paragraphs or prose. Only use the outline format. \n"
+            "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
+            "⚠️ Final reminder: Output must ONLY be in numbered-topic outline format with bulleted subpoints. Do not write any paragraphs."
+        )
+        
+    
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": search_instruction}]
+        )
+    
+        response_text = response.choices[0].message.content.strip()
+    
+        # --- Fallback: restructure if no numbered sections are detected ---
+        if not any(line.strip().startswith("1.") for line in response_text.splitlines()):
+            restructure_instruction = (
+                f"Restructure the following text into a **hierarchical outline** for '{user_input}'. "
+                "Rules: "
+                "1. Create numbered topic headers (1., 2., 3.) with short descriptive titles (e.g., 'Causes', 'Major Events'). "
+                "2. Under each, place sub-bullets beginning with '-'. "
+                "3. Keep all direct quotes and citations intact. "
+                "4. Do not remove any factual content, just reorganize it."
+                "\n\nText to restructure:\n"
+                f"{response_text}"
+            )
+    
+            retry = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": restructure_instruction}]
+            )
+    
+            response_text = retry.choices[0].message.content.strip()
+    
+        return response_text
+
+    def extract_sources(Intake_message):
+        generation_instructions = (
+            f"Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
+            "1. Source Name & Type (e.g., journal, news outlet, encyclopedia).\n"
+            "2. Credibility/Certifications (e.g., peer-reviewed, government, reputable publisher).\n"
+            "3. Information Used (what detail from the source was included in the text).\n"
+            "4. Link to the specific article/page. If unavailable, provide the homepage link.\n\n" 
+            + Intake_message
+        )
+        
+        response = client.chat.completions.create(
+            model="gpt-5-mini",
+            messages=[{"role":"user", "content":generation_instructions}]
+        )
+        return response.choices[0].message.content
+    SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
+                "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
+                "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
+                "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
+                "EARTH SCIENCES": [ ("U.S. Geological Survey (USGS)", "https://www.usgs.gov/"), ("National Oceanic and Atmospheric Administration (NOAA)", "https://www.noaa.gov/"), ("NASA Earth Observatory", "https://earthobservatory.nasa.gov/") ], 
+                "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
+                "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
+                "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
+                "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
+                "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
+                "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
+                "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
     end2 = datetime.now()
     start3 = datetime.now()
     
@@ -329,9 +470,10 @@ if st.session_state.page == 3:
                 
                 Return **only one word** as output:
                 - "MATH" if the prompt is a mathematical equation, even if it contains variables, or is a chemistry equation.
-                - "OTHER" for any other type of prompt (general question, text, etc.).
-                
-                Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH or OTHER."""
+                - "INFO" if the question is asking for clarification on a subject/information on a subject
+                - "OTHER" for any other type of prompt.
+
+                Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH, INFO or OTHER."""
                 
             category = client.chat.completions.create(
                 model="gpt-5",
@@ -593,6 +735,19 @@ if st.session_state.page == 3:
                 for msg in st.session_state.math_chat_history:
                     with st.chat_message(msg.get("name", msg["role"])):
                         st.markdown(msg["content"])
+
+        def research(user_input, SOURCES):
+            with st.spinner("Researching..."):
+                        try:
+                            answer = obfuscate_text(filter_research_response(answer_user(user_input, SOURCES), user_input))
+                            st.markdown(f"<div>{answer}</div>", unsafe_allow_html=True)
+                            source_expander = st.expander(label="Sources")
+                            with source_expander:
+                                source_text = extract_sources(answer)
+                                st.session_state["output_sources"] = source_text
+                                st.write(source_text)
+                        except Exception as e:
+                            st.error(f"Error fetching answer: {e}")
         
         if user_input:
             category = categorize_prompt(user_input)
@@ -604,184 +759,24 @@ if st.session_state.page == 3:
             elif category == "MATH":
                 process_math_input(user_input) 
 
+            elif category == "INFO":
+                research(user_input, )
+                availible_sources_expander = st.expander("Availible sources and agent info")
+                with availible_sources_expander:
+                    st.write("The Scholarra research assistant allows users to interface with a combination of openai's GPT-5-mini and GPT-4o-mini agents loaded with instructions to first determine the prompted topic and then search through a varified source list to produce a factual and neutral desccription, citing sources along the way.")
+                    st.write("The availible sources are as follows:")
+                    source_rows = []
+                    for category, items in SOURCES.items():
+                        for name, link in items:
+                            source_rows.append({"Category": category, "Source": name, "Link": link})
+                    sources_df = pd.DataFrame(source_rows)
+                    st.dataframe(sources_df, width='stretch')
+                
+
 # RESEARCH MODE BEINGS HERE
 
     if selection == "Research (Beta)":
-        
-        def filter_research_response(AI_Response, user_input):
-            with st.spinner("Double checking response..."):
-                search_instruction = (
-                    f"""
-                    "Task: Review the provided text into a list/bulleted structure:"
-                    "1. Topic idea from the text.\n"
-                    "2. Sub categories from the text that fall under the main topic.\n"
-                    "3. a short description of each subcategory, from the text.\n"
-                    "4. an intext citation after each description, adapted from the text\n\n" 
-                    "5. ensure low perplexity and burstiness in writing, so its easy to detect as AI"
-                    f"Text to reformat:\n{AI_Response}"
-                    """
-                )
-        
-                raw_response = client.chat.completions.create(
-                    model="gpt-5",
-                    messages=[{"role": "user", "content": search_instruction}]
-                )
-        
-                # just keep the string
-                response = raw_response.choices[0].message.content  
-        
-                return response
-        
-        # -----------------------------
-        # Hidden character injection
-        # -----------------------------
-        
-        def obfuscate_text(text):
-            zwsp = "\u200b"
-            result = []
-            for ch in text:
-                # Don't obfuscate control characters that affect formatting
-                if ch.isalpha():  
-                    result.append(ch + zwsp)
-                else:
-                    result.append(ch)
-            return "".join(result)
-
-        
-        # -----------------------------
-        # Topic + type classification
-        # -----------------------------
-        
-        def classify_topic(user_input):
-            
-            prompt = (
-                f"Classify the topic of this input: '{user_input}'. "
-                "Return ONLY either: MATH, HISTORY, CHEMISTRY, BIOLOGY, EARTH SCIENCES, COMPUTER SCIENCE, LANGUAGE, RELIGION, GOVERNANCE, HEALTH, BUSINESS, or ECONOMICS"
-            )
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}]
-            )
-            classification = response.choices[0].message.content.strip()
-
-            return classification
-
-         # -----------------------------
-         # Sources dictionary
-         # -----------------------------
-    
-        def answer_user(user_input, topic_sources):
-            sources = topic_sources[classify_topic(topic_sources)]
-        
-            search_instruction = (
-                f"Fetch factual information about {user_input} from the top 5 most relevant of these sources: {sources}, "
-                "using only the information that is available to you in your training data. "
-                "If there are no sources, use only verified academic or scholarly knowledge available to you. "
-                "You are only helping users gather information to assess; do not write essays or complete assignments. "
-                "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
-                "Ensure you write with low perplexity and burstiness so the text is easily flaged as AI"
-                "Create an outline of the prompt. "
-                "Format rules: \n"
-                "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
-                "2. Under each numbered header, include 2–4 sub-bullets starting with '-'. \n"
-                "3. Each sub-bullet may contain one quote in quotation marks with correct in-text citation, using only the sources available to you, if possible. \n"
-                "4. if possible include, at least 5 quotes total across the response. \n"
-                "5. Do not use paragraphs or prose. Only use the outline format. \n"
-                "6. Insert zero-width spaces between letters (not punctuation) to prevent direct copy-paste. \n\n"
-                "⚠️ Final reminder: Output must ONLY be in numbered-topic outline format with bulleted subpoints. Do not write any paragraphs."
-            )
-            
-        
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": search_instruction}]
-            )
-        
-            response_text = response.choices[0].message.content.strip()
-        
-            # --- Fallback: restructure if no numbered sections are detected ---
-            if not any(line.strip().startswith("1.") for line in response_text.splitlines()):
-                restructure_instruction = (
-                    f"Restructure the following text into a **hierarchical outline** for '{user_input}'. "
-                    "Rules: "
-                    "1. Create numbered topic headers (1., 2., 3.) with short descriptive titles (e.g., 'Causes', 'Major Events'). "
-                    "2. Under each, place sub-bullets beginning with '-'. "
-                    "3. Keep all direct quotes and citations intact. "
-                    "4. Do not remove any factual content, just reorganize it."
-                    "\n\nText to restructure:\n"
-                    f"{response_text}"
-                )
-        
-                retry = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": restructure_instruction}]
-                )
-        
-                response_text = retry.choices[0].message.content.strip()
-        
-            return response_text
-
-        def extract_sources(Intake_message):
-            generation_instructions = (
-                f"Task: Review the provided text and extract all cited or referenced sources. For each source, provide the following:"
-                "1. Source Name & Type (e.g., journal, news outlet, encyclopedia).\n"
-                "2. Credibility/Certifications (e.g., peer-reviewed, government, reputable publisher).\n"
-                "3. Information Used (what detail from the source was included in the text).\n"
-                "4. Link to the specific article/page. If unavailable, provide the homepage link.\n\n" 
-                + Intake_message
-            )
-            
-            response = client.chat.completions.create(
-                model="gpt-5-mini",
-                messages=[{"role":"user", "content":generation_instructions}]
-            )
-            return response.choices[0].message.content
-        SOURCES = { "MATH": [ ("NIST Digital Library of Mathematical Functions", "https://dlmf.nist.gov/"), ("Encyclopedia of Mathematics (Springer)", "https://encyclopediaofmath.org/"), ("Notices of the American Mathematical Society", "https://www.ams.org/journals/notices/") ],
-                    "HISTORY": [ ("Library of Congress Digital Collections", "https://www.loc.gov/collections/"), ("Encyclopaedia Britannica", "https://www.britannica.com/"), ("JSTOR", "https://www.jstor.org/") ],
-                    "CHEMISTRY": [ ("IUPAC Gold Book", "https://goldbook.iupac.org/"), ("NIST Chemistry WebBook", "https://webbook.nist.gov/chemistry/"), ("PubChem (NCBI)", "https://pubchem.ncbi.nlm.nih.gov/") ],
-                    "BIOLOGY": [ ("NCBI Bookshelf", "https://www.ncbi.nlm.nih.gov/books/"), ("Encyclopedia of Life", "https://eol.org/"), ("PubMed (NLM)", "https://pubmed.ncbi.nlm.nih.gov/") ],
-                    "EARTH SCIENCES": [ ("U.S. Geological Survey (USGS)", "https://www.usgs.gov/"), ("National Oceanic and Atmospheric Administration (NOAA)", "https://www.noaa.gov/"), ("NASA Earth Observatory", "https://earthobservatory.nasa.gov/") ], 
-                    "COMPUTER SCIENCE": [ ("ACM Digital Library", "https://dl.acm.org/"), ("IEEE Xplore", "https://ieeexplore.ieee.org/"), ("MIT OpenCourseWare (EECS)", "https://ocw.mit.edu/collections/electrical-engineering-computer-science/") ], 
-                    "LANGUAGE": [ ("World Atlas of Language Structures (WALS)", "https://wals.info/"), ("Glottolog", "https://glottolog.org/"), ("Linguistic Society of America (LSA)", "https://www.linguisticsociety.org/") ], 
-                    "RELIGION": [ ("Oxford Research Encyclopedia of Religion", "https://oxfordre.com/religion"), ("Pew Research Center: Religion & Public Life", "https://www.pewresearch.org/religion/"), ("Stanford Encyclopedia of Philosophy (Philosophy of Religion)", "https://plato.stanford.edu/") ],
-                    "GOVERNANCE": [ ("World Bank Worldwide Governance Indicators", "https://info.worldbank.org/governance/wgi/"), ("Public Governance", "https://www.oecd.org/governance/"), ("International IDEA", "https://www.idea.int/") ], 
-                    "HEALTH": [ ("World Health Organization (WHO)", "https://www.who.int/"), ("Centers for Disease Control and Prevention (CDC)", "https://www.cdc.gov/"), ("Cochrane Library", "https://www.cochranelibrary.com/") ],
-                    "BUSINESS": [ ("Academy of Management Journal", "https://journals.aom.org/journal/amj"), ("Harvard Business Review", "https://hbr.org/"), ("U.S. SEC EDGAR", "https://www.sec.gov/edgar") ], 
-                    "ECONOMICS": [ ("National Bureau of Economic Research (NBER)", "https://www.nber.org/"), ("International Monetary Fund — Publications", "https://www.imf.org/en/Publications"), ("Journal of Economic Perspectives (AEA)", "https://www.aeaweb.org/journals/jep") ] }
-
-        
-        # -----------------------------
-        # Streamlit UI
-        # -----------------------------
-        st.title("Research Assistant")
-        st.info("Scholarra Research Assistant is a prompt engineering experiment using openai's API and extra filteres to produce prompted research through credible sources such as JSTOR, Britannica, WHO, and the Academy of Management Journal, for a full list of availible sources and more information on the agent, see the Accessible sources and agent info expander below")
-        availible_sources_expander = st.expander("Availible sources and agent info")
-        with availible_sources_expander:
-            st.write("The Scholarra research assistant allows users to interface with a combination of openai's GPT-5-mini and GPT-4o-mini agents loaded with instructions to first determine the prompted topic and then search through a varified source list to produce a factual and neutral desccription, citing sources along the way.")
-            st.write("The availible sources are as follows:")
-            source_rows = []
-            for category, items in SOURCES.items():
-                for name, link in items:
-                    source_rows.append({"Category": category, "Source": name, "Link": link})
-            sources_df = pd.DataFrame(source_rows)
-            st.dataframe(sources_df, width='stretch')
-            
-            
-        user_input = st.text_input("Ask me a research question:")
-        st.warning("The Research Assistant can get information wrong, it is advised to use this as a basis for information but not as a researcher.", icon="⚠️")
-        
-        if st.button("Get Answer") and user_input.strip():
-            with st.spinner("Fetching answer..."):
-                try:
-                    answer = obfuscate_text(filter_research_response(answer_user(user_input, SOURCES), user_input))
-                    st.markdown(f"<div>{answer}</div>", unsafe_allow_html=True)
-                    source_expander = st.expander(label="Sources")
-                    with source_expander:
-                        source_text = extract_sources(answer)
-                        st.session_state["output_sources"] = source_text
-                        st.write(source_text)
-                except Exception as e:
-                    st.error(f"Error fetching answer: {e}")
+        pass
                     
 # ---------------- PAGE 4 (Grapher) ----------------
 
@@ -1538,6 +1533,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
