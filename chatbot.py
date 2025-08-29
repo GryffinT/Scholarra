@@ -1226,10 +1226,10 @@ if st.session_state.page >= 3:
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
         if st.session_state.page >= 3:
-            main_switch = st.selectbox("Function selection", ["Messager", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
+            main_switch = st.selectbox("Function selection", [f"{active_model}", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
             if main_switch == "Login":
                 progress_bar("Loading login page.", 2)
-            if main_switch == "Messager":
+            if main_switch == active_model:
                 progress_bar("Loading AI interface.", 3)
             if main_switch == "Grapher":
                 progress_bar("Loading Scolistics", 4)
@@ -1524,6 +1524,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
