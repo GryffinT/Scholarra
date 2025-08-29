@@ -1302,6 +1302,13 @@ if st.session_state.page == 5:
         user_id = user_row.iloc[0]["ID"]
         organization = user_row.iloc[0]["Organization"]
         plan = user_row.iloc[0]["Plan"]
+        
+        # Store them in session_state so they are accessible everywhere
+        st.session_state["username"] = username
+        st.session_state["user_id"] = user_id
+        st.session_state["organization"] = organization
+        st.session_state["plan"] = plan
+
 
         key_expandable = st.expander(label="Account specifics")
         with key_expandable:
@@ -1349,26 +1356,13 @@ def score_question(answer, questions, question_num):
         return st.error(f"Not quite, you answered {answer}, but the correct answer was {active_quiz[question_num]}.")
 
 def course_register(course, key):
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    df = conn.read(worksheet="Sheet1", ttl=5)
-
-    # Find the row that matches the stored password
-    user_row = df[df["Password"] == key]
     registration = st.button("Register")
-    user_id = user_row.iloc[0]["ID"]
     if registration:
-        st.info(f"Your {course} registration key is: {key}{user_id}.")
+        st.info(f"Your {course} registration key is: {course}-{st.session_state.user_id}.")
 
 if st.session_state.page == 7:
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    df = conn.read(worksheet="Sheet1", ttl=5)
-
-    # Find the row that matches the stored password
-    user_row = df[df["Password"] == key]
-    end5 = datetime.now()
-    user_id = user_row.iloc[0]["ID"]
     start7 = datetime.now()
-    student_course_keys = {f"Excel-{user_id}": "MO-200 Microsoft Excel (Office 2019)"}
+    student_course_keys = {f"Excel-{st.session_state.user_id}": "MO-200 Microsoft Excel (Office 2019)"}
     accepted_courses = ["MO-200 Microsoft Excel (Office 2019)"]
 
     entered_course_key = st.text_input("Enter course key")
@@ -1387,7 +1381,7 @@ if st.session_state.page == 7:
                 st.info("Course difficulty: N/A")
                 st.info("Course cost: Free")
                 st.info("Course duration: N/A")   
-                course_registration("Excel 2019", "Excel-")
+                course_registration("Excel")
     else:
         course_media = {
             "MO-200 Microsoft Excel (Office 2019)": 
@@ -1522,6 +1516,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
