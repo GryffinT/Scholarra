@@ -77,22 +77,18 @@ def progress_bar(loading_text, page):
     key = st.session_state.get('use_key')
     if st.session_state.get("_progress_lock") == page:
         return
+
+    if st.session_state.page != 3 and st.session_state.page != 7:
+        counter = datetime.now()
+        st.session_state["counter"] = counter
     
     if st.session_state.page == 3:
         username = st.session_state["username"]
-        key = st.session_state["use_key"]  # make sure you stored the password at login
-        
-        # Ensure ai_start exists
-        if "ai_start" not in st.session_state:
-            st.session_state["ai_start"] = datetime.now()
-            return  # don’t log yet, just set start time
+        key = st.session_state["use_key"]
+        ai_end = datetime.now()
 
         # Calculate time delta
-        end_time = datetime.now()
-        deltatime = (end_time - st.session_state["ai_start"]).total_seconds()
-
-        # Reset start time so next call only measures the new interval
-        st.session_state["ai_start"] = end_time  
+        deltatime = (ai_end - st.session_state.counter).total_seconds()
 
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
@@ -120,10 +116,10 @@ def progress_bar(loading_text, page):
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
-        
-        # Example: calculate elapsed time
-        end_time = datetime.now()
-        deltatime = (end_time - st.session_state["course_start"]).total_seconds()
+        course_end = datetime.now()
+
+        # Calculate time delta
+        deltatime = (course_end - st.session_state.counter).total_seconds()
         
         # Find the row with matching username + password
         mask = (df["Username"] == username) & (df["Password"] == key)
@@ -135,7 +131,7 @@ def progress_bar(loading_text, page):
             # Push the changes back to Google Sheets
             conn.update(worksheet="Sheet1", data=df)
         
-            print("AI time recorded successfully!")
+            print("MatLib time recorded successfully!")
         else:
             print("No matching user found.")
     
@@ -1592,6 +1588,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
