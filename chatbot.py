@@ -472,8 +472,8 @@ if st.session_state.page == 3:
                 
                 Return **only one word** as output:
                 - "MATH" if the prompt is a mathematical equation, even if it contains variables, or is a chemistry equation.
-                - "INFO" if the question is asking for clarification on a subject/information on a subject
-                - "OTHER" for any other type of prompt.
+                - "INFO" if the question is asking for information or research on a subject.
+                - "OTHER" for any other type of prompt, such as outlines, text structuring, etc.
 
                 Do not include any extra text, explanation, punctuation, or quotes. The output must be exactly either MATH, INFO or OTHER."""
                 
@@ -1535,6 +1535,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
