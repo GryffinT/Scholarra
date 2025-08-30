@@ -77,51 +77,51 @@ def url_video_func(url, name, video_title):
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
 
-# --- Helper function to record time ---
-def record_time(username, key, column):
-    """Record the time spent on a given page column in Google Sheets."""
-    now = datetime.now()
-    start_time = st.session_state.get("counter")
+# --- Helper function to record elapsed time ---
+def record_time(username, key, column, page):
+    """Record time spent on a page. Only record when leaving the page."""
+    # Only record if start time exists for this page
+    start_times = st.session_state.setdefault("start_times", {})
+    if page in start_times:
+        delta = (datetime.now() - start_times[page]).total_seconds()
 
-    # If this is the first visit, just set counter and return
-    if not start_time:
-        st.session_state["counter"] = now
-        return  # nothing to record yet
+        # Connect to Google Sheets
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = conn.read(worksheet="Sheet1", ttl="10m")
 
-    delta = (now - start_time).total_seconds()
+        # Find user row
+        mask = (df["Username"] == username) & (df["Password"] == st.session_state.get("use_key"))
+        if mask.any():
+            df[column] = df[column].fillna(0).astype(float)
+            df.loc[mask, column] += delta
+            conn.update(worksheet="Sheet1", data=df)
+            print(f"{column} time recorded: {delta:.2f} seconds")
+        else:
+            print("No matching user found.")
 
-    # Connect to Google Sheets
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    df = conn.read(worksheet="Sheet1", ttl="10m")
-
-    # Find the user's row
-    mask = (df["Username"] == username) & (df["Password"] == key)
-    if mask.any():
-        df[column] = df[column].fillna(0).astype(float)
-        df.loc[mask, column] += delta
-        conn.update(worksheet="Sheet1", data=df)
-        print(f"{column} time recorded: {delta:.2f} seconds")
-    else:
-        print("No matching user found.")
-
-    # Reset counter for next measurement
-    st.session_state["counter"] = now
+        # Remove start time for this page
+        del start_times[page]
 
 
 # --- Main progress_bar function ---
 def progress_bar(loading_text, page):
-    key = st.session_state.get('use_key')
     username = st.session_state.get("username")
+    key = st.session_state.get("use_key")
 
     # Map pages to Google Sheets columns
     page_column_map = {3: "AI", 4: "Grapher", 7: "MatLib"}
 
-    # Record time for the previous page if needed
+    # Record time for the previous page
     current_page = st.session_state.get("page")
     if current_page in page_column_map:
-        record_time(username, key, page_column_map[current_page])
+        record_time(username, key, page_column_map[current_page], current_page)
 
-    # Display the progress bar
+    # Set start time for the new page if not already set
+    start_times = st.session_state.setdefault("start_times", {})
+    if page not in start_times:
+        start_times[page] = datetime.now()
+
+    # Show the progress bar
     bar = st.progress(0, text=loading_text)
     for percent_complete in range(100):
         time.sleep(0.01)
@@ -130,8 +130,8 @@ def progress_bar(loading_text, page):
     bar.empty()
 
     # Update current page
-    st.session_state["_progress_lock"] = page
     st.session_state["page"] = page
+    st.session_state["_progress_lock"] = page
 
 
 key = None
@@ -1624,6 +1624,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
