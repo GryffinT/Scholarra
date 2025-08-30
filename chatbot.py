@@ -1436,7 +1436,7 @@ if st.session_state.page == 6:
         ax_mat.set_ylabel("Seconds")
         ax_mat.tick_params(axis="x", rotation=45)
         st.pyplot(fig_mat)
-    show_time_graph()
+    show_time_graphs()
 
 
 
@@ -1648,6 +1648,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
