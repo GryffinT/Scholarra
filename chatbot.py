@@ -1309,7 +1309,7 @@ if st.session_state.page == 4:
 # ---------------- PAGE 3-5 (Scholarra Terminal) ----------------
 
 if st.session_state.page >= 3:
-    key = st.session_state.get('use_key')
+    key = st.session_state["use_key"]
     AI_sources = st.session_state["output_sources"]
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read(worksheet="Sheet1", ttl=5)
@@ -1668,6 +1668,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
