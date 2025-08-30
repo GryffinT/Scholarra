@@ -7,6 +7,7 @@ import re
 import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import httpx
 import plotly.express as px
 import random
@@ -1402,7 +1403,38 @@ if st.session_state.page == 5:
 # ---------------- PAGE 6 (Analytics) ----------------
 
 if st.session_state.page == 6:
-    pass
+    def show_time_graphs():
+        # Connect to Google Sheets
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = conn.read(worksheet="Sheet1", ttl="10m")
+    
+        # Ensure time columns are numeric
+        df["AI"] = df["AI"].fillna(0).astype(float)
+        df["MatLib"] = df["MatLib"].fillna(0).astype(float)
+    
+        usernames = df["Username"].tolist()
+        ai_times = df["AI"].tolist()
+        matlib_times = df["MatLib"].tolist()
+    
+        # --- Plot AI times ---
+        fig_ai, ax_ai = plt.subplots()
+        ax_ai.bar(usernames, ai_times)
+        ax_ai.set_title("Time Spent on AI Page")
+        ax_ai.set_xlabel("User")
+        ax_ai.set_ylabel("Seconds")
+        ax_ai.tick_params(axis="x", rotation=45)
+        st.pyplot(fig_ai)
+    
+        # --- Plot MatLib times ---
+        fig_mat, ax_mat = plt.subplots()
+        ax_mat.bar(usernames, matlib_times)
+        ax_mat.set_title("Time Spent on MatLib Page")
+        ax_mat.set_xlabel("User")
+        ax_mat.set_ylabel("Seconds")
+        ax_mat.tick_params(axis="x", rotation=45)
+        st.pyplot(fig_mat)
+    show_time_graph()
+
 
 
 # ---------------- PAGE 7 (Courses) ----------------
@@ -1613,6 +1645,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
