@@ -34,6 +34,8 @@ active_model = "PBCA-0.3"
 
 # CODE BEGINS    
 
+counter = 0
+
 base_dir = os.path.dirname(__file__)
 images_dir = os.path.join(base_dir, "Images")
 
@@ -1645,6 +1647,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
