@@ -1325,10 +1325,11 @@ if st.session_state.page >= 3:
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
         # Menu options
-        options = [active_model, "Grapher", "Login", "Account Info", "Material Library"]
+        if key != admin_password:
+            options = [active_model, "Grapher", "Login", "Account Info", "Material Library"]
         if key == admin_password:
-            options.append("Analytics")  # Only Admin sees Analytics
-            st.rerun()
+            options = [active_model, "Grapher", "Login", "Account Info", "Material Library", "Analytics"]
+
 
         main_switch = st.selectbox("Function selection", options)
 
@@ -1664,6 +1665,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
