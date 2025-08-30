@@ -89,7 +89,7 @@ def record_time(username, key, column, page):
         mask = (df["Username"] == username) & (df["Password"] == key)
         if mask.any():
             df[column] = df[column].fillna(0).astype(float)
-            df.loc[mask, column] += delta
+            df.loc[mask, column] += delta - 3
             conn.update(worksheet="Sheet1", data=df)
             print(f"{column} time recorded: {delta:.2f} seconds")
         else:
@@ -1622,6 +1622,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
