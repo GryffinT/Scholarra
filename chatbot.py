@@ -1322,7 +1322,7 @@ if st.session_state.page >= 3:
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
         if st.session_state.page >= 3:
-            if key == df.iloc[1]["Password"]
+            if key == df.iloc[1]["Password"]:
                 main_switch = st.selectbox("Function selection", [f"{active_model}", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
                 if main_switch == "Login":
                     progress_bar("Loading login page.", 2)
@@ -1667,6 +1667,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
