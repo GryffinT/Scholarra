@@ -14,3 +14,4 @@ asyncio
 pdf2image
 streamlit-modal
 st-gsheets-connection
+matplotlib
