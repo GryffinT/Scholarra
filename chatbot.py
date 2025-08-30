@@ -1316,9 +1316,11 @@ if st.session_state.page >= 3:
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read(worksheet="Sheet1", ttl=5)
 
-    # Get Admin row (row 2 -> iloc[1])
-    admin_row = df.iloc[1]
-    is_admin = (key == admin_row["Password"])
+    # Get the password from row 2, column 2
+    admin_password = df.iloc[1, 1]  # iloc[row_index, column_index]
+
+    # Check if the entered key matches Admin password
+    is_admin = (key == admin_password)
 
     # Sidebar
     with st.sidebar:
@@ -1665,6 +1667,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
