@@ -77,93 +77,43 @@ def url_video_func(url, name, video_title):
 page_counter = {"Page1": 0, "Page2": 0, "Page3": 0, "Page4": 0, "Page5": 0, "Page6": 0, "Page7": 0, "Page8": 0}
 st.session_state["page_counter"] = page_counter
 
+def record_time(username, key, column):
+    """Helper to record time spent on a page"""
+    now = datetime.now()
+    start_time = st.session_state.get("counter")
+    if not start_time:
+        # First time entering the page
+        st.session_state["counter"] = now
+        return  # nothing to record yet
+
+    delta = (now - start_time).total_seconds()
+
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    df = conn.read(worksheet="Sheet1", ttl="10m")
+
+    mask = (df["Username"] == username) & (df["Password"] == key)
+    if mask.any():
+        df[column] = df[column].fillna(0).astype(float)
+        df.loc[mask, column] += delta
+        conn.update(worksheet="Sheet1", data=df)
+        print(f"{column} time recorded: {delta:.2f} seconds")
+    else:
+        print("No matching user found.")
+
+    # Reset counter for next measurement
+    st.session_state["counter"] = now
+
+
 def progress_bar(loading_text, page):
     key = st.session_state.get('use_key')
-    if st.session_state.get("_progress_lock") == page:
-        return
+    username = st.session_state.get("username")
 
-    if st.session_state.page not in [3,4,7]:
-        counter = datetime.now()
-        st.session_state["counter"] = counter
+    # Record time for the previous page if needed
+    page_column_map = {3: "AI", 4: "Grapher", 7: "MatLib"}
+    if st.session_state.page in page_column_map:
+        record_time(username, key, page_column_map[st.session_state.page])
     
-    if st.session_state.page == 3:
-        username = st.session_state["username"]
-        key = st.session_state["use_key"]
-        ai_end = datetime.now()
-
-        # Calculate time delta
-        deltatime = (st.session_state.counter - ai_end).total_seconds()
-
-        # Connect to Google Sheets
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(worksheet="Sheet1", ttl="10m")
-
-        # Match user row
-        mask = (df["Username"] == username) & (df["Password"] == key)
-
-        if mask.any():
-            # Make sure "AI" column is numeric
-            df["AI"] = df["AI"].fillna(0).astype(float)
-
-            # Add elapsed time
-            df.loc[mask, "AI"] += deltatime
-
-            # Push changes back
-            conn.update(worksheet="Sheet1", data=df)
-            print(f"AI time recorded: {deltatime:.2f} seconds")
-        else:
-            print("No matching user found.")
-
-        
-    elif st.session_state.page == 7:
-        username = st.session_state["username"]
-        # Connect to Google Sheets
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(worksheet="Sheet1", ttl="10m")
-        course_end = datetime.now()
-
-        # Calculate time delta
-        deltatime = (course_end - st.session_state.counter).total_seconds()
-        
-        # Find the row with matching username + password
-        mask = (df["Username"] == username) & (df["Password"] == key)
-        
-        if mask.any():
-            df["MatLib"] = df["MatLib"].fillna(0).astype(float)
-            # Update the "AI" column with the new delta time
-            df.loc[mask, "MatLib"] += deltatime
-        
-            # Push the changes back to Google Sheets
-            conn.update(worksheet="Sheet1", data=df)
-        
-            print("MatLib time recorded successfully!")
-        else:
-            print("No matching user found.")
-    elif st.session_state.page == 4:
-        username = st.session_state["username"]
-        # Connect to Google Sheets
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(worksheet="Sheet1", ttl="10m")
-        course_end = datetime.now()
-
-        # Calculate time delta
-        deltatime = (course_end - st.session_state.counter).total_seconds()
-        
-        # Find the row with matching username + password
-        mask = (df["Username"] == username) & (df["Password"] == key)
-        
-        if mask.any():
-            df["Grapher"] = df["Grapher"].fillna(0).astype(float)
-            # Update the "AI" column with the new delta time
-            df.loc[mask, "Grapher"] += deltatime
-        
-            # Push the changes back to Google Sheets
-            conn.update(worksheet="Sheet1", data=df)
-        
-            print("Grapher time recorded successfully!")
-        else:
-            print("No matching user found.")
-    
+    # Display progress bar
     bar = st.progress(0, text=loading_text)
     for percent_complete in range(100):
         time.sleep(0.01)
@@ -171,9 +121,11 @@ def progress_bar(loading_text, page):
     time.sleep(1)
     bar.empty()
     
+    # Update current page
     st.session_state.page = page
-    st.session_state["_progress_lock"] = page  # mark as done for this page
+    st.session_state["_progress_lock"] = page
     st.rerun()
+
 
 key = None
 def get_key():
@@ -1665,6 +1617,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
