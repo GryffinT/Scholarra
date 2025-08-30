@@ -79,18 +79,14 @@ st.session_state["page_counter"] = page_counter
 
 # --- Helper function to record elapsed time ---
 def record_time(username, key, column, page):
-    """Record time spent on a page. Only record when leaving the page."""
-    # Only record if start time exists for this page
     start_times = st.session_state.setdefault("start_times", {})
     if page in start_times:
         delta = (datetime.now() - start_times[page]).total_seconds()
 
-        # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
         df = conn.read(worksheet="Sheet1", ttl="10m")
 
-        # Find user row
-        mask = (df["Username"] == username) & (df["Password"] == st.session_state.get("use_key"))
+        mask = (df["Username"] == username) & (df["Password"] == key)
         if mask.any():
             df[column] = df[column].fillna(0).astype(float)
             df.loc[mask, column] += delta
@@ -99,7 +95,7 @@ def record_time(username, key, column, page):
         else:
             print("No matching user found.")
 
-        # Remove start time for this page
+        # Remove start time for the old page
         del start_times[page]
 
 
@@ -107,8 +103,6 @@ def record_time(username, key, column, page):
 def progress_bar(loading_text, page):
     username = st.session_state.get("username")
     key = st.session_state.get("use_key")
-
-    # Map pages to Google Sheets columns
     page_column_map = {3: "AI", 4: "Grapher", 7: "MatLib"}
 
     # Record time for the previous page
@@ -130,9 +124,13 @@ def progress_bar(loading_text, page):
     bar.empty()
 
     # Update current page
-    st.session_state["page"] = page
+    previous_page = st.session_state.get("page")
     st.session_state["_progress_lock"] = page
+    st.session_state["page"] = page
 
+    # Only rerun if page actually changed
+    if page != previous_page:
+        st.rerun()  # <-- triggers page refresh
 
 key = None
 def get_key():
@@ -1624,6 +1622,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
