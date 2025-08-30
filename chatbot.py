@@ -92,7 +92,7 @@ def progress_bar(loading_text, page):
         ai_end = datetime.now()
 
         # Calculate time delta
-        deltatime = (ai_end - st.session_state.counter).total_seconds()
+        deltatime = (st.session_state.counter - ai_end).total_seconds()
 
         # Connect to Google Sheets
         conn = st.connection("gsheets", type=GSheetsConnection)
@@ -1665,6 +1665,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
