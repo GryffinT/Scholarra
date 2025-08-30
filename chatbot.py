@@ -1317,7 +1317,7 @@ if st.session_state.page >= 3:
     df = conn.read(worksheet="Sheet1", ttl=5)
 
     # Get the password from row 2, column 2
-    admin_password = df.iloc[1, 1]  # iloc[row_index, column_index]
+    admin_password = df.iloc[0, 1]  # iloc[row_index, column_index]
     st.title(admin_password)
 
     # Check if the entered key matches Admin password
@@ -1669,6 +1669,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
