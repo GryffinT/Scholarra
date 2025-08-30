@@ -1309,45 +1309,43 @@ if st.session_state.page == 4:
 # ---------------- PAGE 3-5 (Scholarra Terminal) ----------------
 
 if st.session_state.page >= 3:
-    key = st.session_state["use_key"]
-    AI_sources = st.session_state["output_sources"]
+    key = st.session_state.get("use_key")
+    AI_sources = st.session_state.get("output_sources")
+
+    # Load spreadsheet
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read(worksheet="Sheet1", ttl=5)
 
-    # Find the row that matches the stored password
-    
+    # Check if password exists in the sheet
+    user_row = df[df["Password"] == key]
+    has_password = not user_row.empty
+
+    # Sidebar
     with st.sidebar:
-        st.sidebar.image(logo[1], width='stretch')
+        st.image(logo[1], width=200)
         st.header("Scholarra terminal")
         st.markdown("Here you can take notes, view sources, and navigate the Scholarra app.")
 
-        if st.session_state.page >= 3:
-            if key == df.iloc[1]["Password"]:
-                main_switch = st.selectbox("Function selection", [f"{active_model}", "Grapher", "Login", "Account Info", "Analytics", "Material Library"])
-                if main_switch == "Login":
-                    progress_bar("Loading login page.", 2)
-                if main_switch == active_model:
-                    progress_bar("Loading AI interface.", 3)
-                if main_switch == "Grapher":
-                    progress_bar("Loading Scolistics", 4)
-                if main_switch == "Account Info":
-                    progress_bar("Loading account info", 5)
-                if main_switch == "Analytics":
-                    progress_bar("Loading Scholarra analytics", 6)
-                if main_switch == "Material Library":
-                    progress_bar("Loading courses", 7)
-            else:
-                main_switch = st.selectbox("Function selection", [f"{active_model}", "Grapher", "Login", "Account Info", "Material Library"])
-                if main_switch == "Login":
-                    progress_bar("Loading login page.", 2)
-                if main_switch == active_model:
-                    progress_bar("Loading AI interface.", 3)
-                if main_switch == "Grapher":
-                    progress_bar("Loading Scolistics", 4)
-                if main_switch == "Account Info":
-                    progress_bar("Loading account info", 5)
-                if main_switch == "Material Library":
-                    progress_bar("Loading courses", 7)
+        # Menu options
+        options = [active_model, "Grapher", "Login", "Account Info", "Material Library"]
+        if has_password:
+            options.append("Analytics")  # Only show Analytics if password matches
+
+        main_switch = st.selectbox("Function selection", options)
+
+        # Mapping menu to progress_bar page numbers
+        page_mapping = {
+            "Login": 2,
+            active_model: 3,
+            "Grapher": 4,
+            "Account Info": 5,
+            "Analytics": 6,
+            "Material Library": 7
+        }
+
+        # Run progress_bar for selected option
+        if main_switch in page_mapping:
+            progress_bar(f"Loading {main_switch} page.", page_mapping[main_switch])
                     
             
         notes_expander = st.expander("Notes")
@@ -1668,6 +1666,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
