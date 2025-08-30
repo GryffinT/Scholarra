@@ -1316,9 +1316,9 @@ if st.session_state.page >= 3:
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = conn.read(worksheet="Sheet1", ttl=5)
 
-    # Check if password exists in the sheet
-    user_row = df[df["Password"] == key]
-    has_password = not user_row.empty
+    # Get Admin row (row 2 -> iloc[1])
+    admin_row = df.iloc[1]
+    is_admin = (key == admin_row["Password"])
 
     # Sidebar
     with st.sidebar:
@@ -1328,8 +1328,8 @@ if st.session_state.page >= 3:
 
         # Menu options
         options = [active_model, "Grapher", "Login", "Account Info", "Material Library"]
-        if has_password:
-            options.append("Analytics")  # Only show Analytics if password matches
+        if is_admin:
+            options.append("Analytics")  # Only Admin sees Analytics
 
         main_switch = st.selectbox("Function selection", options)
 
@@ -1347,7 +1347,6 @@ if st.session_state.page >= 3:
         if main_switch in page_mapping:
             progress_bar(f"Loading {main_switch} page.", page_mapping[main_switch])
                     
-            
         notes_expander = st.expander("Notes")
         with notes_expander:
             if "sidebar_note" not in st.session_state:
@@ -1666,6 +1665,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
