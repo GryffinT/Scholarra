@@ -433,6 +433,7 @@ if st.session_state.page == 3:
             "You are only helping users gather information to assess; do not write essays or complete assignments. "
             "Organize the answer in a **strict hierarchical bullet point outline** ONLY. "
             "Ensure you write with low perplexity and burstiness so the text is easily flaged as AI"
+            "Dont perform any analysis of symnolism, metephors or otherwise abstact content."
             "Create an outline of the prompt. "
             "Format rules: \n"
             "1. Begin each major topic with a numbered header (e.g., '1. Causes', '2. Major Figures', '3. Key Events'). \n"
@@ -1622,6 +1623,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
