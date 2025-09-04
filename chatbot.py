@@ -537,7 +537,8 @@ if st.session_state.page == 3:
         PBCA_expander = st.expander(f"{active_model} agent profile")
         with PBCA_expander:
             st.title(f"Prompt Based Cascading Agent {active_model}")
-            st.write(f"The {active_model}, or Prompt-Based Cascading Agent, is an orchestrated AI interface that implements a multi-stage processing pipeline. User inputs are cascaded sequentially through six specialized GPT-powered modules, each performing domain-specific analyses. Intermediate outputs are systematically evaluated and filtered according to rigorously defined academic and ethical guidelines, with the final response synthesized to ensure contextual fidelity, accuracy, and compliance with established operational standards.")
+            st.write(f"The {active_model}, or Prompt-Based Cascading Agent, is an sequential AI interface that implements a multi-stage processing pipeline of generative and assessment procedures. User inputs are cascaded through various specialized GPT-powered modules, each of which perform a domain-specific analysis ensuring data integrity. The final response is synthesized in line with contextual fidelity, accuracy, and compliance with established operational standards.")
+            st.info(f"The {active_model} is still in development and to ensure it coincides with user interests we're open to feeback. If you find a bug or are dissatisfied with the current guidelines, contact us through Github.")
             availible_sources_expander = st.expander("Availible sources")
             with availible_sources_expander:
                 st.write("The availible sources are as follows:")
@@ -1623,6 +1624,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
