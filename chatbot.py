@@ -1531,7 +1531,6 @@ if st.session_state.page == 7:
                     segment_completion = st.checkbox("Completed")
                     if segment_completion:
                         st.success("Congratulations on completing this segment! You can close it and continue to the next one.")
-                        st.balloons()
                 lesson_one_expander = st.expander(label="Lesson 1")
                 with lesson_one_expander:
                     st.title("Lesson one, importing data")
@@ -1580,6 +1579,10 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=0SRt9dkR3Zg", "learnexcel.video","Excel Page Layout: The Ultimate Guide")
                     url_video_func("https://www.youtube.com/watch?v=wI6U9I2nZWg", "Technology for Teachers and Students", "3 Ways to AutoFit all Columns and Rows in Excel")
                     url_video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    lesson_3_quiz_answers = ["Find & Select", "Yes", "An entry's column and row.", "Ctrl + K"]
+                    lesson_3_q1 = st.text_input("LESSON 3 QUESTION?")
+                    score_question(lesson_3_q1,lesson_3_quiz_answers, 0)
                     segment_completed(3)
                 lesson_four_expander= st.expander(label="Lesson 3.1")
                 with lesson_four_expander:
@@ -1624,6 +1627,7 @@ if st.session_state.page == 7:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
