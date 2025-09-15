@@ -1545,18 +1545,15 @@ if st.session_state.page == 7:
                 lesson_two_expander = st.expander(label="Lesson 2")
                 with lesson_two_expander:
                     st.title("Lesson 2, navigating workbook")
-                    st.write("In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.")
-
+                    st.write("""In this lesson, we will explore how to efficiently move through and manage the contents of a workbook. 
+                    You’ll learn how to search for specific data, jump directly to named cells or ranges, and access different workbook elements with ease. 
+                    Additionally, we’ll cover how to insert and remove hyperlinks, making it easier to connect information within your workbook or to external resources. 
+                    Mastering these skills will help you work faster, stay organized, and make your spreadsheets more interactive and user-friendly.""")
                     # Video 1
-                    
                     url_video_func("https://www.youtube.com/watch?v=ovDpZD4BxQk", "Kay Rand Morgan", "Search for data within a workbook" )
-
                     # Video 2
-                    
                     url_video_func("https://www.youtube.com/watch?v=Z7RQnu3yrPk", "Kay Rand Morgan", "Navigating to named cells, ranges, or workbook elements" )
-
                     # Video 3
-
                     url_video_func("https://www.youtube.com/watch?v=QMzx3h-USM4", "Santhu Analytics", "How to Create & Remove Hyperlinks" )
                  
                     st.header("Test your knowledge with a short quiz to complete this section")
@@ -1580,10 +1577,34 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=wI6U9I2nZWg", "Technology for Teachers and Students", "3 Ways to AutoFit all Columns and Rows in Excel")
                     url_video_func("https://www.youtube.com/watch?v=UbYcYXfHwII", "Technology for Teachers and Students", "Create Custom Headers and Footers in Excel")
                     st.header("Test your knowledge with a short quiz to complete this section")
-                    lesson_3_quiz_answers = ["Find & Select", "Yes", "An entry's column and row.", "Ctrl + K"]
-                    lesson_3_q1 = st.text_input("LESSON 3 QUESTION?")
-                    score_question(lesson_3_q1,lesson_3_quiz_answers, 0)
+                    
+                    lesson_3_quiz_answers = [
+                        "To adjust the spacing around the edges of the printed page",
+                        "Use the 'Orientation' button in the Page Layout menu to switch from portrait to landscape",
+                        "Defines a specific range of cells to be printed, excluding other content",
+                        "Select a cell and click 'Insert Page Break' to add a break above it",
+                        "The background image will not print; it only appears on screen"
+                    ]
+                    
+                    lesson_3_q1 = st.text_input("What is the primary function of the 'Margins' button in Excel's Page Layout menu?")
+                    score_question(lesson_3_q1, lesson_3_quiz_answers, 0)
+                    
+                    lesson_3_q2 = st.text_input("How can you change the page orientation in Excel to landscape?")
+                    score_question(lesson_3_q2, lesson_3_quiz_answers, 1)
+                    
+                    lesson_3_q3 = st.text_input("What does setting a 'Print Area' in Excel do?")
+                    score_question(lesson_3_q3, lesson_3_quiz_answers, 2)
+                    
+                    lesson_3_q4 = st.text_input("How do you insert a manual page break in Excel?")
+                    score_question(lesson_3_q4, lesson_3_quiz_answers, 3)
+                    
+                    lesson_3_q5 = st.text_input("What is a notable limitation of inserting a background image through the Page Layout menu?")
+                    score_question(lesson_3_q5, lesson_3_quiz_answers, 4)
+                    
                     segment_completed(3)
+
+
+                
                 lesson_four_expander= st.expander(label="Lesson 3.1")
                 with lesson_four_expander:
                     st.title("Lesson 3.1, customization")
@@ -1594,7 +1615,36 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=GfHWyniYja4", "Kay Rand Morgan", "Change window views")
                     url_video_func("https://www.youtube.com/watch?v=5ta5Vf8VRms", "David Hays", "Modify basic workbook properties")
                     url_video_func("https://www.youtube.com/watch?v=nBkv7EGsAIU", "Excel Tutorials by EasyClick Academy", "Display formulas")
+                    
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    
+                    lesson_3_1_quiz_answers = [
+                        "Ensures all data is visible without extra space or cut-off",
+                        "Double-click between any two column letters",
+                        "Select all (Ctrl + A), then hold Alt and press H, O, I",
+                        "Hold Alt and press H, O, A",
+                        "Hold Ctrl and tap Z"
+                    ]
+                    
+                    lesson_3_1_q1 = st.text_input("What problem does autofitting columns and rows in Excel solve?")
+                    score_question(lesson_3_1_q1, lesson_3_1_quiz_answers, 0)
+                    
+                    lesson_3_1_q2 = st.text_input("In the first method, how do you autofit all columns after selecting them?")
+                    score_question(lesson_3_1_q2, lesson_3_1_quiz_answers, 1)
+                    
+                    lesson_3_1_q3 = st.text_input("What keyboard shortcut sequence autofits all columns in the entire worksheet?")
+                    score_question(lesson_3_1_q3, lesson_3_1_quiz_answers, 2)
+                    
+                    lesson_3_1_q4 = st.text_input("What is the keyboard shortcut to autofit row heights in Excel according to the video?")
+                    score_question(lesson_3_1_q4, lesson_3_1_quiz_answers, 3)
+                    
+                    lesson_3_1_q5 = st.text_input("What combination does the video presenter use to undo autofitting changes?")
+                    score_question(lesson_3_1_q5, lesson_3_1_quiz_answers, 4)
+                    
                     segment_completed(3.1)
+
+
+                
                 lesson_five_expander= st.expander(label="Lesson 4")
                 with lesson_five_expander:
                     st.title("Lesson 4, how to configure for collaboration")
@@ -1603,7 +1653,37 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=P2L4GOGDsx8", "Kay Rand Morgan", "Microsoft Excel - Save workbooks in alternative file formats CC")
                     url_video_func("https://www.youtube.com/watch?v=HfwMo6M1XzM", "Kevin Stratvert", "How to Print Excel Sheet")
                     url_video_func("https://www.youtube.com/watch?v=KbJUKAY8FZ8", "How To Tutorials- Maha Gurus", "Inspecting and Protecting Workbooks- Inspect Document in Excel Tutorial")
+
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    
+                    lesson_4_quiz_answers = [
+                        "Use 'Print Titles' to set rows to repeat at the top",
+                        "They apply consistent colors, fonts, and effects to the worksheet",
+                        "Adjust how many pages the worksheet prints on by modifying width, height, or scale",
+                        "Uncheck 'Print' under Sheet Options for gridlines",
+                        "To manage stacking order and alignment of objects like charts and images"
+                    ]
+                    
+                    lesson_4_q1 = st.text_input("How can you make sure the header row repeats on every printed page?")
+                    score_question(lesson_4_q1, lesson_4_quiz_answers, 0)
+                    
+                    lesson_4_q2 = st.text_input("What purpose do 'Themes' serve in Excel's Page Layout tab?")
+                    score_question(lesson_4_q2, lesson_4_quiz_answers, 1)
+                    
+                    lesson_4_q3 = st.text_input("What does the 'Scale to Fit' group allow you to do?")
+                    score_question(lesson_4_q3, lesson_4_quiz_answers, 2)
+                    
+                    lesson_4_q4 = st.text_input("How can you turn off gridlines for printing without removing them from the screen?")
+                    score_question(lesson_4_q4, lesson_4_quiz_answers, 3)
+                    
+                    lesson_4_q5 = st.text_input("What is the purpose of the 'Arrange' group in the Page Layout tab?")
+                    score_question(lesson_4_q5, lesson_4_quiz_answers, 4)
+                    
                     segment_completed(4)
+
+
+
+                
                 lesson_six_expander = st.expander(label="Lesson 5")
                 with lesson_six_expander:
                     st.title("Lesson 5, formatting cells and ranges")
@@ -1616,6 +1696,36 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=FwI46frGd9k", "KnowWithBeau", "Excel MOS 2.2.6 Apply cell formats from the Format Cells dialog box - KwB")
                     url_video_func("https://www.youtube.com/watch?v=YSsQmEPFNaI", "Simon Sez IT", "Using Cell Styles in Excel")
                     url_video_func("https://www.youtube.com/watch?v=B9ol_9_QmJU", "ExcelHow Tech", "How to Clear Cell Contents and Formatting")
+                    
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    
+                    lesson_5_quiz_answers = [
+                        "Select whole sheet (Ctrl + A), click Home tab, Cells group, Format, then choose Autofit Column Width or Row Height",
+                        "Because it is faster and keeps your hands on the keyboard",
+                        "Cell shows hashtags (#####) as a placeholder",
+                        "By donating via the thanks button or Patreon",
+                        "Like, comment, subscribe, and click the notification bell"
+                    ]
+                    
+                    lesson_5_q1 = st.text_input("What steps are involved in the third method to autofit columns and rows?")
+                    score_question(lesson_5_q1, lesson_5_quiz_answers, 0)
+                    
+                    lesson_5_q2 = st.text_input("Why does the video presenter consider the second method better than the first?")
+                    score_question(lesson_5_q2, lesson_5_quiz_answers, 1)
+                    
+                    lesson_5_q3 = st.text_input("What happens if column data cannot fit within the current width in Excel?")
+                    score_question(lesson_5_q3, lesson_5_quiz_answers, 2)
+                    
+                    lesson_5_q4 = st.text_input("What is one way viewers can support the creator of the video channel?")
+                    score_question(lesson_5_q4, lesson_5_quiz_answers, 3)
+                    
+                    lesson_5_q5 = st.text_input("What did the presenter suggest viewers do after watching the video?")
+                    score_question(lesson_5_q5, lesson_5_quiz_answers, 4)
+                    
+                    segment_completed(5)
+
+
+                
                 lesson_seven_expander = st.expander(label="Lesson 6")
                 with lesson_seven_expander:
                     st.title("Lesson 6, manipulating data in worksheets")
@@ -1623,10 +1733,41 @@ if st.session_state.page == 7:
                     url_video_func("https://www.youtube.com/watch?v=_ODK4XW-aNs", "HowcastTechGadgets", "How to Use Paste Special | Microsoft Excel")
                     url_video_func("https://www.youtube.com/watch?v=HMXLU9TGogc", "Excel Tutorials by EasyClick Academy", "How to Use AutoFill in Excel (Best Practices)")
                     url_video_func("https://www.youtube.com/watch?v=JvSoAAkcWyY", "Microsoft 365", "How to insert or delete rows and columns in Microsoft Excel")
+
+                    st.header("Test your knowledge with a short quiz to complete this section")
+                    
+                    lesson_6_quiz_answers = [
+                        "To adjust how the worksheet prints, including margins, orientation, and scaling",
+                        "It shows how the worksheet will look when printed, including page breaks and layout",
+                        "To fit the worksheet content onto a specified number of pages",
+                        "To add custom text at the top or bottom of printed pages",
+                        "It defines which part of the worksheet will be printed"
+                    ]
+                    
+                    lesson_6_q1 = st.text_input("What is the purpose of the Page Setup options in Excel?")
+                    score_question(lesson_6_q1, lesson_6_quiz_answers, 0)
+                    
+                    lesson_6_q2 = st.text_input("What does Print Preview allow you to do?")
+                    score_question(lesson_6_q2, lesson_6_quiz_answers, 1)
+                    
+                    lesson_6_q3 = st.text_input("What does the 'Fit to' scaling option do in Excel's print settings?")
+                    score_question(lesson_6_q3, lesson_6_quiz_answers, 2)
+                    
+                    lesson_6_q4 = st.text_input("What is the function of headers and footers in Excel?")
+                    score_question(lesson_6_q4, lesson_6_quiz_answers, 3)
+                    
+                    lesson_6_q5 = st.text_input("What does setting a Print Area in Excel accomplish?")
+                    score_question(lesson_6_q5, lesson_6_quiz_answers, 4)
+                    
+                    segment_completed(6)
+
+
+            
             else:
                 st.warning("This course key is not accepted.")
         elif entered_course_key:
             st.error("Invalid course key.")
+
 
 
 
